@@ -5,6 +5,7 @@ using Architect.Objects.Groups;
 using Architect.Objects.Placeable;
 using JetBrains.Annotations;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Architect.Content;
 
@@ -502,7 +503,10 @@ public static class VanillaObjects
     private static void AddGardensObjects()
     {
         AddEnemy("Mossy Vagabond", "mossy_vagabond", ("Fungus3_39", "Moss Knight Fat"),
-            preloadAction: o => o.LocateMyFSM("FSM").enabled = false);
+            preloadAction: o =>
+            {
+                Object.Destroy(o.LocateMyFSM("FSM"));
+            });
         AddEnemy("Spiny Husk", "spiny_husk", ("Fungus3_34", "Garden Zombie"));
         AddEnemy("Aluba", "aluba", ("Fungus3_48", "Lazy Flyer Enemy"));
         AddEnemy("Mossfly", "mossfly", ("Fungus3_34", "Moss Flyer"));
