@@ -1,0 +1,108 @@
+using System;
+using System.Linq;
+using Architect.Events;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
+namespace Architect.Utils;
+
+public static class ObjectUtils
+{
+    public static T GetOrAddComponent<T>(this GameObject obj) where T : Component
+    {
+        var comp = obj.GetComponent<T>();
+        return comp ? comp : obj.AddComponent<T>();
+    }
+    
+    public static void RemoveComponent<T>(this GameObject obj) where T : Component
+    {
+        var comp = obj.GetComponents<T>();
+        foreach (var c in comp) Object.Destroy(c);
+    }
+    
+    public static T ReplaceComponent<T>(this GameObject obj) where T : Component
+    {
+        obj.RemoveComponent<T>();
+        return obj.AddComponent<T>();
+    }
+    
+    public static void BroadcastEvent(this GameObject obj, string triggerName)
+    {
+        EventManager.BroadcastEvent(obj, triggerName);
+    }
+    
+    public static void RemoveComponentsInChildren<T>(this GameObject obj) where T : Component
+    {
+        var comps = obj.GetComponentsInChildren<T>(true);
+        foreach (var comp in comps) Object.Destroy(comp);
+    }
+    
+    public static string GetPath(this Transform current) {
+        if (!current.parent) return current.name;
+        return current.parent.GetPath() + "/" + current.name;
+    }
+
+    public static GameObject FindGameObject(string path, int index = 0)
+    {
+        for (var i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+        {
+            var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+            var obj = GetGameObjectFromArray(scene.GetRootGameObjects(), path, index);
+            if (obj) return obj;
+        }
+
+        return null;
+    }
+    
+    internal static GameObject GetGameObjectFromArray(GameObject[] objects, string objName, int index = 0)
+    {
+        // Split object name into root and child names based on '/'
+        string rootName;
+        string childName = null;
+
+        var slashIndex = objName.IndexOf('/');
+        if (slashIndex == -1)
+        {
+            rootName = objName;
+        }
+        else if (slashIndex == 0 || slashIndex == objName.Length - 1)
+        {
+            throw new ArgumentException("Invalid GameObject path");
+        }
+        else
+        {
+            rootName = objName[..slashIndex];
+            childName = objName[(slashIndex + 1)..];
+        }
+
+        // Get root object
+        var obj = objects.Where(o => o.name == rootName).ElementAtOrDefault(index);
+        if (!obj) return null;
+
+        // Get child object
+        if (childName != null)
+        {
+            var t = obj.transform.Find(childName);
+            return !t ? null : t.gameObject;
+        }
+
+        return obj;
+    }
+    
+    public static Vector3 RotatePointAroundPivot(this Vector3 point, Vector3 pivot, float angle) {
+        var dir = point - pivot;
+        dir = Quaternion.Euler(0, 0, angle) * dir;
+        point = dir + pivot;
+        return point;
+    }
+
+    public static void DisableChild(this Transform transform, params int[] children)
+    {
+        children.Aggregate(transform, (current, c) => current.GetChild(c)).gameObject.SetActive(false);
+    }
+
+    public static void ApplyToAllComponents<T>(this GameObject obj, Action<T> action) where T : Component
+    {
+        foreach (var component in obj.GetComponentsInChildren<T>(true)) action(component);
+    }
+}

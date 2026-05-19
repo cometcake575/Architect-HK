@@ -1,0 +1,41 @@
+using Hkmp.Networking.Packet;
+
+namespace Architect.Multiplayer.Hkmp.Data;
+
+public class PlacePacketData : ScenePacketData
+{
+    public byte[] SerializedObjects;
+    public string Guid;
+    public int Index;
+    public int Length;
+    public bool IsFullScene;
+    public bool IsScriptOnly;
+
+    protected override void WriteExtData(IPacket packet)
+    {
+        packet.Write(IsFullScene);
+        packet.Write(IsScriptOnly);
+        packet.Write(Length);
+        packet.Write(Index);
+        packet.Write(Guid);
+        
+        packet.Write(SerializedObjects.Length);
+        foreach (var b in SerializedObjects) packet.Write(b);
+    }
+
+    protected override void ReadExtData(IPacket packet)
+    {
+        IsFullScene = packet.ReadBool();
+        IsScriptOnly = packet.ReadBool();
+        Length = packet.ReadInt();
+        Index = packet.ReadInt();
+        Guid = packet.ReadString();
+        
+        var count = packet.ReadInt();
+
+        var bytes = new byte[count];
+        for (var i = 0; i < count; i++) bytes[i] = packet.ReadByte();
+
+        SerializedObjects = bytes;
+    }
+}

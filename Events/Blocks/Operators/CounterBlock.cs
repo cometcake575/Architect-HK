@@ -1,0 +1,40 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Architect.Events.Blocks.Operators;
+
+public class CounterBlock : ScriptBlock
+{
+    protected override IEnumerable<string> Inputs => ["In", "Reset"];
+    protected override IEnumerable<string> Outputs => ["Out"];
+    protected override IEnumerable<(string, string)> OutputVars => [("Count", "Number")];
+
+    protected override string Name => "Counter";
+
+    public int Count;
+    private int _count;
+
+    public override void SetupReference()
+    {
+        _count = 0;
+    }
+
+    public override object GetValue(string id) => _count;
+
+    protected override void Trigger(string trigger)
+    {
+        if (trigger == "Reset")
+        {
+            _count = 0;
+        }
+        else
+        {
+            _count++;
+            if (_count >= Count)
+            {
+                _count = 0;
+                Event("Out");
+            }
+        }
+    }
+}

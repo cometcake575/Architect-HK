@@ -1,0 +1,232 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Architect.Config.Types;
+using Architect.Editor;
+using Architect.Events.Blocks.Config.Types;
+using Architect.Events.Blocks.Outputs;
+using JetBrains.Annotations;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Video;
+using Object = UnityEngine.Object;
+
+namespace Architect.Storage;
+
+public static class CustomAssetManager
+{
+    public static readonly Dictionary<string, Sprite[]> Sprites = new();
+    public static readonly Dictionary<string, AudioClip> Sounds = new();
+
+    public static readonly HashSet<string> LoadingSounds = [];
+    public static readonly HashSet<string> LoadingSprites = [];
+
+    public static readonly List<string> AssetPaths = [];
+
+    public static async Task<bool> SaveFile(string url, string path)
+    {
+        try
+        {
+            var webClient = new WebClient();
+            await webClient.DownloadFileTaskAsync(url, path);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public static void WipeAssets()
+    {
+        foreach (var sp in Sprites.Values.SelectMany(spr => spr)) Object.Destroy(sp);
+        foreach (var sp in Sounds.Values) Object.Destroy(sp);
+        Sprites.Clear();
+        Sounds.Clear();
+    }
+
+    public static void DoLoadVideo(VideoPlayer player, float? scale, string url)
+    {
+        ArchitectPlugin.Instance.StartCoroutine(LoadVideo(url, scale, player));
+    }
+
+    private static IEnumerator LoadVideo(string url, float? scale, [CanBeNull] VideoPlayer player = null)
+    {
+        var path = GetPath($"{url}.mov");
+        if (!File.Exists(path))
+        {
+            yield return SaveFile(url, path);
+        }
+
+        if (player)
+        {
+            player.url = path;
+            while (player.width == 0) yield return null;
+
+            var sc = scale.GetValueOrDefault(EditManager.CurrentScale);
+            player.transform.SetScaleX(sc * player.width / 100);
+            player.transform.SetScaleY(sc * player.height / 100);
+        }
+    }
+
+
+    public static void DoLoadSprite(string url, bool point, float ppu, int hcount, int vcount, Action<Sprite[]> callback)
+    {
+        ArchitectPlugin.Instance.StartCoroutine(LoadSprite(url, point, ppu, Mathf.Max(1, hcount), Mathf.Max(1, vcount), callback));
+    }
+
+    private static IEnumerator LoadSprite(string url, bool point, float ppu, int hcount, int vcount, Action<Sprite[]> callback)
+    {
+        var id = $"{url}_{point}_{ppu}_{hcount}_{vcount}";
+        if (LoadingSprites.Contains(id))
+        {
+            yield return new WaitUntil(() => !LoadingSprites.Contains(id));
+            if (Sprites.TryGetValue(id, out var sprite)) callback(sprite);
+            yield break;
+        }
+        if (!Sprites.ContainsKey(id))
+        {
+            LoadingSprites.Add(id);
+            var path = GetPath($"{url}.png");
+            var tmp = ResourceUtils.LoadSprites(path, point, ppu, hcount, vcount);
+            if (tmp == null)
+            {
+                yield return SaveFile(url, path);
+                tmp = ResourceUtils.LoadSprites(path, point, ppu, hcount, vcount);
+            }
+
+            LoadingSprites.Remove(id);
+            if (tmp == null) yield break;
+            Sprites[id] = tmp;
+        }
+
+        callback(Sprites[id]);
+    }
+
+    public static void DoLoadSound(string url, Action<AudioClip> callback)
+    {
+        ArchitectPlugin.Instance.StartCoroutine(LoadSound(url, callback));
+    }
+
+    private static IEnumerator LoadSound(string url, Action<AudioClip> callback)
+    {
+        if (LoadingSounds.Contains(url))
+        {
+            yield return new WaitUntil(() => !LoadingSounds.Contains(url));
+            if (Sounds.TryGetValue(url, out var sound)) callback(sound);
+            yield break;
+        }
+        
+        if (!Sounds.ContainsKey(url))
+        {
+            LoadingSounds.Add(url);
+            var path = GetPath($"{url}.wav");
+            if (!File.Exists(path))
+            {
+                yield return SaveFile(url, path);
+            }
+            yield return ResourceUtils.LoadClip(path, clip =>
+            {
+                if (clip) Sounds[url] = clip;
+                LoadingSounds.Remove(url);
+            });
+            if (!Sounds.ContainsKey(url)) yield break;
+        }
+
+        callback(Sounds[url]);
+    }
+
+    private static string GetSavePath(string file)
+    {
+        var pathUrl = file.Aggregate(file, (current, c) =>
+            char.IsLetterOrDigit(c) || c == '.' ? current : current.Replace(c, '_'));
+        return Path.Combine(StorageManager.DataPath, "Assets", pathUrl);
+    }
+
+    private static string GetPath(string file)
+    {
+        var pathUrlOld = Path.GetInvalidFileNameChars()
+            .Aggregate(file, (current, c) => current.Replace(c, '_'));
+
+        var pathUrl = file.Aggregate(file, (current, c) =>
+            char.IsLetterOrDigit(c) || c == '.' ? current : current.Replace(c, '_'));
+        
+        foreach (var path in AssetPaths)
+        {
+            var fullPathOld = Path.Combine(path, pathUrlOld);
+            if (File.Exists(fullPathOld)) return fullPathOld;
+            
+            var fullPath = Path.Combine(path, pathUrl);
+            if (File.Exists(fullPath)) return fullPath;
+        }
+
+        var pathOld = Path.Combine(StorageManager.DataPath, "Assets", pathUrlOld);
+        return File.Exists(pathOld) ? pathOld : Path.Combine(StorageManager.DataPath, "Assets", pathUrl);
+    }
+    
+    public static int DownloadingAssets;
+    public static int Downloaded;
+    public static int Failed;
+
+    public static async Task TryDownloadAssets(StringConfigValue config, Text status, int downloadCount)
+    {
+        string fileType;
+        if (config.GetTypeId().Equals("png_url")) fileType = ".png";
+        else if (config.GetTypeId().Equals("wav_url")) fileType = ".wav";
+        else if (config.GetTypeId().Equals("mp4_url")) fileType = ".mov";
+        else return;
+
+        var url = config.GetValue();
+        var b = await SaveFile(url, GetSavePath(url) + fileType);
+        DownloadingAssets -= 1;
+        Downloaded += 1;
+        status.text = "Downloading Assets...\n" +
+                      $"{Downloaded}/{downloadCount}";
+
+        if (!b) Failed++;
+    }
+
+    public static async Task TryDownloadAssets(StringConfigValue<PngBlock> config, Text status, int downloadCount)
+    {
+        string fileType;
+        if (config.GetTypeId().Equals("png_url")) fileType = ".png";
+        else return;
+
+        var url = config.GetValue();
+        var b = await SaveFile(url, GetSavePath(url) + fileType);
+        DownloadingAssets -= 1;
+        Downloaded += 1;
+        status.text = "Downloading Assets...\n" +
+                      $"{Downloaded}/{downloadCount}";
+
+        if (!b) Failed++;
+    }
+
+    public static async Task TryDownloadAssets(string url, string type, Text status, int downloadCount)
+    {
+        string fileType;
+        switch (type)
+        {
+            case "png":
+                fileType = ".png";
+                break;
+            case "wav":
+                fileType = ".wav";
+                break;
+            default:
+                return;
+        }
+
+        var b = await SaveFile(url, GetSavePath(url) + fileType);
+        DownloadingAssets -= 1;
+        Downloaded += 1;
+        status.text = "Downloading Assets...\n" +
+                      $"{Downloaded}/{downloadCount}";
+
+        if (!b) Failed++;
+    }
+}

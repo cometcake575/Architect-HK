@@ -1,0 +1,885 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Architect.Behaviour.Custom;
+using Architect.Behaviour.Utility;
+using Architect.Objects.Categories;
+using Architect.Objects.Groups;
+using Architect.Objects.Placeable;
+using Architect.Storage;
+using JetBrains.Annotations;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
+namespace Architect.Content.Custom;
+
+public static class UtilityObjects
+{
+    private static readonly Dictionary<string, Func<GameObject, string, Disabler[]>> RemoverActions = [];
+    
+    public static void Init()
+    {
+        Categories.Utility.Add(CreateItem());
+        Categories.Utility.Add(CreateWalkArea());
+        Categories.Utility.Add(CreateShielder());
+        
+        Categories.Utility.Add(CreateObjectAnchor());
+        Categories.Utility.Add(CreateObjectLayerer());
+        Categories.Utility.Add(CreateObjectSpinner());
+        Categories.Utility.Add(CreateObjectMover());
+        Categories.Utility.Add(CreateObjectSpawner());
+        Categories.Utility.Add(CreateObjectColourer());
+        Categories.Utility.Add(CreateTriggerZone());
+        Categories.Utility.Add(CreateEnemyDamager());
+        Categories.Utility.Add(CreateInteraction());
+        
+        Categories.Utility.Add(CreateEnemyHook());
+        Categories.Utility.Add(CreateObjectHook());
+        Categories.Utility.Add(CreateFsmHook());
+        Categories.Utility.Add(CreateComponentToggler());
+        
+        Categories.Utility.Add(CreateWalkTarget());
+        Categories.Utility.Add(CreateDarkness());
+        
+        Categories.Utility.Add(CreateEnemyBarrier());
+        Categories.Utility.Add(CreatePlayerBarrier());
+        Categories.Utility.Add(CreateVignetteDisabler());
+        Categories.Utility.Add(CreateObjectRemover("enemy_remover", "Disable Enemy", 
+                FindObjectsToDisable<HealthManager>, "Removes the nearest enemy.\n\n" +
+                                                     "This should be placed at the enemy's spawn point, not its\n" +
+                                                     "current position, or it will not work when exiting edit mode.")
+            .WithConfigGroup(ConfigGroup.Disabler)
+            .WithReceiverGroup(ReceiverGroup.Generic));
+        
+        Categories.Utility.Add(CreateTeleportPoint());
+        
+        Categories.Utility.Add(CreateRespawnPoint());
+        
+        Categories.Utility.Add(CreateHazardRespawnPoint());
+        Categories.Utility.Add(CreateObjectRemover("hrp_remover", "Disable Hazard Respawn Point",
+                FindObjectsToDisable<HazardRespawnTrigger>, "Removes the nearest Hazard Respawn Point.")
+            .WithConfigGroup(ConfigGroup.Disabler)
+            .WithReceiverGroup(ReceiverGroup.Generic));
+        
+        Categories.Utility.Add(CreateTransitionPoint());
+        Categories.Utility.Add(CreateObjectRemover("door_remover", "Disable Transition", 
+                FindObjectsToDisable<TransitionPoint>, "Removes the nearest door to another room.")
+            .WithConfigGroup(ConfigGroup.Generic)
+            .WithReceiverGroup(ReceiverGroup.Generic));
+        
+        Categories.Utility.Add(CreateBinoculars());
+        Categories.Utility.Add(CreateCameraBorder());
+        Categories.Utility.Add(CreateCameraRotator());
+        Categories.Utility.Add(CreateSceneParticleManager());
+        
+        Categories.Utility.Add(CreateObjectRemover("collision_remover", "Disable Collider",
+                (disabler, filter) =>
+                {
+                    List<Collider2D> results1 = [];
+                    List<Collider2D> results2 = [];
+                    Physics2D.OverlapArea(
+                        disabler.transform.position - Vector3.one,
+                        disabler.transform.position + Vector3.one,
+                        new ContactFilter2D(),
+                        results1
+                    );
+                    Physics2D.OverlapPoint(
+                        disabler.transform.position,
+                        new ContactFilter2D(),
+                        results2
+                    );
+                    return results1.Concat(results2)
+                        .Where(i => i.name.Contains(filter) && i.gameObject.scene == disabler.scene)
+                        .Select(p => p.gameObject.GetOrAddComponent<Disabler>()).ToArray();
+                }, "Removes colliders touching this object.\n" +
+                   "Trigger zones such as hazard respawn points do not count.")
+            .WithConfigGroup(ConfigGroup.Remover)
+            .WithReceiverGroup(ReceiverGroup.Generic));
+        
+        Categories.Utility.Add(CreateObjectRemover("render_remover", "Disable Renderer", 
+                FindObjectsToDisable<Renderer>, "Removes the nearest renderer.")
+            .WithConfigGroup(ConfigGroup.DisableRenderer)
+            .WithReceiverGroup(ReceiverGroup.Generic));
+        
+        Categories.Utility.Add(CreateObjectRemover("room_remover", "Clear Room", (o, filter) =>
+                {
+                    var clearer = o.GetComponent<RoomClearerConfig>();
+
+                    if (!clearer) return [];
+
+                    var objects = o.scene.GetRootGameObjects().Where(obj =>
+                        !obj.name.StartsWith("[Architect]")
+                        && !obj.name.StartsWith("_SceneManager")
+                        && !obj.GetComponent<CustomTransitionPoint>()
+                        && !obj.GetComponentInChildren<SceneAdditiveLoadConditional>()
+                        && obj.name.Contains(filter)
+                    );
+
+                    if (clearer.removeMusic && filter.IsNullOrWhiteSpace()) 
+                        clearer.gameObject.AddComponent<MusicController>();
+            
+                    if (clearer.removeOther)
+                    {
+                        if (!clearer.removeBenches) objects = objects.Where(obj => !obj.GetComponent<RestBench>());
+                        if (!clearer.removeBlur) objects = objects.Where(obj => !obj.GetComponentInChildren<BlurPlane>());
+                        if (!clearer.removeTransitions)
+                            objects = objects.Where(obj => !obj.GetComponentInChildren<TransitionPoint>());
+                        if (!clearer.removeMusic) objects = objects.Where(obj => !obj.GetComponent<MusicRegion>());
+                        if (!clearer.removeTilemap) objects = objects.Where(obj => !obj.name.Contains("TileMap"));
+                    }
+                    else
+                    {
+                        objects = objects.Where(obj =>
+                            (obj.GetComponent<RestBench>() && clearer.removeBenches) ||
+                            (obj.GetComponentInChildren<BlurPlane>() && clearer.removeBlur) ||
+                            (obj.GetComponentInChildren<TransitionPoint>() && clearer.removeTransitions) ||
+                            (obj.GetComponent<MusicRegion>() && clearer.removeMusic) ||
+                            (obj.name.Contains("TileMap") && clearer.removeTilemap)
+                        );
+                    }
+
+                    return objects.Select(obj => obj.GetOrAddComponent<Disabler>()).ToArray();
+                }, "Removes all existing objects in a room,\n" +
+                   "settings determine which objects are removed.")
+            .WithConfigGroup(ConfigGroup.RoomClearer)
+            .WithReceiverGroup(ReceiverGroup.Generic));
+        
+        //Categories.Effects.Add(CreateRoar());
+        /*Categories.Effects.Add(CreateFinalHit());
+        Categories.Effects.Add(CreateBossExplosion());*/
+    }
+
+    private static PlaceableObject CreateItem()
+    {
+        CustomPickup.Init();
+        
+        var pickup = new GameObject("Pickup Spawner");
+        Object.DontDestroyOnLoad(pickup);
+        pickup.SetActive(false);
+
+        pickup.AddComponent<CustomPickup>();
+        
+        return new CustomObject("Item", "item_pickup", pickup, 
+                "A collectible item such as a Charm or Key.\n" +
+                "Some items may act strangely.\n\n" +
+                "Disabling 'Ignore Limit' will cause the item to disappear if the player normally cannot get more,\n" +
+                "such as if the item is a tool the player already has.\n\n" +
+                "A list of valid item IDs can be found in the Architect guide.",
+                sprite:ResourceUtils.LoadSpriteResource("item_pickup", ppu:64))
+            .WithBroadcasterGroup(BroadcasterGroup.Item)
+            .WithConfigGroup(ConfigGroup.Item);
+    }
+
+    private static PlaceableObject CreateWalkArea()
+    {
+        var wa = new GameObject("Walk Area");
+        Object.DontDestroyOnLoad(wa);
+        wa.SetActive(false);
+
+        var bc = wa.AddComponent<BoxCollider2D>();
+        bc.isTrigger = true;
+        bc.size = new Vector2(3.2f, 3.2f);
+
+        wa.AddComponent<WalkArea>();
+        
+        return new CustomObject("Walk Area", "walk_area", wa, 
+                "Forces the player to walk (unless sprinting)",
+                sprite:ResourceUtils.LoadSpriteResource("walk_area", FilterMode.Point, ppu:64));
+    }
+
+    private static PlaceableObject CreateShielder()
+    {
+        var shielder = new GameObject("Shielder");
+        Object.DontDestroyOnLoad(shielder);
+        shielder.SetActive(false);
+        
+        Shielder.Init();
+
+        shielder.AddComponent<Shielder>();
+        
+        return new CustomObject("Resistance Changer", "shielder", shielder, 
+                "Toggles whether enemies take damage from certain sources.",
+                sprite:ResourceUtils.LoadSpriteResource("shielder", ppu:64))
+            .WithConfigGroup(ConfigGroup.Shielder)
+            .WithReceiverGroup(ReceiverGroup.Shielder);
+    }
+
+    private static PlaceableObject CreateEnemyHook()
+    {
+        var hook = new GameObject("Enemy Hook");
+        Object.DontDestroyOnLoad(hook);
+        hook.SetActive(false);
+
+        hook.AddComponent<EnemyHook>();
+        
+        return new CustomObject("Enemy Hook", "enemy_hook", hook, 
+                "Allows connecting enemy events and triggers to vanilla enemies.\n\n" +
+                "The path to an object can be found with tools such as Unity Explorer.",
+                sprite:ResourceUtils.LoadSpriteResource("enemy_hook", FilterMode.Point, ppu:64))
+            .WithConfigGroup(ConfigGroup.EnemyHook)
+            .WithBroadcasterGroup(BroadcasterGroup.Enemies)
+            .WithInputGroup(InputGroup.EnemyHook)
+            .WithOutputGroup(OutputGroup.EnemyHook)
+            .WithReceiverGroup(ReceiverGroup.EnemyHook);
+    }
+
+    private static PlaceableObject CreateObjectHook()
+    {
+        var hook = new GameObject("Object Hook");
+        Object.DontDestroyOnLoad(hook);
+        hook.SetActive(false);
+
+        hook.AddComponent<ObjectHook>();
+        
+        return new CustomObject("Object Hook", "object_hook", hook, 
+                "Allows using vanilla objects in the Script Editor.\n\n" +
+                "The path to an object can be found with tools such as Unity Explorer.",
+                preview: true,
+                sprite:ResourceUtils.LoadSpriteResource("object_hook", FilterMode.Point, ppu:100))
+            .WithConfigGroup(ConfigGroup.ObjectHook)
+            .WithReceiverGroup(ReceiverGroup.ObjectHook)
+            .WithOutputGroup(OutputGroup.ObjectHook);
+    }
+
+    private static PlaceableObject CreateFsmHook()
+    {
+        var hook = new GameObject("FSM Hook");
+        Object.DontDestroyOnLoad(hook);
+        hook.SetActive(false);
+
+        hook.AddComponent<FsmHook>();
+        
+        return new CustomObject("FSM Hook", "fsm_hook", hook, 
+                "Allows detecting the current FSM State of an object.\n" +
+                "The FSMSeer mod can be used to see FSM names and states.",
+                sprite:ResourceUtils.LoadSpriteResource("fsm_hook", FilterMode.Point, ppu:64))
+            .WithConfigGroup(ConfigGroup.FsmHook)
+            .WithReceiverGroup(ReceiverGroup.FsmHook)
+            .WithInputGroup(InputGroup.FsmHook)
+            .WithBroadcasterGroup(BroadcasterGroup.FsmHook)
+            .WithOutputGroup(OutputGroup.FsmHook);
+    }
+
+    private static PlaceableObject CreateComponentToggler()
+    {
+        var hook = new GameObject("Component Toggler");
+        Object.DontDestroyOnLoad(hook);
+        hook.SetActive(false);
+
+        hook.AddComponent<ComponentHook>();
+        
+        return new CustomObject("Component Hook", "component_toggle", hook, 
+                "Allows enabling, disabling or removing components on an object.\n" +
+                "Works on vanilla objects using their internal path.\n" +
+                "'Recursive' will get components of child objects too.",
+                sprite:ResourceUtils.LoadSpriteResource("component_hook", FilterMode.Point, ppu:64))
+            .WithConfigGroup(ConfigGroup.ComponentHook)
+            .WithReceiverGroup(ReceiverGroup.ComponentHook)
+            .WithInputGroup(InputGroup.ComponentHook);
+    }
+
+    private static PlaceableObject CreateWalkTarget()
+    {
+        var target = new GameObject("Walk Target");
+
+        Object.DontDestroyOnLoad(target);
+        target.SetActive(false);
+
+        target.AddComponent<WalkTarget>();
+        
+        return new CustomObject("Walk Target", "walk_target", target,
+                description:"Forces the player to walk to this spot when the 'Start' trigger is called.\n" +
+                            "Animation and speed can be customised.\n\n" +
+                            "Can be cancelled with the 'Cancel' trigger.\n" +
+                            "Calls the 'OnFinish' event when the player arrives at the target.",
+                sprite:ResourceUtils.LoadSpriteResource("walk_target", ppu:33))
+            .WithReceiverGroup(ReceiverGroup.WalkTarget)
+            .WithConfigGroup(ConfigGroup.WalkTarget)
+            .WithBroadcasterGroup(BroadcasterGroup.Finishable);
+    }
+
+    private static PlaceableObject CreateDarkness()
+    {
+        var dark = new GameObject("Darkness");
+        
+        Object.DontDestroyOnLoad(dark);
+        dark.SetActive(false);
+
+        Darkness.Init();
+        dark.AddComponent<Darkness>();
+        
+        return new CustomObject("Darkness", "darkness", dark,
+                description:"Makes the room darker, reducing how far the player can see.\n" +
+                            "Placing 2 darkness objects at once will increase the effect.",
+                sprite:ResourceUtils.LoadSpriteResource("darkness"))
+            .WithConfigGroup(ConfigGroup.Darkness);
+    }
+
+    private static PlaceableObject CreateSceneParticleManager()
+    {
+        var spm = new GameObject("Scene Particle Disabler");
+        
+        Object.DontDestroyOnLoad(spm);
+        spm.SetActive(false);
+
+        spm.AddComponent<SceneParticleController>();
+        
+        return new CustomObject("Scene Particle Disabler", "scene_particle_hook", spm,
+                description:"Disables scene specific particles that the Clear Room object cannot.",
+                sprite:ResourceUtils.LoadSpriteResource("scene_particle_remover", ppu:64));
+    }
+
+    private static PlaceableObject CreateTransitionPoint()
+    {
+        var customDoor = new GameObject("Transition Point");
+
+        Object.DontDestroyOnLoad(customDoor);
+        customDoor.SetActive(false);
+
+        CustomTransitionPoint.Init();
+
+        customDoor.AddComponent<CustomTransitionPoint>();
+        var point = customDoor.AddComponent<TransitionPoint>();
+        point.entryPoint = "";
+        point.nonHazardGate = true;
+
+        var col = customDoor.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(3, 3);
+        col.isTrigger = true;
+
+        return new CustomObject("Transition Gate", "transition_gate", customDoor,
+                description:"Creates a custom doorway to another room. Requires a target scene and door id.\n\n" +
+                            "Disable 'Collision Trigger' and use the 'Transition' trigger to transition when\n" +
+                            "an event is received instead of when touching the door.",
+                sprite:ResourceUtils.LoadSpriteResource("door", ppu:33),
+                preview:true)
+            .WithConfigGroup(ConfigGroup.Transitions)
+            .WithBroadcasterGroup(BroadcasterGroup.Transitions);
+    }
+
+    private static PlaceableObject CreateCameraBorder()
+    {
+        CameraBorder.Init();
+
+        var cameraBorder = new GameObject("Camera Border");
+        cameraBorder.AddComponent<CameraBorder>();
+
+        cameraBorder.transform.position = new Vector3(0, 0, 0.1f);
+
+        Object.DontDestroyOnLoad(cameraBorder);
+        cameraBorder.SetActive(false);
+        return new CustomObject("Camera Border", "camera_border", cameraBorder,
+                description:"Stops the centre of the camera from passing a certain point.\n\n" +
+                            "Toggling this object with the Disable and Enable\n" +
+                            "triggers will toggle whether the border is active.\n\n" +
+                            "Change the 'Active Mode' setting to control if the border is active everywhere,\n" +
+                            "only when not using Binoculars, or only when using Binoculars.",
+                sprite:ResourceUtils.LoadSpriteResource("camera_border"))
+            .WithConfigGroup(ConfigGroup.CameraBorder);
+    }
+
+    private static PlaceableObject CreateCameraRotator()
+    {
+        CameraRotator.Init();
+
+        var cameraSpinner = new GameObject("Camera Rotator");
+        cameraSpinner.AddComponent<CameraRotator>();
+
+        cameraSpinner.transform.position = new Vector3(0, 0, 0.1f);
+
+        Object.DontDestroyOnLoad(cameraSpinner);
+        cameraSpinner.SetActive(false);
+        return new CustomObject("Camera Rotator", "camera_rotator", cameraSpinner,
+                description:"Rotates the camera to the angle of this object.\n\n" +
+                            "Can be used in combination with the Object Spinner\n" +
+                            "to rotate the camera over time.",
+                sprite:ResourceUtils.LoadSpriteResource("camera_spinner"));
+    }
+
+    private static PlaceableObject CreateSceneBorderRemover()
+    {
+        var sceneBorderRemover = new GameObject("Scene Border Remover");
+        
+        Object.DontDestroyOnLoad(sceneBorderRemover);
+        sceneBorderRemover.SetActive(false);
+        
+        SceneBorderRemover.Init();
+        sceneBorderRemover.AddComponent<SceneBorderRemover>();
+
+        sceneBorderRemover.transform.position = new Vector3(0, 0, 0.1f);
+
+        return new CustomObject("Scene Border Remover", "scene_border_remover", sceneBorderRemover,
+                description:"Removes the borders of a room, making it possible\n" +
+                            "to build out of bounds without needing to lock the camera.",
+                sprite:ResourceUtils.LoadSpriteResource("scene_border_remover"),
+                preview:true);
+    }
+
+    private static PlaceableObject CreateEnemyBarrier()
+    {
+        var enemyBarrier = new GameObject("Enemy Barrier");
+        var heroOnly = LayerMask.NameToLayer("Hero Only");
+
+        enemyBarrier.AddComponent<BoxCollider2D>().size = new Vector2(3.2f, 3.2f);
+        enemyBarrier.layer = heroOnly;
+
+        enemyBarrier.SetActive(false);
+        Object.DontDestroyOnLoad(enemyBarrier);
+
+        return new CustomObject("Enemy Barrier", "enemy_blocker", enemyBarrier,
+            description:"A barrier that enemies cannot pass through, but the player can.\n\n" +
+                        "This object is only a barrier, it does not function like terrain.",
+            sprite:ResourceUtils.LoadSpriteResource("enemy_blocker", ppu:60))
+            .WithConfigGroup(ConfigGroup.Stretchable);
+    }
+
+    private static PlaceableObject CreatePlayerBarrier()
+    {
+        var playerBarrier = new GameObject("Player Barrier");
+        var heroOnly = LayerMask.NameToLayer("Hero Detector");
+
+        playerBarrier.AddComponent<BoxCollider2D>().size = new Vector2(3.2f, 3.2f);
+        playerBarrier.layer = heroOnly;
+
+        playerBarrier.SetActive(false);
+        Object.DontDestroyOnLoad(playerBarrier);
+
+        return new CustomObject("Player Barrier", "player_blocker", playerBarrier,
+            description:"A barrier that the player cannot pass through, but enemies can.\n\n" +
+                        "This object is similar to terrain but does not block enemies.",
+            sprite:ResourceUtils.LoadSpriteResource("player_blocker", ppu:60))
+            .WithConfigGroup(ConfigGroup.Stretchable);
+    }
+
+    private static PlaceableObject CreateVignetteDisabler()
+    {
+        VignetteDisabler.Init();
+        var vignetteDisabler = new GameObject("Vignette Disabler");
+
+        vignetteDisabler.SetActive(false);
+        Object.DontDestroyOnLoad(vignetteDisabler);
+
+        vignetteDisabler.AddComponent<VignetteDisabler>();
+
+        return new CustomObject("Disable Vignette", "vignette_disabler", vignetteDisabler,
+            description:"Disables the Vignette effect.",
+            sprite:ResourceUtils.LoadSpriteResource("vignette_disabler", FilterMode.Point));
+    }
+
+    private static PlaceableObject CreateObjectSpawner()
+    {
+        var duplicator = new GameObject("Object Duplicator");
+        duplicator.SetActive(false);
+        Object.DontDestroyOnLoad(duplicator);
+
+        duplicator.AddComponent<ObjectDuplicator>();
+
+        return new CustomObject("Object Spawner", "object_duplicator",
+                duplicator,
+                sprite: ResourceUtils.LoadSpriteResource("object_duplicator", FilterMode.Point),
+                description: "Spawns a copy of a placed object.\n" +
+                             "Copies have the same settings as the original object.\n\n" +
+                             "Find the ID of the object to copy using the Cursor tool.\n\n" +
+                             "The original object should have 'Start Enabled' set to false.")
+            .WithConfigGroup(ConfigGroup.Duplicator)
+            .WithReceiverGroup(ReceiverGroup.Duplicator);
+    }
+
+    private static PlaceableObject CreateObjectColourer()
+    {
+        ObjectColourer.Init();
+        
+        var colourer = new GameObject("Object Colourer");
+        colourer.SetActive(false);
+        Object.DontDestroyOnLoad(colourer);
+
+        colourer.AddComponent<ObjectColourer>();
+
+        return new CustomObject("Object Colourer", "object_colourer",
+                colourer,
+                sprite: ResourceUtils.LoadSpriteResource("object_colourer", FilterMode.Point),
+                description: "Changes the colour of an object.\n" +
+                             "This works with most objects, but not all of them.\n\n" +
+                             "Find the ID of the object to copy using the Cursor tool.")
+            .WithConfigGroup(ConfigGroup.Colourer)
+            .WithInputGroup(InputGroup.Colourer)
+            .WithReceiverGroup(ReceiverGroup.Colourer);
+    }
+
+    private static PlaceableObject CreateObjectAnchor()
+    {
+        var anchor = new GameObject("Object Anchor");
+        anchor.SetActive(false);
+        Object.DontDestroyOnLoad(anchor);
+        
+        ObjectAnchor.Init();
+        anchor.AddComponent<ObjectAnchor>();
+
+        return new CustomObject("Object Anchor", "object_anchor",
+                anchor,
+                sprite: ResourceUtils.LoadSpriteResource("object_anchor", FilterMode.Point),
+                description: "Used to move objects.\n\n" +
+                             "Set Move Speed above 0 for the anchor to move linearly.\n\n" +
+                             "Set the Parent ID to make the anchor follow the parent,\n" +
+                             "or set it to a Track Point to make the anchor move along the track.\n\n" +
+                             "Find the ID of the object and parent by clicking them with the Cursor tool\n" +
+                             "or holding the 'I' key and clicking the object.",
+                preview: true)
+            .WithConfigGroup(ConfigGroup.ObjectAnchor)
+            .WithReceiverGroup(ReceiverGroup.ObjectAnchor)
+            .WithOutputGroup(OutputGroup.ObjectAnchor)
+            .WithBroadcasterGroup(BroadcasterGroup.ObjectAnchor);
+    }
+
+    private static PlaceableObject CreateObjectLayerer()
+    {
+        var layerer = new GameObject("Object Layer Changer");
+        layerer.SetActive(false);
+        Object.DontDestroyOnLoad(layerer);
+        
+        layerer.AddComponent<Layerer>();
+
+        return new CustomObject("Object Layer Changer", "object_layerer",
+                layerer,
+                sprite: ResourceUtils.LoadSpriteResource("object_layerer", FilterMode.Point),
+                description: "Changes the layer of the target object, affecting things like collision.",
+                preview: true)
+            .WithConfigGroup(ConfigGroup.ObjectLayerer)
+            .WithReceiverGroup(ReceiverGroup.ObjectLayerer);
+    }
+
+    private static PlaceableObject CreateObjectMover()
+    {
+        var mover = new GameObject("Object Mover");
+        mover.SetActive(false);
+        Object.DontDestroyOnLoad(mover);
+        
+        mover.AddComponent<ObjectMover>();
+
+        return new CustomObject("Object Mover", "object_mover",
+                mover,
+                sprite: ResourceUtils.LoadSpriteResource("object_mover", FilterMode.Point),
+                description: "Teleports an object to another position relative to itself, the mover, the player\n" +
+                             "or another object. Position Source ID (an Object ID) overrides Position Source.\n\n" +
+                             "This should be used for individual teleports.\n" +
+                             "To move an object as if on a track, use the Object Anchor.\n" +
+                             "To rotate an object over time, use the Object Spinner.")
+            .WithConfigGroup(ConfigGroup.ObjectMover)
+            .WithReceiverGroup(ReceiverGroup.ObjectMover)
+            .WithInputGroup(InputGroup.ObjectMover);
+    }
+
+    private static PlaceableObject CreateObjectSpinner()
+    {
+        var spinner = new GameObject("Object Spinner");
+
+        spinner.AddComponent<ObjectSpinner>();
+
+        spinner.SetActive(false);
+        Object.DontDestroyOnLoad(spinner);
+
+        return new CustomObject("Object Spinner", "object_spinner",
+                spinner,
+                sprite: ResourceUtils.LoadSpriteResource("object_spinner", FilterMode.Point),
+                description: "Used to rotate objects at configurable speeds.\n" +
+                             "May cause unusual behaviour with objects that are not intended to be rotated.\n\n" +
+                             "Find the ID of the object to rotate by clicking it with the Cursor tool.\n\n" +
+                             "Hold the 'P' keybind to preview the movement of placed objects.",
+                preview: true)
+            .WithConfigGroup(ConfigGroup.ObjectSpinner)
+            .WithReceiverGroup(ReceiverGroup.ObjectSpinner);
+    }
+
+    private static PlaceableObject CreateTriggerZone()
+    {
+        var point = new GameObject("Trigger Zone");
+
+        var bc = point.AddComponent<BoxCollider2D>();
+        bc.isTrigger = true;
+        bc.size = new Vector2(3.2f, 3.2f);
+
+        var cc = point.AddComponent<PolygonCollider2D>();
+        cc.isTrigger = true;
+
+        var points = new Vector2[24];
+        for (var i = 0; i < 24; i++)
+        {
+            var angle = 2 * Mathf.PI * i / 24;
+            var x = Mathf.Cos(angle) * 1.6f;
+            var y = Mathf.Sin(angle) * 1.6f;
+            points[i] = new Vector2(x, y);
+        }
+
+        cc.pathCount = 1;
+        cc.SetPath(0, points);
+        cc.enabled = false;
+
+        point.AddComponent<TriggerZone>();
+
+        point.SetActive(false);
+        Object.DontDestroyOnLoad(point);
+
+        return new CustomObject("Trigger Zone", "trigger_zone",
+                point,
+                sprite: TriggerZone.SquareZone,
+                description: "Can broadcast events when entered or exited.\n\n" +
+                             "'Activator' mode detects Millibelle and the Zote Head,\n" +
+                             "a trigger layer can be set to only detect specific objects.")
+            .WithBroadcasterGroup(BroadcasterGroup.TriggerZone)
+            .WithReceiverGroup(ReceiverGroup.TriggerZone)
+            .WithOutputGroup(OutputGroup.TriggerZone)
+            .WithConfigGroup(ConfigGroup.TriggerZones);
+    }
+
+    public static readonly Sprite SquareDamager = ResourceUtils.LoadSpriteResource("enemy_damager", FilterMode.Point, ppu:64);
+    public static readonly Sprite CircleDamager = ResourceUtils.LoadSpriteResource("enemy_damager_circle", FilterMode.Point, ppu:64);
+
+    private static PlaceableObject CreateEnemyDamager()
+    {
+        var point = new GameObject("Enemy Damager")
+        {
+            layer = LayerMask.NameToLayer("Attack")
+        };
+
+        var bc = point.AddComponent<BoxCollider2D>();
+        bc.isTrigger = true;
+        bc.size = new Vector2(3.2f, 3.2f);
+
+        point.AddComponent<NonBouncer>();
+
+        var cc = point.AddComponent<PolygonCollider2D>();
+        cc.isTrigger = true;
+
+        var points = new Vector2[24];
+        for (var i = 0; i < 24; i++)
+        {
+            var angle = 2 * Mathf.PI * i / 24;
+            var x = Mathf.Cos(angle) * 1.6f;
+            var y = Mathf.Sin(angle) * 1.6f;
+            points[i] = new Vector2(x, y);
+        }
+
+        cc.pathCount = 1;
+        cc.SetPath(0, points);
+        cc.enabled = false;
+
+        var de = point.AddComponent<DamageEnemies>();
+        de.damageDealt = 5;
+
+        point.AddComponent<EnemyDamager>();
+
+        point.AddComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
+        
+        point.SetActive(false);
+        Object.DontDestroyOnLoad(point);
+        
+        typeof(DamageEnemies).Hook(nameof(DamageEnemies.DoDamage),
+            (Action<DamageEnemies, GameObject> orig, DamageEnemies self, GameObject obj) =>
+            {
+                orig(self, obj);
+                var ed = self.GetComponent<EnemyDamager>();
+                if (ed)
+                {
+                    ed.last = obj.GetComponent<HealthManager>();
+                    obj.BroadcastEvent("OnDamage");
+                }
+            });
+
+        return new CustomObject("Enemy Damager", "enemy_damager",
+                point,
+                sprite: SquareDamager,
+                description: "Damages enemies inside the zone with configurable damage and damage types.")
+            .WithConfigGroup(ConfigGroup.EnemyDamager)
+            .WithReceiverGroup(ReceiverGroup.EnemyDamager)
+            .WithBroadcasterGroup(BroadcasterGroup.EnemyDamager)
+            .WithOutputGroup(OutputGroup.EnemyDamager)
+            .WithInputGroup(InputGroup.EnemyDamager);
+    }
+
+    public class EnemyDamager : MonoBehaviour
+    {
+        public HealthManager last;
+    }
+
+    private static PlaceableObject CreateInteraction()
+    {
+        CustomInteraction.Init();
+        
+        var point = new GameObject("Interaction");
+
+        var collider = point.AddComponent<BoxCollider2D>();
+        collider.isTrigger = true;
+        collider.size = new Vector2(3.2f, 3.2f);
+
+        point.AddComponent<CustomInteraction>();
+
+        point.SetActive(false);
+        Object.DontDestroyOnLoad(point);
+
+        return new CustomObject("Interaction", "interaction",
+                point,
+                sprite: ResourceUtils.LoadSpriteResource("interaction", FilterMode.Point, ppu:10),
+                description: "Hovering text appears when the player stands in the interaction's range,\n" +
+                             "broadcasts an event when interacted with.")
+            .WithBroadcasterGroup(BroadcasterGroup.Interaction)
+            .WithConfigGroup(ConfigGroup.Interaction);
+    }
+
+    private static PlaceableObject CreateObjectRemover(string id, string name,
+        [CanBeNull] Func<GameObject, string, Disabler[]> action, string desc)
+    {
+        var obj = new GameObject($"Object Remover ({id})");
+        Object.DontDestroyOnLoad(obj);
+        obj.SetActive(false);
+
+        RemoverActions[id] = action;
+        obj.AddComponent<ObjectRemover>().triggerName = id;
+
+        var sprite = ResourceUtils.LoadSpriteResource(id, FilterMode.Point);
+        obj.transform.position = new Vector3(0, 0, -2);
+
+        return new CustomObject(name, id, obj, desc, sprite:sprite, preview:true)
+            .WithReceiverGroup(ReceiverGroup.Generic);
+    }
+
+    private static PlaceableObject CreateObjectEnabler()
+    {
+        var obj = new GameObject("Object Enabler");
+        Object.DontDestroyOnLoad(obj);
+        obj.SetActive(false);
+
+        obj.AddComponent<ObjectEnabler>();
+
+        var sprite = ResourceUtils.LoadSpriteResource("object_enabler", FilterMode.Point);
+        obj.transform.position = new Vector3(0, 0, -2);
+
+        return new CustomObject("Enable Object", "object_enabler", obj, 
+                "Enables a disabled object.\n\n" +
+                "The path to an object can be found with tools such as Unity Explorer.", sprite:sprite, preview:true)
+            .WithReceiverGroup(ReceiverGroup.Generic)
+            .WithConfigGroup(ConfigGroup.ObjectEnabler);
+    }
+
+    public static Disabler[] GetObjects(ObjectRemover editor)
+    {
+        return RemoverActions[editor.triggerName].Invoke(editor.gameObject, editor.filter);
+    }
+
+    private static Disabler[] FindObjectsToDisable<T>(GameObject disabler, string filter) where T : Component
+    {
+        var objects = disabler.scene.GetRootGameObjects()
+            .Where(obj => !obj.name.StartsWith("[Architect] ") && obj.name.Contains(filter) &&
+                          !obj.GetComponent<CustomTransitionPoint>())
+            .SelectMany(root => root.GetComponentsInChildren<T>(true))
+            .Select(obj => obj.gameObject);
+
+        var or = disabler.GetComponent<ObjectRemover>();
+        if (or)
+        {
+            if (or.all) return objects.Select(o => o.GetOrAddComponent<Disabler>()).ToArray();
+            if (or.allInRange) return objects
+                .Where(o => (o.transform.position - disabler.transform.position)
+                    .Where(z: 0).sqrMagnitude < or.range * or.range).Select(o => o.GetOrAddComponent<Disabler>()).ToArray();
+        }
+        
+        var lowest = float.MaxValue;
+        GameObject point = null;
+        foreach (var obj in objects)
+        {
+            var pos = obj.transform.position - disabler.transform.position;
+            pos.z = 0;
+            var dist = pos.sqrMagnitude;
+
+            if (dist < lowest)
+            {
+                lowest = dist;
+                point = obj;
+            }
+        }
+        
+        return point is not null && lowest <= or.range * or.range ? [point.gameObject.GetOrAddComponent<Disabler>()] : [];
+    }
+
+    private static PlaceableObject CreateHazardRespawnPoint()
+    {
+        var point = new GameObject("Hazard Respawn Point");
+
+        point.SetActive(false);
+        Object.DontDestroyOnLoad(point);
+
+        point.AddComponent<HazardRespawnTrigger>().respawnMarker = point.AddComponent<CustomHazardRespawnMarker>();
+
+        var collider = point.AddComponent<BoxCollider2D>();
+        collider.size = Vector2.one;
+        collider.isTrigger = true;
+        
+        return new CustomObject("Hazard Respawn Point", "hazard_respawn_point", point, 
+            sprite:ResourceUtils.LoadSpriteResource("hazard_respawn_point"),
+            description:"A point that the player can respawn at after taking hazard damage.",
+            preview:true)
+            .WithConfigGroup(ConfigGroup.HazardRespawn)
+            .WithReceiverGroup(ReceiverGroup.HazardRespawn);
+    }
+
+    private static PlaceableObject CreateRespawnPoint()
+    {
+        var point = new GameObject("Respawn Point");
+
+        point.SetActive(false);
+        Object.DontDestroyOnLoad(point);
+
+        point.AddComponent<RespawnMarker>();
+        
+        return new CustomObject("Respawn Point", "respawn_point", point, 
+            sprite:ResourceUtils.LoadSpriteResource("respawn_point", ppu: 50),
+            description:"A point that the player can respawn at after dying.\n\n" +
+                        "To set the player's spawn use the 'SetSpawn' trigger.",
+            preview:true)
+            .WithFlipAction((o, f) =>
+            {
+                if (f) o.GetComponent<RespawnMarker>().respawnFacingRight = true;
+            })  
+            .WithReceiverGroup(ReceiverGroup.Respawn);
+    }
+
+    private static PlaceableObject CreateTeleportPoint()
+    {
+        var point = new GameObject("Teleport Point");
+
+        point.SetActive(false);
+        Object.DontDestroyOnLoad(point);
+
+        return new CustomObject("Teleport Point", "telepoint", point, 
+            sprite:ResourceUtils.LoadSpriteResource("telepoint"),
+            description:"Teleports the player to this point when the 'Teleport' trigger is called.")
+            .WithReceiverGroup(ReceiverGroup.TeleportPoint);
+    }
+
+    private static PlaceableObject CreateBinoculars()
+    {
+        var point = new GameObject("Binoculars");
+
+        var col = point.AddComponent<BoxCollider2D>();
+        col.isTrigger = true;
+        col.size = new Vector2(1.25f, 1.06f);
+
+        point.AddComponent<SpriteRenderer>().sprite = ResourceUtils.LoadSpriteResource("binoculars");
+
+        Binoculars.Init();
+        var softTerrain = LayerMask.NameToLayer("Soft Terrain");
+        point.layer = softTerrain;
+        point.AddComponent<Binoculars>();
+        
+        point.SetActive(false);
+        Object.DontDestroyOnLoad(point);
+
+        return new CustomObject("Binoculars", "freecam", point,
+                description:"Enables a Freecam mode when hit by the player,\n" +
+                            "or when receiving the StartUsing trigger. Use the scroll wheel to zoom in/out.\n\n" +
+                            "Useful for giving players a preview of a map.\n\n" +
+                            "Press jump to leave Freecam mode.")    
+            .WithConfigGroup(ConfigGroup.Binoculars)
+            .WithReceiverGroup(ReceiverGroup.Binoculars)
+            .WithBroadcasterGroup(BroadcasterGroup.Binoculars );
+    }
+}

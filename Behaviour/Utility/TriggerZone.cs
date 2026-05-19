@@ -1,0 +1,81 @@
+using System;
+using Architect.Behaviour.Fixers;
+using Architect.Events;
+using Architect.Utils;
+using UnityEngine;
+
+namespace Architect.Behaviour.Utility;
+
+public class TriggerZone : MonoBehaviour
+{
+    public static readonly Sprite SquareZone =
+        ResourceUtils.LoadSpriteResource("trigger_zone", FilterMode.Point, ppu: 10);
+    public static readonly Sprite CircleZone =
+        ResourceUtils.LoadSpriteResource("trigger_zone_circle", FilterMode.Point, ppu: 10);
+
+    public bool block;
+    
+    public int mode;
+    public int layer;
+    public bool usingLayer;
+
+    public bool inside;
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        switch (mode)
+        {
+            case 0:
+                if (!other.gameObject.GetComponent<HeroController>()) return;
+                break;
+            case 1:
+                if (!other.gameObject.GetComponent<NailSlash>()) return;
+                break;
+            case 2:
+                if (!other.gameObject.GetComponent<HealthManager>()) return;
+                break;
+            case 3:
+                var tz = other.gameObject.GetComponent<TriggerZone>();
+                if (!tz || (tz.layer != layer && usingLayer)) return;
+                break;
+            case 4:
+                var kr = other.gameObject.GetComponentInParent<MiscFixers.TriggerActivator>();
+                if (!kr || (kr.layer != layer && usingLayer)) return;
+                break;
+        }
+
+        EventManager.BroadcastEvent(gameObject, "ZoneEnter");
+        inside = true;
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (block) return;
+        switch (mode)
+        {
+            case 0:
+                if (!other.gameObject.GetComponent<HeroController>()) return;
+                break;
+            case 1:
+                if (!other.gameObject.GetComponent<NailSlash>()) return;
+                break;
+            case 2:
+                if (!other.gameObject.GetComponent<HealthManager>()) return;
+                break;
+            case 3:
+                if (!other.gameObject.GetComponent<TriggerZone>()) return;
+                break;
+            case 4:
+                if (!other.gameObject.GetComponent<MiscFixers.TriggerActivator>()) return;
+                break;
+        }
+
+        EventManager.BroadcastEvent(gameObject, "ZoneExit");
+        inside = false;
+    }
+
+    private void OnEnable()
+    {
+        block = false;
+    }
+}

@@ -1,0 +1,54 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Architect.Events.Blocks.Operators;
+
+public class CompareBlock : ScriptBlock
+{
+    protected override IEnumerable<(string, string)> OutputVars => [("Value", "Boolean")];
+    protected override IEnumerable<(string, string)> InputVars => [("1", "Number"), ("2", "Number")];
+    
+    protected override string Name => "Compare";
+
+    public int Mode;
+
+    public override object GetValue(string id)
+    {
+        var v1 = GetVariable<float>("1");
+        var v2 = GetVariable<float>("2");
+        
+        return Mode switch
+        {
+            0 => Mathf.Approximately(v1, v2),
+            1 => v1 > v2,
+            2 => v1 < v2,
+            3 => v1 >= v2,
+            _ => v1 <= v2
+        };
+    }
+}
+
+public class StringCompareBlock : ScriptBlock
+{
+    protected override IEnumerable<(string, string)> OutputVars => [("Value", "Boolean")];
+    protected override IEnumerable<(string, string)> InputVars => [("1", "Text"), ("2", "Text")];
+    
+    protected override string Name => "Compare Text";
+
+    public int Mode;
+
+    public override object GetValue(string id)
+    {
+        var v1 = GetVariable<string>("1");
+        var v2 = GetVariable<string>("2");
+        
+        return Mode switch
+        {
+            0 => v1 == v2,
+            1 => v1.Contains(v2),
+            2 => v1.StartsWith(v2),
+            3 => v1.EndsWith(v2),
+            _ => v1.Length > v2.Length
+        };
+    }
+}

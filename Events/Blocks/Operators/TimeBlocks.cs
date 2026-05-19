@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Architect.Events.Blocks.Operators;
+
+public abstract class TimeBlockType : ScriptBlock
+{
+    public int Mode = 0;
+    
+    protected DateTime GetNow() => Mode == 0 ? DateTime.Now : DateTime.UtcNow;
+}
+
+public class TimeBlock : TimeBlockType
+{
+    protected override string Name => "Time Block";
+
+    protected override IEnumerable<(string, string)> OutputVars =>
+    [
+        ("Days", "Number"),
+        ("Hours", "Number"),
+        ("Minutes", "Number"),
+        ("Seconds", "Number"),
+        ("Delta", "Number")
+    ];
+
+    public override object GetValue(string id)
+    {
+        var diff = GetNow() - DateTime.MinValue;
+        return Convert.ToSingle(id switch
+        {
+            "Days" => diff.TotalDays,
+            "Hours" => diff.TotalHours,
+            "Minutes" => diff.TotalMinutes,
+            "Seconds" => diff.TotalSeconds,
+            _ => Time.deltaTime
+        });
+    }
+}
+
+public class DayBlock : TimeBlockType
+{
+    protected override string Name => "Day Block";
+
+    protected override IEnumerable<(string, string)> OutputVars =>
+    [
+        ("OfYear", "Number"),
+        ("OfWeek", "Number"),
+        ("Hour", "Number"),
+        ("Minute", "Number"),
+        ("Second", "Number"),
+        ("Ms", "Number")
+    ];
+
+    public override object GetValue(string id)
+    {
+        var now = GetNow();
+        return id switch
+        {
+            "OfYear" => now.DayOfYear,
+            "OfWeek" => (int)now.DayOfWeek,
+            "Hour" => (int)now.TimeOfDay.TotalHours,
+            "Minute" => (int)now.TimeOfDay.TotalMinutes % 60,
+            "Second" => (int)now.TimeOfDay.TotalSeconds % 60,
+            _ => (int)now.TimeOfDay.TotalMilliseconds % 1000
+        };
+    }
+}

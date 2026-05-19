@@ -1,0 +1,271 @@
+using System;
+using Architect.Behaviour.Custom;
+using Architect.Behaviour.Utility;
+using Architect.Content.Preloads;
+using Architect.Objects.Categories;
+using Architect.Objects.Groups;
+using Architect.Objects.Placeable;
+using Architect.Utils;
+using GlobalEnums;
+using UnityEngine;
+using UnityEngine.Video;
+using Object = UnityEngine.Object;
+
+namespace Architect.Content.Custom;
+
+public static class MiscObjects
+{
+    public static void Init()
+    {
+        Categories.Misc.AddStart(CreateLine());
+        Categories.Misc.AddStart(CreateTriangle());
+        Categories.Misc.AddStart(CreateCircle());
+        Categories.Misc.AddStart(CreateSquare());
+        
+        //Categories.Effects.AddStart(CreateAudioObject());
+        
+        Categories.Effects.AddStart(CreateAsset<Mp4Object>("MP4", "custom_mp4", true, true)
+            .WithConfigGroup(ConfigGroup.Mp4)
+            .WithReceiverGroup(ReceiverGroup.Playable)
+            .WithBroadcasterGroup(BroadcasterGroup.Finishable));
+        
+        Categories.Effects.AddStart(CreateAsset<WavObject>("WAV", "custom_wav", false, false)
+            .WithConfigGroup(ConfigGroup.Wav)
+            .WithReceiverGroup(ReceiverGroup.Wav)
+            .WithInputGroup(InputGroup.Wav));
+        
+        Categories.Effects.AddStart(CreateAsset<UIPngObject>("PNG (HUD)", "custom_png_ui", true, false,
+                "\n\nFrame Count options can be used to split a sprite sheet into an animation.\n" +
+                "Broadcasts 'OnFinish' when the animation ends.\n\n" +
+                "Renders on the HUD, can be used inside of a prefab and\n" +
+                "made to appear in every room using the Spawn Prefab block.", true)
+            .WithConfigGroup(ConfigGroup.PngUI)
+            .WithReceiverGroup(ReceiverGroup.Png)
+            .WithBroadcasterGroup(BroadcasterGroup.Finishable)
+            .WithInputGroup(InputGroup.Png)
+            .WithOutputGroup(OutputGroup.Png));
+        
+        Categories.Effects.AddStart(CreateAsset<PngObject>("PNG", "custom_png", true, false,
+                "\n\nFrame Count options can be used to split a sprite sheet into an animation.\n" +
+                "Broadcasts 'OnFinish' when the animation ends.")
+            .WithConfigGroup(ConfigGroup.FullPng)
+            .WithReceiverGroup(ReceiverGroup.Png)
+            .WithBroadcasterGroup(BroadcasterGroup.Png)
+            .WithInputGroup(InputGroup.Png)
+            .WithOutputGroup(OutputGroup.Png));
+        
+        Categories.Platforming.Add(CreateWind());
+        Categories.Platforming.Add(CreateDreamBlock());
+
+        Categories.Hazards.Add(CreateCustomHazard("White Thorns", "white_thorns",
+        [
+            new Vector2(-3.672f, -1.265f),
+            new Vector2(-3.011f, 0.066f),
+            new Vector2(-1.469f, 0.777f),
+            new Vector2(0.474f, 1.282f),
+            new Vector2(2.353f, 0.813f),
+            new Vector2(3.754f, -0.674f)
+        ]));
+    }
+
+    public static PlaceableObject CreateCustomHazard(string name, string id, Vector2[] points)
+    {
+        var obj = new GameObject(name);
+        obj.SetActive(false);
+        Object.DontDestroyOnLoad(obj);
+        
+        obj.transform.SetPositionZ(0.01f);
+
+        var col = obj.AddComponent<EdgeCollider2D>();
+        col.isTrigger = true;
+
+        col.points = points;
+
+        obj.AddComponent<CustomDamager>().damageAmount = 1;
+        obj.AddComponent<SpriteRenderer>().sprite = ResourceUtils.LoadSpriteResource(id, ppu:64);
+
+        return new CustomObject(name, id, obj)
+            .WithRotationGroup(RotationGroup.All)
+            .WithConfigGroup(ConfigGroup.Vines);
+    }
+
+    private static PlaceableObject CreateWind()
+    {
+        Wind.Init();
+
+        var windObj = new GameObject("Wind")
+        {
+            layer = 6
+        };
+        
+        var collider = windObj.AddComponent<BoxCollider2D>();
+        collider.size = new Vector2(10, 10);
+        collider.isTrigger = true;
+
+        windObj.AddComponent<Wind>();
+
+        windObj.SetActive(false);
+        Object.DontDestroyOnLoad(windObj);
+        
+        return new CustomObject("Wind", "wind_zone",
+                windObj,
+                sprite: ResourceUtils.LoadSpriteResource("wind", FilterMode.Point, ppu:3.2f),
+                description: "Applies a force to players and some objects when inside the wind's hitbox.")
+            .WithRotationGroup(RotationGroup.All)
+            .WithConfigGroup(ConfigGroup.Wind);
+    }
+
+    private static PlaceableObject CreateDreamBlock()
+    {
+        DreamBlock.Init();
+
+        var obj = new GameObject("Dream Block");
+        Object.DontDestroyOnLoad(obj);
+
+        obj.layer = LayerMask.NameToLayer("Terrain");
+
+        obj.AddComponent<BoxCollider2D>().size *= 10;
+
+        var col = obj.AddComponent<BoxCollider2D>();
+        col.isTrigger = true;
+        col.size *= 9.8f;
+
+        obj.SetActive(false);
+        obj.AddComponent<DreamBlock>();
+
+        obj.AddComponent<SpriteRenderer>().sprite =
+            ResourceUtils.LoadSpriteResource("DreamBlock.dream_block", FilterMode.Point);
+
+        obj.transform.SetPositionZ(0.01f);
+
+        return new CustomObject("Dream Block", "dream_block", obj)
+            .WithConfigGroup(ConfigGroup.DreamBlock);
+    }
+
+    private static PlaceableObject CreateAsset<T>(string name, string id, bool addRenderer, 
+        bool addVideo, string extDesc = "", bool preview = false) where T : MonoBehaviour
+    {
+        var asset = new GameObject("Custom Asset");
+
+        if (addRenderer) asset.AddComponent<SpriteRenderer>().sprite = ArchitectPlugin.BlankSprite;
+        if (addVideo) asset.AddComponent<VideoPlayer>();
+        
+        asset.AddComponent<T>();
+        Object.DontDestroyOnLoad(asset);
+        asset.SetActive(false);
+
+        return new CustomObject($"Custom {name}", id,
+                asset,
+                sprite: ResourceUtils.LoadSpriteResource(id, ppu: 300),
+                description:
+                $"Places a custom {name} in the game.\n\n" +
+                "URL should be a direct download anyone can access\n" +
+                "in order to work with the level sharer." + extDesc,
+                preview: preview)
+            .WithRotationGroup(RotationGroup.All);
+    }
+
+    private static PlaceableObject CreateSquare()
+    {
+        var square = CreateShape("square");
+
+        var collider = square.AddComponent<BoxCollider2D>();
+        collider.isTrigger = true;
+        collider.size = new Vector2(10, 10);
+
+        return new CustomObject("Coloured Square", "coloured_square", square, 
+                "A square that can be coloured or given a hitbox for custom collision.\n\n" +
+                "RGBA colour values should be between 0 and 1.")
+            .WithConfigGroup(ConfigGroup.Colours)
+            .WithRotationGroup(RotationGroup.All);
+    }
+
+    private static PlaceableObject CreateCircle()
+    {
+        var circle = CreateShape("circle");
+
+        var collider = circle.AddComponent<PolygonCollider2D>();
+        collider.isTrigger = true;
+
+        var points = new Vector2[24];
+        for (var i = 0; i < 24; i++)
+        {
+            var angle = 2 * Mathf.PI * i / 24;
+            var x = Mathf.Cos(angle) * 5;
+            var y = Mathf.Sin(angle) * 5;
+            points[i] = new Vector2(x, y);
+        }
+
+        collider.pathCount = 1;
+        collider.SetPath(0, points);
+
+        return new CustomObject("Coloured Circle", "coloured_circle", circle, 
+                "A circle that can be coloured or given a hitbox for custom collision." +
+                "\n\nRGBA colour values should be between 0 and 1.")
+            .WithConfigGroup(ConfigGroup.Colours)
+            .WithRotationGroup(RotationGroup.All);
+    }
+    
+    public static readonly Material LineMaterial = new(Shader.Find("Sprites/Default"));
+
+    private static PlaceableObject CreateLine()
+    {
+        var line = new GameObject("Shape (Line)");
+
+        line.SetActive(false);
+        Object.DontDestroyOnLoad(line);
+
+        line.AddComponent<LineObject>();
+
+        var lr = line.AddComponent<LineRenderer>();
+        lr.material = LineMaterial;
+
+        var collider = line.AddComponent<EdgeCollider2D>();
+        collider.isTrigger = true;
+
+        return new CustomObject("Coloured Line Point", "coloured_line", line, 
+                "A point that can be combined with others to form lines that\n" +
+                "can be coloured or given a hitbox for custom collision.\n\n" +
+                "Follows the config options of the first point of its ID that is placed." +
+                "\n\nRGBA colour values should be between 0 and 1.",
+                sprite: ResourceUtils.LoadSpriteResource("line_point", ppu:200))
+            .WithConfigGroup(ConfigGroup.Line)
+            .WithRotationGroup(RotationGroup.All);
+    }
+
+    private static PlaceableObject CreateTriangle()
+    {
+        var triangle = CreateShape("triangle");
+
+        var collider = triangle.AddComponent<EdgeCollider2D>();
+        collider.isTrigger = true;
+        collider.points =
+        [
+            new Vector2(-5, -4.17f),
+            new Vector2(0, 4.45f),
+            new Vector2(5, -4.17f),
+            new Vector2(-5, -4.17f)
+        ];
+
+        return new CustomObject("Coloured Triangle", "coloured_triangle", triangle, 
+                "A triangle that can be coloured or given a hitbox for custom collision." +
+                "\n\nRGBA colour values should be between 0 and 1.")
+            .WithConfigGroup(ConfigGroup.Colours)
+            .WithRotationGroup(RotationGroup.All);
+    }
+
+    private static GameObject CreateShape(string name)
+    {
+        var sprite = ResourceUtils.LoadSpriteResource(name);
+
+        var point = new GameObject("Shape (" + name + ")");
+        point.transform.localScale /= 3;
+
+        point.AddComponent<SpriteRenderer>().sprite = sprite;
+
+        point.SetActive(false);
+        Object.DontDestroyOnLoad(point);
+
+        return point;
+    }
+}

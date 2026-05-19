@@ -1,0 +1,544 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Architect.Api;
+using Architect.Config.Types;
+using Architect.Content.Preloads;
+using Architect.Editor;
+using Architect.Events.Blocks.Config.Types;
+using Architect.Events.Blocks.Outputs;
+using Architect.Objects.Categories;
+using Architect.Objects.Placeable;
+using Architect.Placements;
+using Architect.Prefabs;
+using Architect.Utils;
+using Architect.Workshop;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Architect.Storage;
+
+public static class StorageManager
+{
+    public const string GLOBAL = "Global";
+    
+    public static string DataPath;
+    
+    private static readonly Dictionary<string, List<IScheduledEdit>> ScheduledEdits = [];
+    
+    
+    public static void Init()
+    {
+        DataPath = Path.GetFullPath(Application.persistentDataPath + "/Architect/");
+        Directory.CreateDirectory(DataPath + "Scenes/");
+        Directory.CreateDirectory(DataPath + "Prefabs/");
+        Directory.CreateDirectory(DataPath + "Assets/");
+        Directory.CreateDirectory(DataPath + "Backups/");
+        Directory.CreateDirectory(DataPath + "ModAssets/");
+        
+        typeof(GameManager).Hook(nameof(GameManager.SaveGame), 
+            (Action<GameManager, Action<bool>> orig, GameManager self, Action<bool> callback) => 
+            { 
+                SaveFavourites(FavouritesCategory.Favourites);
+                SavePrefabs(SavedCategory.Objects);
+
+                if (EditManager.IsEditing)
+                {
+                    SaveScene(GameManager.instance.sceneName, PlacementManager.GetLevelData());
+                    SaveScene(GLOBAL, PlacementManager.GetGlobalData());
+                    SaveWorkshopData();
+                }
+
+                foreach (var (scene, edits) in ScheduledEdits)
+                {
+                    ApplyScheduledEdits(scene, edits);
+                }
+                ScheduledEdits.Clear();
+
+                orig(self, callback);
+            }, typeof(Action<bool>));
+    }
+
+    private static string GetScenePath(string scene)
+    {
+        if (scene.StartsWith("Prefab_"))
+        {
+            return MapLoader.GetPrefab(scene) ?? Path.Combine(DataPath, "Prefabs", $"{scene}.architect.json");
+        }
+        return Path.Combine(DataPath, "Scenes", $"{scene}.architect.json");
+    }
+    
+    public static void SaveScene(string scene, LevelData level)
+    {
+        var path = GetScenePath(scene);
+        if (File.Exists(path)) File.Delete(path);
+
+        if (level.Placements.IsNullOrEmpty() &&
+            level.TilemapChanges.IsNullOrEmpty() &&
+            level.ScriptBlocks.IsNullOrEmpty() &&
+            level.Comments.IsNullOrEmpty())
+        {
+            if (scene.StartsWith("Prefab_")) PrefabsCategory.Remove(scene.Replace("Prefab_", ""));
+            return;
+        }
+        if (scene.StartsWith("Prefab_")) PrefabsCategory.Add(scene.Replace("Prefab_", ""), level);
+        
+        var data = SerializeLevel(level, Formatting.Indented);
+        
+        using var stream = File.Create(path);
+        using var writer = new StreamWriter(stream);
+
+        writer.Write(data);
+    }
+
+    public static LevelData LoadScene(string scene)
+    {
+        if (ScheduledEdits.TryGetValue(scene, out var edits))
+        {
+            ScheduledEdits.Remove(scene);
+            return ApplyScheduledEdits(scene, edits);
+        }
+        
+        var path = GetScenePath(scene);
+        
+        return File.Exists(path) ? DeserializeLevel(File.ReadAllText(path)) : 
+            new LevelData([], [], [], []);
+    }
+
+    public static void LoadWorkshopData()
+    {
+        var path = DataPath + "workshop.json";
+        if (!File.Exists(path))
+        {
+            WorkshopManager.LoadWorkshop(new WorkshopData());
+            return;
+        }
+        
+        var data = File.ReadAllText(path);
+        
+        WorkshopManager.LoadWorkshop(JsonConvert.DeserializeObject<WorkshopData>(data, Converters.All));
+    }
+    
+    public static void SaveWorkshopData()
+    {
+        var path = DataPath + "workshop.json";
+        if (File.Exists(path)) File.Delete(path);
+        
+        File.WriteAllText(path, JsonConvert.SerializeObject(WorkshopManager.WorkshopData, Formatting.Indented, Converters.All));
+    }
+
+    public static LevelData DeserializeLevel(string data)
+    {
+        try
+        {
+            return JsonConvert.DeserializeObject<LevelData>(data, Converters.All);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public static List<ObjectPlacement> DeserializePlacements(string data)
+    {
+        try
+        {
+            return JsonConvert.DeserializeObject<List<ObjectPlacement>>(data, Converters.All);
+        }
+        catch (Exception)
+        {
+            ArchitectPlugin.Instance.LogError("Invalid saved objects file (prefabs.json), clearing saved objects");
+            return [];
+        }
+    }
+
+    public static string SerializeLevel(LevelData level, Formatting formatting)
+    {
+        return JsonConvert.SerializeObject(level, formatting, Converters.All);
+    }
+
+    public static string SerializePlacements(List<ObjectPlacement> placements)
+    {
+        return JsonConvert.SerializeObject(placements, Formatting.Indented, Converters.All);
+    }
+
+    public static void SaveFavourites(List<string> favourites)
+    {
+        var path = DataPath + "favourites.json";
+        if (File.Exists(path)) File.Delete(path);
+
+        var data = JsonConvert.SerializeObject(favourites);
+
+        using var stream = File.Create(path);
+        using var writer = new StreamWriter(stream);
+
+        writer.Write(data);
+    }
+
+    public static List<string> LoadFavourites()
+    {
+        var path = DataPath + "favourites.json";
+        if (File.Exists(path))
+        {
+            var deserialized = JsonConvert.DeserializeObject<List<string>>(File.ReadAllText(path));
+            if (deserialized != null) return deserialized;
+        }
+
+        return [];
+    }
+
+    public static void SavePrefabs(List<SavedObject> prefabs)
+    {
+        var path = DataPath + "prefabs.json";
+        if (File.Exists(path)) File.Delete(path);
+
+        var data = SerializePlacements(prefabs.Select(obj => obj.Placement).ToList());
+
+        using var stream = File.Create(path);
+        using var writer = new StreamWriter(stream);
+
+        writer.Write(data);
+    }
+
+    public static List<SavedObject> LoadSavedObjects()
+    {
+        var path = DataPath + "prefabs.json";
+        if (File.Exists(path))
+        {
+            var deserialized = DeserializePlacements(File.ReadAllText(path));
+            if (deserialized != null) return deserialized.Select(obj => new SavedObject(obj)).ToList();
+        }
+
+        return [];
+    }
+
+    public static List<PrefabObject> LoadPrefabs(string dp)
+    {
+        var path = dp + "/Prefabs";
+        List<PrefabObject> prefabs = [];
+        if (Directory.Exists(path)) foreach (var file in Directory.GetFiles(path))
+        {
+            if (!file.EndsWith(".architect.json")) continue;
+            prefabs.Add(new PrefabObject(Path.GetFileNameWithoutExtension(file)
+                .Replace("Prefab_", "").Replace(".architect", "")));
+        }
+        
+        return prefabs;
+    }
+
+    public static readonly List<string> Directories = [];
+
+    public static void FindLoadRequirements()
+    {
+        FindLoadRequirements(DataPath);
+        foreach (var dir in Directories) FindLoadRequirements(dir);
+    }
+
+    public static void FindLoadRequirements(string dp)
+    {
+        foreach (var s in new[] { "Scenes/", "Prefabs/" })
+        {
+            var path = Path.Combine(dp, s);
+            if (!Directory.Exists(path)) continue;
+            foreach (var file in Directory.GetFiles(path))
+            {
+                if (!file.EndsWith(".architect.json") || file.StartsWith(".")) continue;
+                var scene = DeserializeLevel(File.ReadAllText(file));
+                if (scene == null)
+                {
+                    ArchitectPlugin.Instance.Log($"Invalid scene found at {file}");
+                    continue;
+                }
+                foreach (var o in scene.Placements.Where(o => o != null))
+                {
+                    if (o.GetPlacementType() is PreloadObject preload) 
+                        preload.ShouldLoad = true;
+                }
+            }
+        }
+    }
+
+    public static string SerializeAllScenes()
+    {
+        Dictionary<string, LevelData> data = [];
+        foreach (var s in new[] { "Scenes/", "Prefabs/" })
+        {
+            foreach (var file in Directory.GetFiles(DataPath + s))
+            {
+                var name = Path.GetFileName(file);
+                if (!name.EndsWith(".architect.json")) continue;
+
+                var n = name.Replace(".architect.json", "");
+                data[n] = LoadScene(n);
+            }
+        }
+
+        return JsonConvert.SerializeObject(data, Formatting.None, Converters.All);
+    }
+
+    public static void WipeLevelData()
+    {
+        foreach (var file in Directory.GetFiles(DataPath + "Scenes/")) File.Delete(file);
+        foreach (var file in Directory.GetFiles(DataPath + "Prefabs/")) File.Delete(file);
+        foreach (var file in Directory.GetFiles(DataPath + "Assets/")) File.Delete(file);
+
+        GlobalArchitectData.Instance.CurrentMap = "";
+        GlobalArchitectData.Instance.CurrentMapId = "";
+        CustomAssetManager.WipeAssets();
+        WorkshopManager.LoadWorkshop(new WorkshopData());
+    }
+
+    public static IEnumerator LoadLevelData(Dictionary<string, LevelData> levels, WorkshopData workshop, Text status)
+    {
+        WipeLevelData();
+        var startTime = Time.realtimeSinceStartup;
+
+        Dictionary<string, StringConfigValue> downloads = [];
+        Dictionary<string, StringConfigValue<PngBlock>> blockDownloads = [];
+
+        HashSet<PlaceableObject> placeable = [];
+
+        var cherries = 0;
+        var goldCherries = 0;
+        foreach (var (scene, data) in levels)
+        {
+            foreach (var pt in data.Placements
+                         .Select(placement => placement.GetPlacementType()).OfType<PreloadObject>())
+            {
+                placeable.Add(pt);
+            }
+            
+            foreach (var config in data.Placements.SelectMany(obj => obj.Config)
+                         .OfType<StringConfigValue>())
+            {
+                if (!config.GetTypeId().Contains("_url")) continue;
+                var cfg = config.GetValue();
+                if (!downloads.ContainsKey(cfg)) downloads.Add(cfg, config);
+            }
+
+            foreach (var config in data.ScriptBlocks.SelectMany(obj => obj.CurrentConfig.Values)
+                         .OfType<StringConfigValue<PngBlock>>())
+            {
+                if (!config.GetTypeId().Contains("_url")) continue;
+                var cfg = config.GetValue();
+                if (!blockDownloads.ContainsKey(cfg)) blockDownloads.Add(cfg, config);
+            }
+
+            cherries += data.Placements.Count(p => p.ID.StartsWith("cherry_false"));
+            goldCherries += data.Placements.Count(p => p.ID.StartsWith("cherry_true"));
+
+            SaveScene(scene, data);
+        }
+
+        var gad = GlobalArchitectData.Instance;
+        var levelId = gad.CurrentMapId;
+
+        if (!gad.CherryScores.TryGetValue(levelId, out var score))
+        {
+            score = gad.CherryScores[levelId] = ([], cherries);
+        }
+        else score.Item2 = cherries;
+
+        gad.CherryScores[levelId] = score;
+
+        if (!gad.GoldCherryScores.TryGetValue(levelId, out var gscore))
+        {
+            gscore = gad.GoldCherryScores[levelId] = ([], goldCherries);
+        }
+        else score.Item2 = goldCherries;
+
+        gad.GoldCherryScores[levelId] = gscore;
+
+        Dictionary<string, string> workshopDownloads = [];
+        foreach (var item in workshop.Items)
+        {
+            foreach (var cfg in item.CurrentConfig.Values) cfg.Setup(item);
+            if (item.FilesToDownload == null) continue;
+            foreach (var file in item.FilesToDownload)
+            {
+                if (file.Item1.IsNullOrWhiteSpace()) continue;
+                if (!workshopDownloads.ContainsKey(file.Item1)) workshopDownloads.Add(file.Item1, file.Item2);
+            }
+        }
+
+        CustomAssetManager.DownloadingAssets = 0;
+        CustomAssetManager.Downloaded = 0;
+        CustomAssetManager.Failed = 0;
+        var downloadCount = downloads.Count + blockDownloads.Count + workshopDownloads.Count;
+        status.text = "Downloading Assets...\n" +
+                      $"0/{downloadCount}";
+
+        foreach (var config in downloads.Values)
+        {
+            while (CustomAssetManager.DownloadingAssets > 4) yield return null;
+            CustomAssetManager.DownloadingAssets++;
+            Task.Run(() => CustomAssetManager.TryDownloadAssets(config, status, downloadCount));
+        }
+
+        foreach (var config in blockDownloads.Values)
+        {
+            while (CustomAssetManager.DownloadingAssets > 4) yield return null;
+            CustomAssetManager.DownloadingAssets++;
+            Task.Run(() => CustomAssetManager.TryDownloadAssets(config, status, downloadCount));
+        }
+
+        foreach (var (url, type) in workshopDownloads)
+        {
+            while (CustomAssetManager.DownloadingAssets > 4) yield return null;
+            CustomAssetManager.DownloadingAssets++;
+            Task.Run(() => CustomAssetManager.TryDownloadAssets(url, type, status, downloadCount));
+        }
+
+        while (CustomAssetManager.Downloaded < downloadCount) yield return null;
+
+        var preloadCount = placeable.Count;
+        var doneCount = 0;
+        status.text = "Loading Objects...\n" + 
+                      $"0/{preloadCount}";
+        foreach (var preload in placeable)
+        {
+            yield return preload.EnsureLoaded();
+            doneCount++;
+            status.text = "Loading Objects...\n" + 
+                          $"{doneCount}/{preloadCount}";
+        }
+
+        var elapsed = Time.realtimeSinceStartup - startTime;
+        if (elapsed < 1) yield return new WaitForSeconds(1 - elapsed);
+
+        PrefabsCategory.Prefabs = LoadPrefabs(DataPath);
+        WorkshopManager.LoadWorkshop(workshop);
+        SaveWorkshopData();
+
+        var plural = CustomAssetManager.Failed == 1 ? "" : "s";
+        status.text = "Download Complete" + (CustomAssetManager.Failed == 0
+            ? ""
+            : $"\n{CustomAssetManager.Failed} asset{plural} could not be downloaded");
+    }
+
+    public static void MakeBackup(string backupId)
+    {
+        try
+        {
+            var path = DataPath + $"Backups/{backupId}";
+            
+            if (Directory.Exists(path)) Directory.Delete(path, true);
+            
+            Directory.CreateDirectory($"{path}/Scenes");
+            Directory.CreateDirectory($"{path}/Prefabs");
+
+            foreach (var file in Directory.GetFiles(DataPath + "Scenes/"))
+            {
+                if (!file.EndsWith(".architect.json")) continue;
+                File.Copy(file, path + "/Scenes/" + Path.GetFileName(file));
+            }
+
+            foreach (var file in Directory.GetFiles(DataPath + "Prefabs/"))
+            {
+                if (!file.EndsWith(".architect.json")) continue;
+                File.Copy(file, path + "/Prefabs/" + Path.GetFileName(file));
+            }
+
+            if (File.Exists(DataPath + "workshop.json"))
+            {
+                File.Copy(DataPath + "workshop.json", path + "/workshop.json");
+            }
+        }
+        catch
+        {
+            //
+        }
+    }
+
+    public static void DeleteBackup(string backupId)
+    {
+        try
+        {
+            var path = DataPath + $"Backups/{backupId}";
+            Directory.Delete(path, true);
+        }
+        catch
+        {
+            //
+        }
+    }
+
+    public static void LoadBackup(string backupId)
+    {
+        try
+        {
+            var path = DataPath + $"Backups/{backupId}/";
+            
+            WipeLevelData();
+
+            foreach (var file in Directory.GetFiles(path + "Scenes/"))
+            {
+                if (!file.EndsWith(".architect.json")) continue;
+                File.Copy(file, DataPath + "Scenes/" + Path.GetFileName(file));
+            }
+
+            foreach (var file in Directory.GetFiles(path + "Prefabs/"))
+            {
+                if (!file.EndsWith(".architect.json")) continue;
+                File.Copy(file, DataPath + "Prefabs/" + Path.GetFileName(file));
+            }
+
+            if (File.Exists(path + "workshop.json"))
+            {
+                File.Copy(path + "workshop.json", DataPath + "workshop.json", true);
+            }
+
+            PrefabsCategory.Prefabs = LoadPrefabs(DataPath);
+            LoadWorkshopData();
+        }
+        catch
+        {
+            //
+        }
+    }
+
+    public static void SaveApiKey([CanBeNull] string key)
+    {
+        var path = DataPath + "key.txt";
+        if (File.Exists(path)) File.Delete(path);
+        
+        if (key == null) return;
+        
+        using var stream = File.Create(path);
+        using var writer = new StreamWriter(stream);
+
+        writer.Write(key);
+    }
+
+    [CanBeNull]
+    public static string LoadSharerKey()
+    {
+        var path = DataPath + "key.txt";
+        return File.Exists(path) ? File.ReadAllText(path) : null;
+    }
+    
+    public static void ScheduleEdit(string scene, IScheduledEdit edit)
+    {
+        if (!ScheduledEdits.TryGetValue(scene, out var edits)) edits = ScheduledEdits[scene] = [];
+        edits.Add(edit);
+    }
+    
+    public static LevelData ApplyScheduledEdits(string scene, List<IScheduledEdit> edits)
+    {
+        var data = LoadScene(scene);
+        foreach (var edit in edits) edit.ExecuteScheduled(data);
+        SaveScene(scene, data);
+
+        return data;
+    }
+    
+    public static void WipeScheduledEdits(string scene)
+    {
+        ScheduledEdits.Remove(scene);
+    }
+}

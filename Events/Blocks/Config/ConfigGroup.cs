@@ -1,0 +1,746 @@
+using System;
+using System.Collections.Generic;
+using Architect.Events.Blocks.Config.Types;
+using Architect.Events.Blocks.Events;
+using Architect.Events.Blocks.Functions;
+using Architect.Events.Blocks.Objects;
+using Architect.Events.Blocks.Operators;
+using Architect.Events.Blocks.Outputs;
+using Architect.Objects.Groups;
+using UnityEngine;
+
+namespace Architect.Events.Blocks.Config;
+
+public static class ConfigGroup
+{
+    public static readonly List<ConfigType> Constants =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<ConstantBlock>("Configurable", "prefab_configurable", 
+                (b, f) => b.Public = f.GetValue())
+                .WithDefaultValue(false)
+                .MarkPrefabOnly()
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<ConstantBlock>("Name", "prefab_configurable_name", 
+                (b, f) => b.ConfigName = f.GetValue())
+                .MarkPrefabOnly()
+        )
+    ];
+    
+    public static readonly List<ConfigType> ItemControl =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<ItemBlock>("Item ID", "item_id", 
+                (b, f) => b.ItemName = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> CharmControl =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<CharmBlock>("Charm ID", "charm_id", 
+                (b, f) => b.CharmName = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> CameraShaker =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<ShakeCameraBlock>("Shake Type", "camera_shake_type", 
+                    (b, f) =>
+                    {
+                        b.ShakeType = f.GetValue();
+                    })
+                .WithOptions("Tiny", "Small", "Medium", "Large").WithDefaultValue(2)
+        )
+    ];
+    
+    public static readonly List<ConfigType> ConstantNum = GroupUtils.Merge(Constants,
+    [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<ConstantNumBlock>("Number", "constant_num", 
+                (b, f) => b.Value = f.GetValue())
+        )
+    ]);
+    
+    public static readonly List<ConfigType> ConstantBool = GroupUtils.Merge(Constants,
+    [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<ConstantBoolBlock>("Bool", "constant_bool", 
+                (b, f) => b.Value = f.GetValue())
+        )
+    ]);
+    
+    public static readonly List<ConfigType> ConstantText = GroupUtils.Merge(Constants,
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<ConstantTextBlock>("Text", "constant_text", 
+                (b, f) => b.Value = f.GetValue())
+        )
+    ]);
+    
+    public static readonly List<ConfigType> Counter =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType<CounterBlock>("Target", "counter_target", 
+                (b, f) => b.Count = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> RandomTrigger =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<RandomEventBlock.TriggerBlock>("Weight", "random_trigger_chance", 
+                (b, f) => b.Chance = Mathf.Max(f.GetValue(), 0))
+                .WithDefaultValue(1)
+        )
+    ];
+    
+    public static readonly List<ConfigType> Raycast =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<RaycastBlock>("Max Distance", "raycast_max_dist", 
+                (b, f) => b.MaxDistance = f.GetValue())
+                .WithDefaultValue(10)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<RaycastBlock>("Mode", "raycast_mode", 
+                (b, f) => b.Mode = f.GetValue())
+                .WithDefaultValue(0).WithOptions("Terrain", "Enemies", "Player")
+        )
+    ];
+    
+    public static readonly List<ConfigType> SpawnObject =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SpawnObjectBlock>("Offset X", "spawn_object_x", 
+                (b, f) => b.OffsetX = f.GetValue()).WithDefaultValue(0)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SpawnObjectBlock>("Offset Y", "spawn_object_y", 
+                (b, f) => b.OffsetY = f.GetValue()).WithDefaultValue(0)
+        )
+    ];
+    
+    public static readonly List<ConfigType> Prefab =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SpawnPrefabBlock>("Prefab", "prefab_name", 
+                (b, f) => b.Prefab = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SpawnPrefabBlock>("Offset X", "prefab_x", 
+                (b, f) => b.OffsetX = f.GetValue()).WithDefaultValue(0)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SpawnPrefabBlock>("Offset Y", "prefab_y", 
+                (b, f) => b.OffsetY = f.GetValue()).WithDefaultValue(0)
+        )
+    ];
+    
+    public static readonly List<ConfigType> Lighting =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SetLightingBlock>("Light R", "lighting_r", 
+                (b, f) => b.R = f.GetValue()).WithDefaultValue(1)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SetLightingBlock>("Light G", "lighting_g", 
+                (b, f) => b.G = f.GetValue()).WithDefaultValue(1)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SetLightingBlock>("Light B", "lighting_b", 
+                (b, f) => b.B = f.GetValue()).WithDefaultValue(1)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SetLightingBlock>("Intensity", "lighting_intense", 
+                (b, f) => b.Intensity = f.GetValue()).WithDefaultValue(1)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SetLightingBlock>("Saturation", "lighting_sat", 
+                (b, f) => b.Saturation = f.GetValue()).WithDefaultValue(1)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<SetLightingBlock>("Lock", "lighting_lock", 
+                (b, f) => b.Lock = f.GetValue()).WithDefaultValue(true)
+        )
+    ];
+    
+    public static readonly List<ConfigType> Png =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<PngBlock>("PNG URL", "png_url",
+                (o, value) =>
+                {
+                    o.Url = value.GetValue();
+                })),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<PngBlock>("Anti Aliasing", "png_antialias",
+                    (o, value) =>
+                    {
+                        o.Point = !value.GetValue();
+                    })
+                .WithDefaultValue(true)),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<PngBlock>("Pixels Per Unit", "png_ppu",
+                    (o, value) =>
+                    {
+                        o.Ppu = value.GetValue();
+                    })
+                .WithDefaultValue(100))
+    ];
+    
+    public static readonly List<ConfigType> EnemyControl =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<EnemyBlock>("Damage Type", "enemy_damage_type", 
+                (b, f) =>
+                {
+                    var val = f.GetStringValue();
+                    b.AttackType = val switch
+                    {
+                        "Water" => AttackTypes.RuinsWater,
+                        _ => (AttackTypes)Enum.Parse(typeof(AttackTypes), val)
+                    };
+                }).WithDefaultValue(1)
+                .WithOptions(
+                    "Nail",
+                    "Generic",
+                    "Spell",
+                    "Acid",
+                    "Splatter",
+                    "Water",
+                    "SharpShadow",
+                    "NailBeam")
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType<EnemyBlock>("Amount", "enemy_hp_amount", 
+                (b, f) =>
+                {
+                    b.Health = f.GetValue();
+                }).WithDefaultValue(10)
+            )
+    ];
+    
+    public static readonly List<ConfigType> EntryControl =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<JournalEntryBlock>("Entry ID", "journal_entry_id", 
+                (b, f) => b.EntryName = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> AchievementControl =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<AchievementBlock>("Achieve ID", "achievement_id", 
+                (b, f) => b.AchievementName = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> Transition =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<TransitionBlock>("Scene ID", "trans_scene", 
+                (b, f) => b.Scene = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<TransitionBlock>("Door ID", "trans_door", 
+                (b, f) => b.Door = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> Time =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<TimeBlockType>("Mode", "time_block_mode", 
+                (b, f) => b.Mode = f.GetValue())
+                .WithOptions("Local", "Global").WithDefaultValue(0)
+        )
+    ];
+    
+    public static readonly List<ConfigType> BoolVar =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new IdConfigType<BoolVarBlock>("Variable ID", "var_id_bool", 
+                (b, f) => b.Id = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<BoolVarBlock>("Persistence", "var_persistence_bool", 
+                (b, f) => b.PType = f.GetValue())
+                .WithOptions("None", "Bench", "Global", "Universal").WithDefaultValue(2)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<BoolVarBlock>("Default", "var_default_bool", 
+                (b, f) => b.Default = f.GetValue())
+                .WithDefaultValue(false)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<BoolVarBlock>("Prefab-Local", "var_local_bool", 
+                (b, f) => b.Local = f.GetValue())
+                .WithDefaultValue(true).MarkPrefabOnly()
+        )
+    ];
+    
+    public static readonly List<ConfigType> NumVar =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new IdConfigType<NumVarBlock>("Variable ID", "var_id_num", 
+                (b, f) => b.Id = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<NumVarBlock>("Persistence", "var_persistence_num", 
+                (b, f) => b.PType = f.GetValue())
+                .WithOptions("None", "Bench", "Global", "Universal").WithDefaultValue(2)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<NumVarBlock>("Default", "var_default_num", 
+                    (b, f) => b.Default = f.GetValue())
+                .WithDefaultValue(0)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<NumVarBlock>("Prefab-Local", "var_local_num", 
+                    (b, f) => b.Local = f.GetValue())
+                .WithDefaultValue(true).MarkPrefabOnly()
+        )
+    ];
+    
+    public static readonly List<ConfigType> StringVar =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new IdConfigType<StringVarBlock>("Variable ID", "var_id_str", 
+                (b, f) => b.Id = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<StringVarBlock>("Persistence", "var_persistence_str", 
+                (b, f) => b.PType = f.GetValue())
+                .WithOptions("None", "Bench", "Global", "Universal").WithDefaultValue(2)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<StringVarBlock>("Default", "var_default_str", 
+                    (b, f) => b.Default = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<StringVarBlock>("Prefab-Local", "var_local_str", 
+                    (b, f) => b.Local = f.GetValue())
+                .WithDefaultValue(true).MarkPrefabOnly()
+        )
+    ];
+
+    public static readonly List<ConfigType> TimeSlower = [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<TimeSlowerBlock>("Time Scale", "time_scale", (o, value) =>
+            {
+                o.TargetSpeed = value.GetValue();
+            }).WithDefaultValue(0.25f)),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<TimeSlowerBlock>("Change Time", "time_change", (o, value) =>
+            {
+                o.ChangeTime = value.GetValue();
+            }).WithDefaultValue(0.1f)),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<TimeSlowerBlock>("Wait Time", "time_wait", (o, value) =>
+            {
+                o.WaitTime = value.GetValue();
+            }).WithDefaultValue(1)),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<TimeSlowerBlock>("Return Time", "time_return", (o, value) =>
+            {
+                o.ReturnTime = value.GetValue();
+            }).WithDefaultValue(0.75f)),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<TimeSlowerBlock>("Disable Pause", "time_prevent_pausing", (o, value) =>
+            {
+                o.NoPause = value.GetValue();
+            }).WithDefaultValue(true))
+    ];
+    
+    public static readonly List<ConfigType> AnimPlayer =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<AnimatorBlock>("Clip Name", "anim_clip", (o, value) =>
+            {
+                o.ClipName = value.GetValue();
+            })),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<AnimatorBlock>("Time Override", "anim_duration", (o, value) =>
+            {
+                o.OverrideAnimTime = true;
+                o.AnimTime = value.GetValue();
+            })),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<AnimatorBlock>("Take Control", "anim_take_ctrl", (o, value) =>
+            {
+                o.TakeCtrl = value.GetValue();
+            }).WithDefaultValue(true)),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<AnimatorBlock>("Clear Force X", "anim_clear_x_vel", (o, value) =>
+            {
+                o.ClearXVel = value.GetValue();
+            }).WithDefaultValue(false)),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<AnimatorBlock>("Clear Force Y", "anim_clear_y_vel", (o, value) =>
+            {
+                o.ClearYVel = value.GetValue();
+            }).WithDefaultValue(false))
+    ];
+    
+    public static readonly List<ConfigType> Broadcast =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new IdConfigType<BroadcastBlock>("Event ID", "in_name", (o, value) =>
+            {
+                o.EventName = value.GetValue();
+            })),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<BroadcastBlock>("Prefab-Local", "in_local", 
+                    (b, f) => b.Local = f.GetValue())
+                .WithDefaultValue(true).MarkPrefabOnly()
+        )
+    ];
+    
+    public static readonly List<ConfigType> Receive =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new IdConfigType<ReceiveBlock>("Event ID", "out_name", (o, value) =>
+            {
+                o.EventName = value.GetValue();
+            })),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<ReceiveBlock>("Prefab-Local", "out_local", 
+                    (b, f) => b.Local = f.GetValue())
+                .WithDefaultValue(true).MarkPrefabOnly()
+        )
+    ];
+    
+    public static readonly List<ConfigType> MultiplayerOut =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<MultiplayerOutBlock>("Event ID", "multi_out_name", (o, value) =>
+            {
+                o.EventName = value.GetValue();
+            }))
+    ];
+    
+    public static readonly List<ConfigType> MultiplayerIn =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<MultiplayerInBlock>("Event ID", "multi_in_name", (o, value) =>
+            {
+                o.EventName = value.GetValue();
+            }))
+    ];
+    
+    public static readonly List<ConfigType> RandomNumber =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<RandomNumBlock>("Lower Bound", "random_lower", 
+                (b, f) => b.LowerBound = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<RandomNumBlock>("Upper Bound", "random_upper", 
+                (b, f) => b.UpperBound = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<RandomNumBlock>("Whole Num", "random_whole", 
+                (b, f) => b.WholeNumber = f.GetValue())
+                .WithDefaultValue(false)
+        )
+    ];
+    
+    public static readonly List<ConfigType> RandomText =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<RandomTextBlock>("Source", "random_text_source", 
+                (b, f) => b.Pool = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<RandomTextBlock>("Delimiter", "random_text_delimiter", 
+                (b, f) => b.Delimiter = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> HealthHook =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType<HpBlock>("Amount", "health_amount", 
+                (b, f) =>
+                {
+                    b.Amount = f.GetValue();
+                }).WithDefaultValue(1)
+        )
+    ];
+    
+    public static readonly List<ConfigType> InvulHook =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<InvulBlock>("Duration", "invul_amount", 
+                (b, f) =>
+                {
+                    b.Duration = f.GetValue();
+                }).WithDefaultValue(1)
+        )
+    ];
+    
+    public static readonly List<ConfigType> SilkHook =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType<SilkBlock>("Amount", "silk_amount", 
+                (b, f) =>
+                {
+                    b.Amount = f.GetValue();
+                }).WithDefaultValue(1)
+        )
+    ];
+    
+    public static readonly List<ConfigType> CurrencyHook =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType<CurrencyBlock>("Amount", "currency_amount", 
+                (b, f) =>
+                {
+                    b.Amount = f.GetValue();
+                }).WithDefaultValue(1)
+        )
+    ];
+
+    public static readonly List<ConfigType> TextDisplay =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<TextBlock>("Text", "display_text", (o, value) =>
+            {
+                o.Text = value.GetValue();
+            }).WithDefaultValue("Sample Text")),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<TextBlock>("Style", "display_style", (o, value) =>
+            {
+                o.Dream = value.GetValue() == 1;
+            }).WithOptions("Normal", "Dream").WithDefaultValue(0))
+    ];
+    
+    public static readonly List<ConfigType> ThoughtDisplay =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<ThoughtBlock>("Text", "thought_text", 
+                (b, f) =>
+                {
+                    b.Text = f.GetValue();
+                }).WithDefaultValue("Sample Text")
+        )
+    ];
+
+    public static readonly List<ConfigType> TitleDisplay =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<TitleBlock>("Header", "title_header", (o, value) =>
+            {
+                o.Header = value.GetValue();
+            })),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<TitleBlock>("Body", "title_body", (o, value) =>
+            {
+                o.Body = value.GetValue();
+            }).WithDefaultValue("Sample Text")),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<TitleBlock>("Footer", "title_footer", (o, value) =>
+            {
+                o.Footer = value.GetValue();
+            })),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<TitleBlock>("Mode", "title_type", (o, value) =>
+            {
+                o.TitleType = value.GetValue();
+            }).WithOptions("Area", "Left", "Right").WithDefaultValue(0)),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<TitleBlock>("Wait to Cancel", "title_wait_cancel", (o, value) =>
+            {
+                o.WaitForCancel = value.GetValue();
+            }).WithDefaultValue(false))
+    ];
+    
+    public static readonly List<ConfigType> ChoiceDisplay = [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<ChoiceBlock>("Text", "choice_text", (o, value) =>
+            {
+                o.Text = value.GetValue();
+            }).WithDefaultValue("Sample Text")),
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType<ChoiceBlock>("Cost Amount", "choice_cost", (o, value) =>
+            {
+                o.Cost = value.GetValue();
+            }).WithDefaultValue(0))
+    ];
+    
+    public static readonly List<ConfigType> PdBool =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<PlayerDataBoolBlock>("Data ID", "pd_bool_type", 
+                (b, f) => b.Data = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<PlayerDataBoolBlock>("Value", "pd_bool", 
+                (b, f) => b.Value = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> PdInt =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<PlayerDataIntBlock>("Data ID", "pd_int_type", 
+                (b, f) => b.Data = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType<PlayerDataIntBlock>("Value", "pd_int", 
+                (b, f) => b.Value = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> PdFloat =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<PlayerDataFloatBlock>("Data ID", "pd_float_type", 
+                (b, f) => b.Data = f.GetValue())
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<PlayerDataFloatBlock>("Value", "pd_float", 
+                (b, f) => b.Value = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> Delay =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<DelayBlock>("Delay", "delay_num", 
+                (b, f) => b.Delay = f.GetValue())
+        )
+    ];
+    
+    public static readonly List<ConfigType> Loop =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<LoopBlock>("Delay", "loop_delay_num", 
+                (b, f) => b.Delay = f.GetValue()).WithDefaultValue(0)
+        )
+    ];
+    
+    public static readonly List<ConfigType> Compare =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<CompareBlock>("Mode", "compare_mode", 
+                (b, f) => b.Mode = f.GetValue())
+                .WithOptions("=", ">", "<", ">=", "<=").WithDefaultValue(0)
+        )
+    ];
+    
+    public static readonly List<ConfigType> StringCompare =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<StringCompareBlock>("Mode", "string_compare_mode", 
+                (b, f) => b.Mode = f.GetValue())
+                .WithOptions("Equals", "Contains", "Starts", "Ends", "Longer").WithDefaultValue(0)
+        )
+    ];
+    
+    public static readonly List<ConfigType> Maths =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<MathsBlock>("Mode", "maths_mode", 
+                (b, f) => b.Mode = f.GetValue())
+                .WithOptions("+", "–", "*", "/", "//", "%", "^", "Nth Root", "Min", "Max").WithDefaultValue(0)
+        )
+    ];
+    
+    public static readonly List<ConfigType> Trig =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<TrigBlock>("Function", "trig_func", 
+                (b, f) => b.Mode = f.GetValue())
+                .WithOptions("Sin", "Cos", "Tan", "Arcsin", "Arccos", "Arctan").WithDefaultValue(0)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<TrigBlock>("Mode", "trig_mode", 
+                (b, f) => b.IsDegrees = f.GetValue() == 0)
+                .WithOptions("Degrees", "Radians").WithDefaultValue(0)
+        )
+    ];
+    
+    public static readonly List<ConfigType> Normalise =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<NormaliseBlock>("Angle", "normalise_angle", 
+                (b, f) => b.Angle = f.GetValue())
+                .WithDefaultValue(0)
+        )
+    ];
+    
+    public static readonly List<ConfigType> KeyListener =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<KeyBlock>("Key", "key_listener_key", 
+                (o, value) =>
+                {
+                    var val = value.GetValue();
+                    if (Enum.TryParse<KeyCode>(val, true, out var key))
+                    {
+                        o.Key = key;
+                    } else if (InputHandler.Instance.inputActions.actionsByName.TryGetValue(val, out var a))
+                    {
+                        o.PlayerAction = a;
+                    }
+                })
+        )
+    ];
+    
+    public static readonly List<ConfigType> Timer =  [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<TimerBlock>("Start Delay", "timer_start_delay", (o, value) =>
+            {
+                o.StartDelay = value.GetValue();
+            }).WithDefaultValue(1)),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<TimerBlock>("Repeat Delay", "timer_repeat_delay", (o, value) =>
+            {
+                o.RepeatDelay = value.GetValue();
+            }).WithDefaultValue(1)),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<TimerBlock>("Random Delay", "timer_rand_delay", (o, value) =>
+            {
+                o.RandDelay = value.GetValue();
+            }).WithDefaultValue(0)),
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType<TimerBlock>("Max Calls", "timer_limit", (o, value) =>
+            {
+                o.MaxCalls = value.GetValue();
+            })),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<TimerBlock>("Run If Paused", "timer_run_when_paused", (o, value) =>
+            {
+                o.RunWhenPaused = value.GetValue();
+            }).WithDefaultValue(false))
+    ];
+    
+    public static readonly List<ConfigType> EveryFrame =  [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<EveryFrameBlock>("Run If Paused", "ef_run_when_paused", (o, value) =>
+            {
+                o.RunWhenPaused = value.GetValue();
+            }).WithDefaultValue(false))
+    ];
+    
+    public static readonly List<ConfigType> CustomNeedle =  [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<CustomNeedleBlock>("Needle ID", "custom_needle_id", (o, value) =>
+            {
+                o.Value = value.GetValue();
+            }))
+    ];
+    
+    public static readonly List<ConfigType> Functions =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new RandStringConfigType<FunctionDefinitionBlock>("Name", "function_name", 
+                (b, f) => b.FunctionName = f.GetValue())
+        )
+    ];
+}

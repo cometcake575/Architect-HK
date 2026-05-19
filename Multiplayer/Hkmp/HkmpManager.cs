@@ -1,0 +1,154 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Architect.Multiplayer.Hkmp.Data;
+using Architect.Placements;
+using Architect.Storage;
+using Hkmp.Api.Client;
+using Hkmp.Api.Server;
+using Hkmp.Networking.Packet;
+using Newtonsoft.Json;
+using UnityEngine;
+
+namespace Architect.Multiplayer.Hkmp;
+
+public class HkmpManager : CoopManager
+{
+    private const int SPLIT_SIZE = 600;
+    
+    private readonly ArchitectClientAddon _clientAddon;
+
+    public override string Name => "SSMP";
+    
+    public HkmpManager()
+    {
+        _clientAddon = new ArchitectClientAddon();
+        ClientAddon.RegisterAddon(_clientAddon);
+        ServerAddon.RegisterAddon(new ArchitectServerAddon());
+    }
+
+    private void SendPacket(PacketId id, IPacketData data)
+    {
+        _clientAddon.API.NetClient.GetNetworkSender<PacketId>(_clientAddon).SendSingleData(id, data);
+    }
+    
+    public override bool IsActive()
+    {
+        return _clientAddon.API.NetClient.IsConnected;
+    }
+
+    public override void ResetRoom(string room)
+    {
+        ArchitectPlugin.Instance.Log("Sending Reset Packet");
+        SendPacket(PacketId.Clear, new ClearPacketData { SceneName = room });
+    }
+
+    public override void MoveObjects(string room, List<(string, Vector3)> movements)
+    {
+        ArchitectPlugin.Instance.Log("Sending Move Packet");
+        SendPacket(PacketId.Move, new MovePacketData
+        {
+            SceneName = room,
+            Movements = movements
+        });
+    }
+
+    public override void EraseObjects(string room, List<string> ids)
+    {
+        ArchitectPlugin.Instance.Log("Sending Erase Packet");
+        SendPacket(PacketId.Erase, new ErasePacketData
+        {
+            SceneName = room,
+            Removals = ids
+        });
+    }
+
+    public override void ToggleTiles(string room, List<(int, int)> tiles, bool empty)
+    {
+        ArchitectPlugin.Instance.Log("Sending Tiles Packet");
+        SendPacket(PacketId.Tiles, new TilePacketData
+        {
+            SceneName = room,
+            Tiles = tiles,
+            Empty = empty
+        });
+    }
+
+    public override void ToggleLock(string room, string id)
+    {
+        ArchitectPlugin.Instance.Log("Sending Lock Packet");
+        SendPacket(PacketId.Lock, new LockPacketData
+        {
+            SceneName = room,
+            Toggle = id
+        });
+    }
+
+    public override void PlaceObjects(string room, List<ObjectPlacement> placements)
+    {
+        ArchitectPlugin.Instance.Log("Sending Place Packet");
+        
+        var json = StorageManager.SerializePlacements(placements);
+        var bytes = Split(ZipUtils.Zip(json), SPLIT_SIZE);
+
+        Task.Run(() => SendSplitPlaceData(bytes, room, false, false));
+    }
+
+    public override void ShareScene(string room, bool scriptOnly, LevelData data)
+    {
+        ArchitectPlugin.Instance.Log("Sending Scene Packet");
+        
+        var json = StorageManager.SerializeLevel(data, Formatting.None);
+        var bytes = Split(ZipUtils.Zip(json), SPLIT_SIZE);
+        
+        Task.Run(() => SendSplitPlaceData(bytes, room, true, scriptOnly));
+    }
+
+    private async Task SendSplitPlaceData(byte[][] bytes, string room, bool isFullScene, bool scriptOnly)
+    {
+        var guid = Guid.NewGuid().ToString();
+
+        var i = 0;
+        var length = bytes.Length;
+        foreach (var byteGroup in bytes)
+        {
+            SendPacket(PacketId.Place, new PlacePacketData
+            {
+                SceneName = room,
+                SerializedObjects = byteGroup,
+                Index = i,
+                Length = length,
+                Guid = guid,
+                IsFullScene = isFullScene,
+                IsScriptOnly = scriptOnly
+            });
+            i++;
+            await Task.Delay(100);
+        }
+    }
+
+    public override void RefreshRoom()
+    {
+    }
+
+    public static byte[][] Split(byte[] array, int size)
+    {
+        var count = Mathf.CeilToInt((float)array.Length / size);
+        var bytes = new byte[count][];
+
+        for (var i = 0; i < count; i++) bytes[i] = array.Skip(i * size).Take(size).ToArray();
+
+        return bytes;
+    }
+
+    public override void ShareEvent(string room, string name)
+    {
+        ArchitectPlugin.Instance.Log("Sending Event Packet");
+        SendPacket(PacketId.Event, new EventPacketData
+        {
+            SceneName = room,
+            Event = name
+        });
+    }
+}
