@@ -15,6 +15,8 @@ public static class InteractableFixers
     {
         var fsm = obj.LocateMyFSM("Call Lever");
 
+        fsm.FsmVariables.FindFsmGameObject("Lift").value = null;
+
         fsm.GetState("Check Already Called").AddAction(() =>
         {
             obj.BroadcastEvent("OnActivate");

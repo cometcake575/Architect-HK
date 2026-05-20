@@ -728,14 +728,6 @@ public static class ConfigGroup
             }).WithDefaultValue(false))
     ];
     
-    public static readonly List<ConfigType> CustomNeedle =  [
-        ConfigurationManager.RegisterConfigType(
-            new StringConfigType<CustomNeedleBlock>("Needle ID", "custom_needle_id", (o, value) =>
-            {
-                o.Value = value.GetValue();
-            }))
-    ];
-    
     public static readonly List<ConfigType> Functions =
     [
         ConfigurationManager.RegisterConfigType(

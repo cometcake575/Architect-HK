@@ -63,6 +63,5 @@ public static class OperatorBlocks
         Category.Data.RegisterBlock<PlayerDataBoolBlock>("PlayerData (Bool)", ConfigGroup.PdBool);
         Category.Data.RegisterBlock<PlayerDataIntBlock>("PlayerData (Int)", ConfigGroup.PdInt);
         Category.Data.RegisterBlock<PlayerDataFloatBlock>("PlayerData (Float)", ConfigGroup.PdFloat);
-        Category.World.RegisterBlock<CustomNeedleBlock>("Custom Needle", ConfigGroup.CustomNeedle);
     }
 }

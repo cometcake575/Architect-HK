@@ -322,6 +322,8 @@ public static class MiscFixers
             obj.BroadcastEvent("OnPull");
             obj.BroadcastEvent("LoadedPulled");
         });
+        (fsm.FsmVariables.FindFsmGameObject("Target") ?? fsm.FsmVariables.FindFsmGameObject("Target 1"))
+            .value = null;
         fsm.FsmVariables.FindFsmString("Player Data").value = "";
     }
 

@@ -1,5 +1,6 @@
 using System;
 using HutongGames.PlayMaker;
+using Satchel;
 
 namespace Architect.Utils;
 
@@ -33,13 +34,10 @@ public static class FsmUtils
         state.Actions[index].Enabled = false;
     }
 
-    public static void AddAction(this FsmState state, Action action, int index = -1, bool everyFrame = false)
+    public static void AddAction(this FsmState state, Action action, int index = -1)
     {
-        var customAction = new CustomFsmAction(action)
-        {
-            EveryFrame = everyFrame
-        };
-        AddAction(state, customAction, index);
+        if (index == -1) state.AddCustomAction(action);
+        else state.InsertCustomAction(action, index);
     }
     
     public static void AddAction(this FsmState state, FsmStateAction customAction, int index = -1)
@@ -65,30 +63,5 @@ public static class FsmUtils
         }
         state.Actions = fsmStateActionArray;
         customAction.Init(state);
-    }
-    
-    public class CustomFsmAction(Action method) : FsmStateAction
-    {
-        public bool EveryFrame;
-        
-        private Action _method = method;
-
-        public override void Reset()
-        {
-            _method = null;
-            base.Reset();
-        }
-
-        public override void OnEnter()
-        {
-            _method();
-            if (!EveryFrame) Finish();
-        }
-
-        public override void OnUpdate()
-        {
-            if (!EveryFrame) return;
-            _method();
-        }
     }
 }

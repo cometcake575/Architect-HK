@@ -17,16 +17,12 @@ public class ArchitectData
     public HashSet<string> GotCharms = [];
     public HashSet<string> NewCharms = [];
     public HashSet<string> EquippedCharms = [];
-
-    public string CustomNeedle = string.Empty;
 }
 
 public class GlobalArchitectData
 {
     public static GlobalArchitectData Instance => ArchitectPlugin.Instance.GlobalData;
     
-    public Dictionary<string, KeyCode> Keybinds = [];
-
     public string CurrentMap = "";
     public string CurrentMapId = "";
 

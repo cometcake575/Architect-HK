@@ -4,7 +4,7 @@ using Architect.Content.Preloads;
 using Architect.Placements;
 using Architect.Sharer.States;
 using Architect.Storage;
-using Architect.Utils;
+using Architect.Workshop;
 using GlobalEnums;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,9 +16,9 @@ namespace Architect.Sharer;
 
 public static class SharerManager
 {
-    // Appears when on Silksong main menu or sharer main menu
+    // Appears when on HK main menu or sharer main menu
     public static GameObject OpenSharerBtn;
-    // Appears on Silksong main menu
+    // Appears on HK main menu
     public static GameObject EraseEditsBtn;
     // Appears when returnState is not null in the current MenuState
     public static Button ReturnBtn;
@@ -203,6 +203,7 @@ public static class SharerManager
             eraseImg.sprite = eraseAll;
             StorageManager.WipeLevelData();
             PlacementManager.InvalidateScene();
+            WorkshopManager.LoadWorkshop(new WorkshopData());
         }
     }
 

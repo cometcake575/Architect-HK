@@ -24,7 +24,6 @@ using ItemChanger;
 using Newtonsoft.Json;
 using Satchel;
 using Satchel.BetterMenus;
-using SFCore;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using SceneUtils = Architect.Utils.SceneUtils;

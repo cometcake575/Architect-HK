@@ -148,7 +148,7 @@ public static class RequestManager
         // Add user key
         form.AddField("key", SharerKey);
 
-        // Indicates this is the Silksong level sharer
+        // Indicates this is the HK level sharer
         form.AddField("game", LEVEL_TYPE);
         
         // Overwriting existing level

@@ -50,7 +50,8 @@ public static class VanillaObjects
         Categories.Interactable.Add(new PreloadObject("Lever", "basic_lever", 
                 ("Room_Town_Stag_Station", "Gate Switch"),
                 postSpawnAction: MiscFixers.FixLever))
-            .WithConfigGroup(ConfigGroup.Levers);
+            .WithConfigGroup(ConfigGroup.Levers)
+            .WithBroadcasterGroup(BroadcasterGroup.Levers).DoFlipX();
 
         Categories.Misc.Add(new PreloadObject("Grub Bottle", "grub_bottle",
             ("Crossroads_31", "Grub Bottle"),
