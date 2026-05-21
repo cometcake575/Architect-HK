@@ -21,7 +21,6 @@ namespace Architect.Events.Blocks;
 public abstract class ScriptBlock
 {
     public static readonly Sprite AddSprite = ResourceUtils.LoadSpriteResource("add", FilterMode.Point);
-    protected static readonly ScriptBlockConverter Sbc = new();
     
     public static readonly (string, string) Space = ("", "");
 
@@ -113,9 +112,9 @@ public abstract class ScriptBlock
         if (!trimStart && ext.ContainsKey("object")) ext["object"] += idAddition;
         if (ext.ContainsKey("children"))
         {
-            var blocks = JsonConvert.DeserializeObject<List<ScriptBlock>>(ext["children"], Sbc);
+            var blocks = JsonConvert.DeserializeObject<List<ScriptBlock>>(ext["children"], Converters.All);
             for (var b = 0; b < blocks.Count; b++) blocks[b] = blocks[b].Clone(idAddition, trimStart);
-            ext["children"] = JsonConvert.SerializeObject(blocks);
+            ext["children"] = JsonConvert.SerializeObject(blocks, Converters.All);
         }
         clone.DeserializeExtraData(ext);
         

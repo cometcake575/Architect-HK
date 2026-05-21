@@ -24,7 +24,7 @@ public abstract class CollectionBlock<T> : LinkedBlock
     protected override Dictionary<string, string> SerializeExtraData()
     {
         Dictionary<string, string> d = [];
-        d["children"] = JsonConvert.SerializeObject(Children.Blocks);
+        d["children"] = JsonConvert.SerializeObject(Children.Blocks, Converters.All);
         return d;
     }
 
@@ -32,7 +32,7 @@ public abstract class CollectionBlock<T> : LinkedBlock
     {
         Children = new ChildrenGroup
         {
-            Blocks = JsonConvert.DeserializeObject<List<ChildBlock>>(data["children"], Sbc)
+            Blocks = JsonConvert.DeserializeObject<List<ChildBlock>>(data["children"], Converters.All)
         };
     }
 
