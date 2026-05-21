@@ -122,27 +122,6 @@ public static class ReceiverGroup
         }, true))
     ];
     
-    public static readonly List<EventReceiverType> Wisp = GroupUtils.Merge(Generic, [
-        EventManager.RegisterReceiverType(new EventReceiverType("wisp_go", "Fire", o =>
-        {
-            o.LocateMyFSM("Control").SetState("Fire Antic");
-        }))
-    ]);
-    
-    public static readonly List<EventReceiverType> FallingRock = GroupUtils.Merge(Generic, [
-        EventManager.RegisterReceiverType(new EventReceiverType("falling_rock_fall", "Fall", o =>
-        {
-            o.LocateMyFSM("Control").SendEvent("STRIKE");
-        }))
-    ]);
-    
-    public static readonly List<EventReceiverType> Silkfly = GroupUtils.Merge(Generic, [
-        EventManager.RegisterReceiverType(new EventReceiverType("silkfly_fly", "Fly", o =>
-        {
-            o.LocateMyFSM("Control").SendEvent("NEEDOLIN");
-        }))
-    ]);
-    
     public static readonly List<EventReceiverType> AbilityCrystal = GroupUtils.Merge(Generic, [
         EventManager.RegisterReceiverType(new EventReceiverType("crystal_clear", "ClearAll", _ =>
         {

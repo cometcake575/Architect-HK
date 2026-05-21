@@ -128,14 +128,19 @@ public static class EditManager
 
     public static ObjectPlacement HoveredObject;
 
+    public static bool ShouldShowCursor()
+    {
+        return GameManager.instance.isPaused ||
+            (IsEditing && CurrentObject is not PlaceableObject);
+    }
+
     public static void Init()
     {
         typeof(GameManager).Hook("EnterHero", OnSceneLoad);
         
         ModHooks.CursorHook += () =>
         {
-            Cursor.visible = GameManager.instance.isPaused ||
-                             (IsEditing && CurrentObject is not PlaceableObject);
+            Cursor.visible = ShouldShowCursor();
         };
         
         typeof(QuitToMenu).Hook("Start", (Func<QuitToMenu, IEnumerator> orig, QuitToMenu self) =>
@@ -211,7 +216,7 @@ public static class EditManager
         // Update UI
         var paused = GameManager.instance.isPaused;
         var actions = InputHandler.Instance.inputActions;
-
+        
         if (!paused && (!HeroController.instance.controlReqlinquished || IgnoreControlRelinquished) &&
             !LoadPos && !HeroController.instance.cState.dead &&
             HeroController.instance.transitionState == HeroTransitionState.WAITING_TO_TRANSITION
@@ -529,6 +534,9 @@ public static class EditManager
     }
     #endregion
     
+    private static PlayMakerFSM SurfaceWaterFsm => 
+        field ? field : field = HeroController.instance.gameObject.LocateMyFSM("Surface Water");
+    
     private static void DoNoclip(HeroActions actions, bool paused)
     {
         var up = actions.up.IsPressed;
@@ -542,7 +550,9 @@ public static class EditManager
             if (!paused && up != down) NoclipPos += (up ? Vector3.up : Vector3.down) * (Time.deltaTime * speed);
             if (!paused && left != right) NoclipPos += (left ? Vector3.left : Vector3.right) * (Time.deltaTime * speed);
         }
-
+        
+        if (SurfaceWaterFsm.ActiveStateName == "Idle") SurfaceWaterFsm.SetState("Regain Control");
+        
         if (HeroController.instance.transitionState == HeroTransitionState.WAITING_TO_TRANSITION)
             HeroController.instance.transform.position = NoclipPos;
         else NoclipPos = HeroController.instance.transform.position;

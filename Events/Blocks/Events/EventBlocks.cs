@@ -1,4 +1,3 @@
-using Architect.Behaviour.Utility;
 using Architect.Events.Blocks.Config;
 using Architect.Events.Blocks.Outputs;
 
@@ -17,6 +16,7 @@ public static class EventBlocks
         Category.Events.RegisterBlock<MultiplayerOutBlock>("Multiplayer Receive", ConfigGroup.MultiplayerOut);
         Category.Events.RegisterBlock<MultiplayerInBlock>("Multiplayer Event", ConfigGroup.MultiplayerIn);
         
+        PlayerBlock.Init();
         Category.World.RegisterBlock<StateBlock>("Player State");
         Category.World.RegisterBlock<ActionBlock>("Player Movement");
         Category.World.RegisterBlock<AttackBlock>("Player Attacks");

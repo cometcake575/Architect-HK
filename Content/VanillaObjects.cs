@@ -468,7 +468,7 @@ public static class VanillaObjects
         Categories.Platforming.Add(new PreloadObject("Flipping Platform", "flipping_platform", 
             ("Mines_31", "Mines Platform")));
         
-        Categories.Misc.Add(new PreloadObject("Crystal", "crystal_peak_crystals",
+        Categories.Misc.Add(new PreloadObject("Breakable Crystal", "crystal_peak_crystals",
                 ("Mines_20", "brk_Crystal3"), 
                 preloadAction: MiscFixers.FixRotation)
             .WithBroadcasterGroup(BroadcasterGroup.Breakable)

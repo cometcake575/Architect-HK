@@ -19,7 +19,7 @@ public class HkmpManager : CoopManager
     
     private readonly ArchitectClientAddon _clientAddon;
 
-    public override string Name => "SSMP";
+    public override string Name => "HKMP";
     
     public HkmpManager()
     {
@@ -130,6 +130,7 @@ public class HkmpManager : CoopManager
 
     public override void RefreshRoom()
     {
+        _clientAddon.RefreshRoom();
     }
 
     public static byte[][] Split(byte[] array, int size)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,8 @@ using Architect.Objects.Placeable;
 using Architect.Placements;
 using Architect.Storage;
 using Hkmp.Api.Client;
-using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
+using Vector2 = Hkmp.Math.Vector2;
 
 namespace Architect.Multiplayer.Hkmp;
 
@@ -20,6 +22,11 @@ public class ArchitectClientAddon : ClientAddon
     protected override string Name => "Architect";
     protected override string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString();
     public override bool NeedsNetwork => true;
+    
+    private PropertyInfo _updateManagerProperty;
+    private object _updateManager;
+    private MethodInfo _setEnterSceneData;
+    private MethodInfo _getCurrentAnimationClip;
     
     public override void Initialize(IClientApi clientApi)
     {
@@ -35,6 +42,15 @@ public class ArchitectClientAddon : ClientAddon
         netReceiver.RegisterPacketHandler<EventPacketData>(PacketId.Event, HandleEvent);
         netReceiver.RegisterPacketHandler<MovePacketData>(PacketId.Move, HandleMove);
         netReceiver.RegisterPacketHandler<TilePacketData>(PacketId.Tiles, HandleTiles);
+        
+        _updateManagerProperty = API.NetClient.GetType().GetProperty("UpdateManager");
+        _setEnterSceneData = _updateManagerProperty!.PropertyType.GetMethod("SetEnterSceneData");
+        
+        var animationManagerField = API.ClientManager.GetType().GetField("_animationManager", 
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        var animationManager = animationManagerField!.GetValue(API.ClientManager);
+        _getCurrentAnimationClip = animationManager.GetType().GetMethod("GetCurrentAnimationClip",
+            BindingFlags.Public | BindingFlags.Static);
     }
 
     private static void HandleClear(ClearPacketData packet)
@@ -162,5 +178,21 @@ public class ArchitectClientAddon : ClientAddon
         ArchitectPlugin.Instance.Log("Receiving Event Packet");
         if (packet.SceneName != GameManager.instance.sceneName) return;
         EventManager.BroadcastMp(packet.Event);
+    }
+
+    public void RefreshRoom()
+    {
+        ArchitectPlugin.Instance.Log("Refreshing Room");
+        var ht = HeroController.instance.transform;
+        
+        var id = _getCurrentAnimationClip.Invoke(null, []);
+        _updateManager ??= _updateManagerProperty!.GetGetMethod().Invoke(API.NetClient, null);
+        _setEnterSceneData
+            .Invoke(_updateManager, [
+                GameManager.instance.sceneName, 
+                new Vector2(ht.position.x, ht.position.y),
+                ht.GetScaleX() > 0,
+                Convert.ToUInt16(id)
+            ]);
     }
 }
