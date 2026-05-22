@@ -686,4 +686,14 @@ public static class EnemyFixers
         cg.DisableAction(3);
         cg.DisableAction(0);
     }
+
+    public static void FixHatchling(GameObject obj)
+    {
+        var fsm = obj.LocateMyFSM("Control");
+        fsm.GetState("Inert").AddAction(() => fsm.SendEvent("SPAWN"));
+        var death = fsm.GetState("Death");
+        for (var i = 1; i <= 5; i++) death.DisableAction(i);
+
+        obj.GetComponent<HealthManager>().OnDeath += () => obj.SetActive(false);
+    }
 }

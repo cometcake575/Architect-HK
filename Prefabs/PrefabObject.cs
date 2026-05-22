@@ -11,7 +11,6 @@ using Architect.Events.Blocks.Outputs;
 using Architect.Objects.Placeable;
 using Architect.Placements;
 using Architect.Storage;
-using Architect.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -89,7 +88,8 @@ public class PrefabObject : PlaceableObject
             
             foreach (var placement in o.Placements)
             {
-                var rePlacement = JsonConvert.DeserializeObject<ObjectPlacement>(JsonConvert.SerializeObject(placement), 
+                var rePlacement = JsonConvert.DeserializeObject<ObjectPlacement>(JsonConvert.SerializeObject(placement,
+                        Converters.All), 
                     Converters.All);
                 rePlacement.ID += id;
                 

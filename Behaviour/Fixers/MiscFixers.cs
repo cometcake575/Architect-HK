@@ -87,6 +87,34 @@ public static class MiscFixers
                 }
             }
         };
+        
+        On.GameManager.FindEntryPoint += (orig, self, name, scene) =>
+        {
+            var point = orig(self, name, scene);
+            if (!point.HasValue)
+            {
+                var hrm = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects()
+                    .SelectMany(obj => obj.GetComponentsInChildren<HazardRespawnMarker>(true))
+                    .First();
+                return hrm.transform.position;
+            }
+
+            return point;
+        };
+
+        On.HeroController.LocateSpawnPoint += (orig, self) =>
+        {
+            var point = orig(self);
+            if (!point)
+            {
+                var hrm = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects()
+                    .SelectMany(obj => obj.GetComponentsInChildren<HazardRespawnMarker>(true))
+                    .First();
+                return hrm.transform;
+            }
+
+            return point;
+        };
     }
 
     private static string SubstituteVars(string txt)

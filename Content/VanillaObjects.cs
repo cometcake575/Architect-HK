@@ -145,6 +145,10 @@ public static class VanillaObjects
             postSpawnAction: EnemyFixers.FixAspidMother)
             .WithScaleAction(EnemyFixers.ScaleHatcher);
 
+        AddEnemy("Aspid Hatchling", "aspid_hatchling",
+            ("Crossroads_19", "Hatcher Cage (1)/Hatcher Baby Spawner"),
+            postSpawnAction: EnemyFixers.FixHatchling);
+
         Categories.Interactable.Add(new PreloadObject("Bone Gate", "bone_gate",
             ("Crossroads_ShamanTemple", "Bone Gate"),
             postSpawnAction: o => o.LocateMyFSM("Bone Gate").GetState("Idle").DisableAction(2))
