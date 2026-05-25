@@ -59,7 +59,8 @@ public static class CustomAssetManager
         var path = GetPath($"{url}.mov");
         if (!File.Exists(path))
         {
-            yield return SaveFile(url, path);
+            var save = SaveFile(url, path);
+            while (!save.IsCompleted) yield return null;
         }
 
         if (player)
@@ -92,11 +93,14 @@ public static class CustomAssetManager
         {
             LoadingSprites.Add(id);
             var path = GetPath($"{url}.png");
-            var tmp = ResourceUtils.LoadSprites(path, point, ppu, hcount, vcount);
+            var tmp = ResourceUtils.LoadSprites(path, point, ppu, hcount, vcount)!;
+            yield return tmp;
             if (tmp == null)
             {
-                yield return SaveFile(url, path);
-                tmp = ResourceUtils.LoadSprites(path, point, ppu, hcount, vcount);
+                var save = SaveFile(url, path);
+                while (!save.IsCompleted) yield return null;
+                tmp = ResourceUtils.LoadSprites(path, point, ppu, hcount, vcount)!;
+                yield return tmp;
             }
 
             LoadingSprites.Remove(id);
@@ -127,7 +131,8 @@ public static class CustomAssetManager
             var path = GetPath($"{url}.wav");
             if (!File.Exists(path))
             {
-                yield return SaveFile(url, path);
+                var save = SaveFile(url, path);
+                while (!save.IsCompleted) yield return null;
             }
             yield return ResourceUtils.LoadClip(path, clip =>
             {

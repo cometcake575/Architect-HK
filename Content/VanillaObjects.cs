@@ -310,7 +310,8 @@ public static class VanillaObjects
             .WithReceiverGroup(ReceiverGroup.MantisGate));
 
         Categories.Platforming.Add(new PreloadObject("Bounce Shroom", "bounce_shroom",
-            ("Fungus2_18", "_Props/Bounce Shrooms 1/Bounce Shroom B (1)"))
+            ("Fungus2_18", "_Props/Bounce Shrooms 1/Bounce Shroom B (1)"),
+            preloadAction: o => o.transform.SetPositionZ(-0.01f))
             .WithConfigGroup(ConfigGroup.BounceShroom));
     }
 
@@ -526,6 +527,16 @@ public static class VanillaObjects
             ("Fungus3_34", "Royal Gardens Plat S")));
         Categories.Platforming.Add(new PreloadObject("Collapsing Platform L", "collapsing_plat_l",
             ("Fungus3_34", "Royal Gardens Plat L")));
+
+        Categories.Interactable.Add(new PreloadObject("Queen's Gardens Door", "qg_door",
+            ("Fungus3_04", "Garden Slide Floor"),
+            preloadAction: ObjectUtils.RemoveComponent<PersistentBoolItem>,
+            postSpawnAction: o => o.LocateMyFSM("Control").GetState("Tween In").DisableAction(1))
+            .WithReceiverGroup(ReceiverGroup.Gate));
+
+        Categories.Misc.Add(new PreloadObject("Cloth (Ally)", "cloth_ally", 
+            ("Fungus3_23_boss", "Battle Scene/Cloth Entry/Cloth Fighter"),
+            postSpawnAction: MiscFixers.FixCloth));
     }
     
     private static void AddEdgeObjects()
@@ -754,13 +765,22 @@ public static class VanillaObjects
             sprite: ResourceUtils.LoadSpriteResource("shade_gate", new Vector2(0.66f, 0.227f), ppu: 64))
             .WithRotationGroup(RotationGroup.Eight));
 
+        Categories.Enemies.Add(new PreloadObject("Shade", "shade",
+            ("Menu_Title", "_SceneManager"),
+            extraction: o => o.GetComponent<SceneManager>().hollowShadeObject,
+            preloadAction: MiscFixers.AddComponent<EnemyFixers.Shade>)
+            .WithConfigGroup(ConfigGroup.Shade)
+            .WithReceiverGroup(ReceiverGroup.Enemies)
+            .WithBroadcasterGroup(BroadcasterGroup.Shades)
+            .WithOutputGroup(OutputGroup.Enemies));
+
         Categories.Enemies.Add(new PreloadObject("Shade Sibling", "shade_sibling",
             ("Abyss_06_Core", "Shade Sibling Spawner"), 
             extraction: o => o.GetComponent<PersonalObjectPool>().startupPool[0].prefab,
             postSpawnAction: o => o.transform.SetPositionY(o.transform.GetPositionY() - 6.5f))
             .WithConfigGroup(ConfigGroup.ShadeSibling)
             .WithReceiverGroup(ReceiverGroup.Enemies)
-            .WithBroadcasterGroup(BroadcasterGroup.ShadeSibling)
+            .WithBroadcasterGroup(BroadcasterGroup.Shades)
             .WithOutputGroup(OutputGroup.Enemies));
         
         Categories.Hazards.Add(new PreloadObject("Void Tendrils", "void_tendrils",

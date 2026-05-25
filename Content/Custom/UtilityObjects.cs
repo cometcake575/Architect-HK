@@ -48,7 +48,7 @@ public static class UtilityObjects
                 FindObjectsToDisable<HealthManager>, "Removes the nearest enemy.\n\n" +
                                                      "This should be placed at the enemy's spawn point, not its\n" +
                                                      "current position, or it will not work when exiting edit mode.")
-            .WithConfigGroup(ConfigGroup.Disabler)
+            .WithConfigGroup(ConfigGroup.DisableEnemy)
             .WithReceiverGroup(ReceiverGroup.Generic));
         
         Categories.Utility.Add(CreateTeleportPoint());
@@ -776,6 +776,7 @@ public static class UtilityObjects
         var or = disabler.GetComponent<ObjectRemover>();
         if (or)
         {
+            if (!or.shade) objects = objects.Where(o => o.name != "Hollow Shade(Clone)");
             if (or.all) return objects.Select(o => o.GetOrAddComponent<Disabler>()).ToArray();
             if (or.allInRange) return objects
                 .Where(o => (o.transform.position - disabler.transform.position)

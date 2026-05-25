@@ -512,13 +512,13 @@ public static class RequestManager
 
         var result = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
         
-        var prefabs = JsonConvert.DeserializeObject<Dictionary<string, LevelData>>(result["level"])
+        var prefabs = JsonConvert.DeserializeObject<Dictionary<string, LevelData>>(result["level"], Converters.All)
             .Where(o => o.Key.StartsWith("Prefab_"));
         PrefabsCategory.Prefabs = prefabs.Select(o => 
             new PrefabObject(o.Key.Replace("Prefab_", ""))).ToList();
         
-        var data = JsonConvert.DeserializeObject<Dictionary<string, LevelData>>(result["level"]);
-        var wData = JsonConvert.DeserializeObject<WorkshopData>(result["workshop"]);
+        var data = JsonConvert.DeserializeObject<Dictionary<string, LevelData>>(result["level"], Converters.All);
+        var wData = JsonConvert.DeserializeObject<WorkshopData>(result["workshop"], Converters.All);
         
         GlobalArchitectData.Instance.CurrentMap = levelName;
         GlobalArchitectData.Instance.CurrentMapId = levelId;

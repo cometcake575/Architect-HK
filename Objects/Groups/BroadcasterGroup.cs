@@ -8,7 +8,7 @@ public static class BroadcasterGroup
     
     public static readonly List<string> Damageable = ["OnDamage"];
     
-    public static readonly List<string> ShadeSibling = ["OnDeath", "OnDamage"];
+    public static readonly List<string> Shades = ["OnDeath", "OnDamage"];
     
     public static readonly List<string> Enemies = ["OnDeath", "FirstDeath", "LoadedDead", "OnDamage"];
     

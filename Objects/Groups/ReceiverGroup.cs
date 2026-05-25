@@ -163,6 +163,13 @@ public static class ReceiverGroup
         }))
     ]);
     
+    public static readonly List<EventReceiverType> Gate = GroupUtils.Merge(Generic, [
+        EventManager.RegisterReceiverType(new EventReceiverType("generic_gate_open", "Open", o =>
+        {
+            o.LocateMyFSM("Control").SendEvent("OPEN");
+        }))
+    ]);
+    
     public static readonly List<EventReceiverType> MantisGate = GroupUtils.Merge(Generic, [
         EventManager.RegisterReceiverType(new EventReceiverType("mantis_gate_open", "Open", o =>
         {

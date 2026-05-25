@@ -658,4 +658,27 @@ public static class MiscFixers
             belt.vertical = true;
         }
     }
+    
+    private static readonly int EnemyLayer = LayerMask.NameToLayer("Enemies");
+
+    public static void FixCloth(GameObject obj)
+    {
+        var fsm = obj.LocateMyFSM("Control");
+        
+        fsm.GetState("Wait").AddAction(() => fsm.SendEvent("CLOTH ENTER"));
+
+        var gt = fsm.GetState("Get Target");
+        gt.DisableAction(0);
+        var target = fsm.FsmVariables.FindFsmGameObject("Target");
+        gt.AddAction(() =>
+        {
+            var enemy = Object
+                .FindObjectsOfType<Collider2D>()
+                .Where(h => h.gameObject != obj && h.gameObject.layer == EnemyLayer)
+                .OrderBy(h => (h.transform.position - obj.transform.position).sqrMagnitude)
+                .FirstOrDefault();
+            if (enemy && (enemy.transform.position - obj.transform.position).sqrMagnitude < 512) 
+                target.value = enemy.gameObject;
+        }, 0);
+    }
 }

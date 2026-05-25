@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Architect.Storage;
@@ -68,7 +69,7 @@ public static class ResourceUtils
         if (!File.Exists(spritePath)) return null;
 
         var tex = new Texture2D(2, 2);
-        tex.LoadImage(File.ReadAllBytes(spritePath), true);
+        tex.LoadImage(File.ReadAllBytes(spritePath));
         tex.wrapMode = TextureWrapMode.Clamp;
         tex.filterMode = point ? FilterMode.Point : FilterMode.Bilinear;
 
@@ -96,7 +97,8 @@ public static class ResourceUtils
         
         if (www.result == UnityWebRequest.Result.Success)
         {
-            callback.Invoke(DownloadHandlerAudioClip.GetContent(www));
+            var clip = DownloadHandlerAudioClip.GetContent(www);
+            callback.Invoke(clip);
         } else ArchitectPlugin.Instance.Log(www.error);
     }
 

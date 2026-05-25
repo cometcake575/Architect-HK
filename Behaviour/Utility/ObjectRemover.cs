@@ -9,6 +9,7 @@ namespace Architect.Behaviour.Utility;
 public class ObjectRemover : MonoBehaviour
 {
     public string triggerName;
+    public bool shade;
     public string filter;
     public bool all;
     public bool allInRange;

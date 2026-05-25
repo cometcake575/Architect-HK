@@ -3,6 +3,7 @@ using Architect.Content.Preloads;
 using HutongGames.PlayMaker.Actions;
 using UnityEngine;
 using ApplyMusicCue = On.HutongGames.PlayMaker.Actions.ApplyMusicCue;
+using Object = UnityEngine.Object;
 using TransitionToAudioSnapshot = On.HutongGames.PlayMaker.Actions.TransitionToAudioSnapshot;
 
 namespace Architect.Behaviour.Fixers;
@@ -695,5 +696,58 @@ public static class EnemyFixers
         for (var i = 1; i <= 5; i++) death.DisableAction(i);
 
         obj.GetComponent<HealthManager>().OnDeath += () => obj.SetActive(false);
+    }
+    
+    public class Shade : MonoBehaviour
+    {
+        public int friendly;
+        public int spirit;
+        public int dive;
+        public int wraiths;
+        public int hp = -1;
+        public bool countDead;
+        
+        private void Start()
+        {
+            var fsm = gameObject.LocateMyFSM("Shade Control");
+            var killed = fsm.GetState("Killed");
+
+            if (!countDead)
+            {
+                killed.AddAction(() =>
+                {
+                    var corpseFsm = fsm.FsmVariables.FindFsmGameObject("Corpse").value.LocateMyFSM("Shade Control");
+                    corpseFsm.GetState("Give Geo").AddAction(() => corpseFsm.SendEvent("FINISHED"), 0);
+                }, 3);
+            }
+            
+            fsm.GetState("Special Type").AddAction(() => fsm.SendEvent("FINISHED"), 0);
+
+            var init = fsm.GetState("Init");
+            
+            var ic = (IntCompare)fsm.GetState("Friendly?").actions[1];
+            switch (friendly)
+            {
+                case 1:
+                    ic.lessThan = ic.greaterThan = ic.equal;
+                    break;
+                case 2:
+                    ic.equal = ic.lessThan;
+                    break;
+            }
+
+            if (hp != -1)
+            {
+                ((SetHP)fsm.GetState("Friendly Idle").actions[1]).hp = hp;
+                ((SetHP)init.actions[10]).hp = hp;
+            }
+            
+            init.AddAction(() =>
+            {
+                if (spirit != 0) fsm.FsmVariables.FindFsmInt("Fireball Level").value = spirit - 1;
+                if (dive != 0) fsm.FsmVariables.FindFsmInt("Quake Level").value = dive - 1;
+                if (wraiths != 0) fsm.FsmVariables.FindFsmInt("Scream Level").value = wraiths - 1;
+            }, 11);
+        }
     }
 }

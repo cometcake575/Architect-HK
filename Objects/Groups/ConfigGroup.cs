@@ -12,6 +12,7 @@ using Architect.Content.Custom;
 using Architect.Editor;
 using Architect.Prefabs;
 using Architect.Storage;
+using HutongGames.PlayMaker.Actions;
 using MonoMod.RuntimeDetour;
 using UnityEngine;
 using UnityEngine.Video;
@@ -36,6 +37,15 @@ public static class ConfigGroup
             new BoolConfigType("Disable All", "disabler_all", (o, value) =>
             {
                 if (value.GetValue()) o.GetComponent<ObjectRemover>().all = true;
+            }).WithDefaultValue(false))
+    ]);
+    
+    public static readonly List<ConfigType> DisableEnemy = GroupUtils.Merge(Generic,
+    [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Include Shade", "disabler_shade", (o, value) =>
+            {
+                if (value.GetValue()) o.GetComponent<ObjectRemover>().shade = true;
             }).WithDefaultValue(false))
     ]);
     
@@ -412,6 +422,29 @@ public static class ConfigGroup
     public static readonly List<ConfigType> Decorations = GroupUtils.Merge(Visible, [
         RenderLayer,
         ZOffset
+    ]);
+    
+    public static readonly List<ConfigType> Camera =  GroupUtils.Merge(Generic, [
+        ConfigurationManager.RegisterConfigType(
+            new IdConfigType("Object ID", "camera_view_id", (o, value) =>
+            {
+                o.GetComponent<CameraObjects.CustomCamera>().id = value.GetValue();
+            })),
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType("Resolution", "camera_resolution", (o, value) =>
+            {
+                o.GetComponent<CameraObjects.CustomCamera>().resolution = value.GetValue();
+            }).WithDefaultValue(1024)),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType("Zoom", "camera_zoom_amount", (o, value) =>
+            {
+                o.GetComponent<tk2dCamera>().zoomFactor = value.GetValue();
+            }).WithDefaultValue(1))
+    ]);
+
+    public static readonly List<ConfigType> CameraView = GroupUtils.Merge(Stretchable, [
+        ZOffset,
+        RenderLayer
     ]);
 
     public static readonly List<ConfigType> StretchDecor = GroupUtils.Merge(Stretchable, GroupUtils.Merge(Decorations, []));
@@ -1123,6 +1156,47 @@ public static class ConfigGroup
                     if (!value.GetValue()) return;
                     var friendly = o.LocateMyFSM("Control").GetState("Friendly?");
                     for (var i = 2; i <= 7; i++) friendly.DisableAction(i);
+                }).WithDefaultValue(false))
+    ]);
+
+    public static readonly List<ConfigType> Shade = GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType("Health Override", "player_shade_hp",
+                (o, value) =>
+                {
+                    o.GetComponent<EnemyFixers.Shade>().hp = value.GetValue();
+                })),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType("Fireball Level", "player_shade_fireball",
+                (o, value) =>
+                {
+                    o.GetComponent<EnemyFixers.Shade>().spirit = value.GetValue();
+                }).WithOptions("Default", "None", "1", "2")),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType("Dive Level", "player_shade_dive",
+                (o, value) =>
+                {
+                    o.GetComponent<EnemyFixers.Shade>().dive = value.GetValue();
+                }).WithOptions("Default", "None", "1", "2")),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType("Wraiths Level", "player_shade_wraths",
+                (o, value) =>
+                {
+                    o.GetComponent<EnemyFixers.Shade>().wraiths = value.GetValue();
+                }).WithOptions("Default", "None", "1", "2")),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType("Friendly", "player_shade_friendly",
+                (o, value) =>
+                {
+                    if (value.GetValue() == 0) return;
+                    o.GetComponent<EnemyFixers.Shade>().friendly = value.GetValue();
+                }).WithOptions("Default", "Friendly", "Unfriendly").WithDefaultValue(0)),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Shade Death Counts", "player_shade_counts",
+                (o, value) =>
+                {
+                    if (!value.GetValue()) return;
+                    o.GetComponent<EnemyFixers.Shade>().countDead = true;
                 }).WithDefaultValue(false))
     ]);
     

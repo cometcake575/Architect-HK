@@ -78,6 +78,7 @@ public class ArchitectPlugin : Mod,
         AbilityObjects.Init();
         MiscObjects.Init();
         ParticleObjects.Init();
+        CameraObjects.Init();
         
         RespawnMarkerManager.Init();
         
@@ -193,7 +194,7 @@ public class ArchitectPlugin : Mod,
             if (File.Exists(workshop))
             {
                 var data = File.ReadAllText(workshop);
-                WorkshopManager.LoadExtWorkshop(JsonConvert.DeserializeObject<WorkshopData>(data));
+                WorkshopManager.LoadExtWorkshop(JsonConvert.DeserializeObject<WorkshopData>(data, Converters.All));
             }
 
             StorageManager.Directories.Add(dir);
