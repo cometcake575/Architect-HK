@@ -28,6 +28,50 @@ public static class ConfigGroup
         )
     ];
     
+    public static readonly List<ConfigType> Shop =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType<ShopBlock>("Figurehead", "shop_figurehead", 
+                    (b, f) =>
+                    {
+                        var val = f.GetStringValue();
+                        if (val == "Salubra") val = "Slug";
+                        if (val == "Lemm") val = "Relic Dealer";
+                        b.Figurehead = val;
+                    })
+                .WithOptions("Iselda", "Sly", "Salubra", "Leg Eater", "Nailsmith", "Lemm", "None").WithDefaultValue(6)
+        )
+    ];
+    
+    public static readonly List<ConfigType> ShopItem =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<ShopBlock.ShopItemBlock>("Item ID", "shop_item_id", 
+                    (b, f) => b.ItemId = f.GetValue())
+                .WithDefaultValue("Wayward_Compass")
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<ShopBlock.ShopItemBlock>("Name", "shop_item_name", 
+                    (b, f) => b.ItemName = f.GetValue())
+                .WithDefaultValue("Sample Text")
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<ShopBlock.ShopItemBlock>("Description", "shop_item_desc", 
+                    (b, f) => b.ItemDesc = f.GetValue())
+                .WithDefaultValue("Sample Text")
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType<ShopBlock.ShopItemBlock>("Cost", "shop_item_cost", 
+                    (b, f) => b.Cost = f.GetValue())
+                .WithDefaultValue(80)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType<ShopBlock.ShopItemBlock>("Icon Scale", "shop_item_scale", 
+                    (b, f) => b.ItemScale = f.GetValue())
+                .WithDefaultValue(1)
+        )
+    ];
+    
     public static readonly List<ConfigType> ItemControl =
     [
         ConfigurationManager.RegisterConfigType(

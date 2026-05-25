@@ -33,5 +33,8 @@ public static class ActionBlocks
         Category.World.RegisterBlock<SpawnObjectBlock>("Spawn Object", ConfigGroup.SpawnObject);
         Category.World.RegisterBlock<SpawnPrefabBlock>("Spawn Prefab", ConfigGroup.Prefab);
         Category.World.RegisterBlock<ObjectMoverBlock>("Move Object");
+        
+        Category.Visual.RegisterBlock<ShopBlock>("Shop", ConfigGroup.Shop, ShopBlock.Init);
+        Category.Visual.RegisterHiddenBlock<ShopBlock.ShopItemBlock>("Shop Item", ConfigGroup.ShopItem);
     }
 }

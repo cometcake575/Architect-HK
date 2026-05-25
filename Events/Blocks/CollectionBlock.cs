@@ -127,7 +127,7 @@ public abstract class CollectionBlock<T> : LinkedBlock
 
         protected override void SetupBlock(bool newBlock, int width, int height)
         {
-            if (ConfigCount >= 3) height += 25; 
+            if (ConfigCount >= 3) height += 25;
             base.SetupBlock(newBlock, width, height);
             BlockInstance.overrideDrag = Group.Parent.BlockInstance;
             BlockHeight = height;

@@ -34,7 +34,10 @@ public static class MiscFixers
             o => _conveyorBlock = o));
 
         ModHooks.LanguageGetHook += (key, title, orig) =>
-            title == "ArchitectMod" ? SubstituteVars(key) : orig;
+        {
+            if (title == "ArchitectMod") return SubstituteVars(key);
+            return key.StartsWith("ArchitectMod_") ? SubstituteVars(key[13..]) : orig;
+        };
 
         On.HeroController.SceneInit += (orig, self) =>
         {
