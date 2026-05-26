@@ -88,6 +88,27 @@ public static class ConfigGroup
         )
     ];
     
+    public static readonly List<ConfigType> Item = [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<CustomItem>("Item Name", "item_name", (item, value) =>
+            {
+                item.Name = value.GetValue();
+            }).WithDefaultValue("Sample Name")
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<CustomItem>("Item Desc", "item_desc", (item, value) =>
+            {
+                item.Desc = value.GetValue();
+            }).WithDefaultValue("Sample Desc")
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<CustomItem>("Show Count", "item_count", (item, value) =>
+            {
+                item.HasCount = value.GetValue();
+            }).WithDefaultValue(false)
+        )
+    ];
+    
     public static readonly List<ConfigType> SceneGroupIcon = [
         ConfigurationManager.RegisterConfigType(
             new StringConfigType<SpriteItem>("Save Icon URL", "scene_group_url", (item, value) =>

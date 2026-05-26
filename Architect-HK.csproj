@@ -4,7 +4,7 @@
     <TargetFramework>net472</TargetFramework>
     <AssemblyName>Architect_HK</AssemblyName>
     <Product>Architect</Product>
-    <Version>3.28.0.9</Version>
+    <Version>3.28.0.10</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>preview</LangVersion>
     <Nullable>disable</Nullable>
@@ -296,6 +296,9 @@
     </Reference>
     <Reference Include="Satchel">
       <HintPath>/Users/arunkapila/Library/Application Support/Steam/steamapps/common/Hollow Knight/hollow_knight.app/Contents/Resources/Data/Managed/Mods/Satchel/Satchel.dll</HintPath>
+    </Reference>
+    <Reference Include="ItemCreator">
+      <HintPath>/Users/arunkapila/Library/Application Support/Steam/steamapps/common/Hollow Knight/hollow_knight.app/Contents/Resources/Data/Managed/Mods/ItemCreator/ItemCreator.dll</HintPath>
     </Reference>
     <Reference Include="HKMP">
       <HintPath>/Users/arunkapila/Library/Application Support/Steam/steamapps/common/Hollow Knight/hollow_knight.app/Contents/Resources/Data/Managed/Mods/HKMP/HKMP.dll</HintPath>

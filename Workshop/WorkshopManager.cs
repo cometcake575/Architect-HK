@@ -33,6 +33,12 @@ public static class WorkshopManager
             new Vector2(-300, -262.5f),
             ConfigGroup.SpriteItem,
             ConfigGroup.Charm);
+        
+        CustomItem.Init();
+        Register<CustomItem>("Item",
+            new Vector2(-100, -262.5f),
+            ConfigGroup.SpriteItem,
+            ConfigGroup.Item);
     }
 
     private static readonly List<WorkshopData> ExtWorkshops = [];

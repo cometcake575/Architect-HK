@@ -23,10 +23,12 @@ public static class CameraObjects
             "_GameCameras",
             o =>
             {
+                if (!o) o = GameCameras.instance.gameObject;
                 var tk2dCam = o.transform.GetChild(1).GetChild(0).gameObject;
 
                 tk2dCam.SetActive(false);
                 var cam = Object.Instantiate(tk2dCam);
+                tk2dCam.SetActive(true);
                 Object.DontDestroyOnLoad(cam);
 
                 cam.RemoveComponent<CameraController>();

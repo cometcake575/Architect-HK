@@ -119,14 +119,16 @@ public class ArchitectPlugin : Mod,
         {
             foreach (var (path, preload) in items)
             {
-                Object.DontDestroyOnLoad(preloadedObjects[scene][path]);
-                preload.OnPreload(preloadedObjects[scene][path]);
+                if (preloadedObjects[scene].TryGetValue(path, out var obj))
+                {
+                    Object.DontDestroyOnLoad(obj);
+                    preload.OnPreload(obj);
+                } else preload.OnPreload(null);
             }
         }
         PreloadManager.HasPreloaded = true;
         
         SharerManager.Init();
-        
         
         WorkshopManager.Setup();
         FavouritesCategory.Favourites = StorageManager.LoadFavourites();

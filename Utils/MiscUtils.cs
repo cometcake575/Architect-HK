@@ -47,9 +47,9 @@ public static class MiscUtils
 
     public static void SetLocalPositionY(this Transform t, float newY)
     {
-        var vector3 = t.localPosition;
-        vector3 = new Vector3(vector3.x, newY, vector3.z);
-        t.localPosition = vector3;
+        var pos = t.localPosition;
+        pos.y = newY;
+        t.localPosition = pos;
     }
 
     public static void SetLocalPositionZ(this Transform t, float newZ)

@@ -17,6 +17,8 @@ public class ArchitectData
     public HashSet<string> GotCharms = [];
     public HashSet<string> NewCharms = [];
     public HashSet<string> EquippedCharms = [];
+
+    public Dictionary<string, int> CustomItems = [];
 }
 
 public class GlobalArchitectData
