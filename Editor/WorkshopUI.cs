@@ -141,8 +141,11 @@ public static class WorkshopUI
         
         savBtn.onClick.AddListener(() =>
         {
-            if (_idField.text.IsNullOrWhiteSpace() || _idField.text.StartsWith("Prefab")
-                || _idField.text.Contains("_"))
+            if (_idField.text.IsNullOrWhiteSpace() 
+                || _idField.text.StartsWith("Prefab")
+                || _idField.text.EndsWith("_Boss") 
+                || _idField.text.EndsWith("_Title")
+                || (_idField.text.Contains("_") && _currentItemType != "Scene"))
             {
                 issue.text = "Invalid ID";
                 return;
@@ -395,9 +398,11 @@ public static class WorkshopUI
     }
 
     private static bool _saved;
+    private static string _currentItemType;
 
     public static void Open(WorkshopItem item, bool isNew)
     {
+        _currentItemType = item.Type;
         _saved = !isNew;
         if (isNew)
         {

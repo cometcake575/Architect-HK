@@ -22,11 +22,16 @@ public static class WorkshopManager
         Register<SceneGroup>("Scene Group",
             new Vector2(-300, -225),
             ConfigGroup.SceneGroup,
-            ConfigGroup.SceneGroupIcon);
+            ConfigGroup.SceneGroupIcon,
+            ConfigGroup.SceneGroupMap,
+            ConfigGroup.SceneGroupMapPos,
+            ConfigGroup.SceneGroupMapDirIn,
+            ConfigGroup.SceneGroupMapDirOut);
         
         Register<CustomScene>("Scene",
             new Vector2(-100, -225),
-            ConfigGroup.Scene);
+            ConfigGroup.Scene,
+            ConfigGroup.SceneMap);
         
         CustomCharm.Init();
         Register<CustomCharm>("Charm",

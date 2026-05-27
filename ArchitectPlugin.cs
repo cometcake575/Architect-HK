@@ -57,6 +57,7 @@ public class ArchitectPlugin : Mod,
         
         HookUtils.Init();
         TitleUtils.Init();
+        MapUtils.Init();
         
         StorageManager.Init();
         

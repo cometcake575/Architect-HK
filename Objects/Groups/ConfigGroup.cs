@@ -1148,7 +1148,7 @@ public static class ConfigGroup
                 }).WithDefaultValue(new Vector2(10, 10)))
     ]);
 
-    public static readonly List<ConfigType> ShadeSibling = GroupUtils.Merge(NonPersistentEnemies, [
+    public static readonly List<ConfigType> ShadeSibling = GroupUtils.Merge(Visible, [
         ConfigurationManager.RegisterConfigType(
             new BoolConfigType("Ignore Void Heart", "shade_ignore_vh",
                 (o, value) =>

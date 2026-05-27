@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Architect.Workshop.Items;
 using Architect.Workshop.Types;
-using GlobalEnums;
 using UnityEngine;
 
 namespace Architect.Workshop.Config;
@@ -55,6 +54,52 @@ public static class ConfigGroup
             {
                 item.Environment = value.GetValue();
             }).WithOptions("Dust", "Grass", "Bone", "Spa", "Metal", "None", "Wet").WithDefaultValue(0)
+        )
+    ];
+    
+    public static readonly List<ConfigType> SceneMap = [
+        (NoteConfigType) "Only applies if the scene's group has a map",
+        ConfigurationManager.RegisterConfigType(
+            new Vector2ConfigType<CustomScene>("Map Offset", "scene_map_offset", (item, value) =>
+            {
+                item.MapPos = value.GetValue();
+            }).WithDefaultValue(Vector2.zero)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SpriteItem>("Full Map URL", "scene_full_map_url", (item, value) =>
+            {
+                item.IconUrl = value.GetValue();
+            })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<SpriteItem>("Anti Aliasing", "scene_full_map_antialias", (item, value) =>
+            {
+                item.Point = !value.GetValue();
+            }).WithDefaultValue(true)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SpriteItem>("Pixels Per Unit", "scene_full_map_ppu", (item, value) =>
+            {
+                item.Ppu = value.GetValue();
+            }).WithDefaultValue(100)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<CustomScene>("Empty Room URL", "scene_empty_map_url", (item, value) =>
+            {
+                item.RoughMapUrl = value.GetValue();
+            })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<CustomScene>("Anti Aliasing", "scene_empty_map_antialias", (item, value) =>
+            {
+                item.MPoint = !value.GetValue();
+            }).WithDefaultValue(true)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<CustomScene>("Pixels Per Unit", "scene_empty_map_ppu", (item, value) =>
+            {
+                item.MPpu = value.GetValue();
+            }).WithDefaultValue(100)
         )
     ];
     
@@ -121,6 +166,136 @@ public static class ConfigGroup
             {
                 item.Point = !value.GetValue();
             }).WithDefaultValue(true)
+        )
+    ];
+    
+    public static readonly List<ConfigType> SceneGroupMap = [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<SceneGroup>("Has Map", "scene_group_has_map", (item, value) =>
+            {
+                item.HasMap = value.GetValue();
+            }).WithDefaultValue(false)
+        ),
+        (NoteConfigType) "The map is unlocked when this global variable is true (if set)",
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SceneGroup>("Required Variable", "scene_group_map_var", (item, value) =>
+            {
+                item.Variable = value.GetValue();
+            })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SceneGroup>("Map Icon URL", "scene_group_map_url", (item, value) =>
+            {
+                item.MapUrl = value.GetValue();
+            })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType<SceneGroup>("Anti Aliasing", "scene_group_map_antialias", (item, value) =>
+            {
+                item.MPoint = !value.GetValue();
+            }).WithDefaultValue(true)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<SceneGroup>("Pixels Per Unit", "scene_group_map_ppu", (item, value) =>
+            {
+                item.MPpu = value.GetValue();
+            }).WithDefaultValue(100)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new ColourConfigType<SceneGroup>("Map Colour", "scene_group_map_colour", (item, value) =>
+            {
+                item.MapColour = value.GetValue();
+            }, false).WithDefaultValue(Color.white)
+        )
+    ];
+    
+    public static readonly List<ConfigType> SceneGroupMapPos = [
+        (NoteConfigType) "The position of the map, label, zoomed in map and compass icon",
+        ConfigurationManager.RegisterConfigType(
+            new Vector2ConfigType<SceneGroup>("Map Pos", "scene_group_map_pos", (item, value) =>
+            {
+                item.Pos = value.GetValue();
+            }).WithDefaultValue(Vector2.zero)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new Vector2ConfigType<SceneGroup>("Title Offset", "scene_group_map_title_pos", (item, value) =>
+            {
+                item.TextPos = value.GetValue();
+            }).WithDefaultValue(Vector2.zero)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new Vector2ConfigType<SceneGroup>("Zoom Pos", "scene_group_map_zoom_pos", (item, value) =>
+            {
+                item.ZoomPos = value.GetValue();
+            }).WithDefaultValue(Vector2.zero)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new Vector2ConfigType<SceneGroup>("Area Label", "scene_group_map_label_pos", (item, value) =>
+            {
+                item.AreaNamePos = value.GetValue();
+            }).WithDefaultValue(Vector2.zero)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new Vector2ConfigType<SceneGroup>("Compass Pos", "scene_group_map_compass_pos", (item, value) =>
+            {
+                item.CompassPos = value.GetValue() + new Vector2(4.2f, -7.61f);
+            }).WithDefaultValue(Vector2.zero)
+        )
+    ];
+    
+    public static readonly List<ConfigType> SceneGroupMapDirIn = [
+        (NoteConfigType) "Make vanilla maps lead to this one",
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SceneGroup>("Enter Below", "scene_group_map_b", (item, value) =>
+            {
+                item.InverseDirectionalZones[(int)MapUtils.Dir.Down] = value.GetValue().Split(',');
+            })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SceneGroup>("Enter Above", "scene_group_map_a", (item, value) =>
+            {
+                item.InverseDirectionalZones[(int)MapUtils.Dir.Up] = value.GetValue().Split(',');
+            })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SceneGroup>("Enter Left", "scene_group_map_l", (item, value) =>
+            {
+                item.InverseDirectionalZones[(int)MapUtils.Dir.Left] = value.GetValue().Split(',');
+            })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SceneGroup>("Enter Right", "scene_group_map_r", (item, value) =>
+            {
+                item.InverseDirectionalZones[(int)MapUtils.Dir.Right] = value.GetValue().Split(',');
+            })
+        )
+    ];
+    
+    public static readonly List<ConfigType> SceneGroupMapDirOut = [
+        (NoteConfigType) "Make this map lead to others",
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SceneGroup>("Exit Below", "scene_group_map_b2", (item, value) =>
+            {
+                item.DirectionalZones[(int)MapUtils.Dir.Down] = value.GetValue().Split(',').ToList();
+            })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SceneGroup>("Exit Above", "scene_group_map_a2", (item, value) =>
+            {
+                item.DirectionalZones[(int)MapUtils.Dir.Up] = value.GetValue().Split(',').ToList();
+            })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SceneGroup>("Exit Left", "scene_group_map_l2", (item, value) =>
+            {
+                item.DirectionalZones[(int)MapUtils.Dir.Left] = value.GetValue().Split(',').ToList();
+            })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<SceneGroup>("Exit Right", "scene_group_map_r2", (item, value) =>
+            {
+                item.DirectionalZones[(int)MapUtils.Dir.Right] = value.GetValue().Split(',').ToList();
+            })
         )
     ];
 }
