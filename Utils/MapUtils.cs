@@ -305,7 +305,8 @@ public static class MapUtils
             {
                 var scale = CalculateMapScale();
 
-                wideMap.position *= scale;
+                wideMap.position = (wideMap.localPosition + new Vector3(-4.05f, 7.55f)) * scale
+                    + wideMap.parent.position - new Vector3(-4.05f, 7.55f);
                 wideMap.localScale = (Vector3.one * scale).Where(z: wideMap.localScale.z);
 
                 add1.value = 3.81f * scale;

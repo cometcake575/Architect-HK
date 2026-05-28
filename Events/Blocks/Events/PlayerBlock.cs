@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Architect.Behaviour.Utility;
+using Architect.Events.Blocks.Outputs;
 using GlobalEnums;
 using UnityEngine;
 
@@ -149,20 +149,14 @@ public class PlayerBlock : ToggleableBlock
             orig(self, amount);
         };
         
-        On.HeroController.TakeDamage += (orig, self, go, side, amount, type) =>
-        {
-            TriggerEvent("OnDamage");
-            if (type != 1) TriggerEvent("OnHazardRespawn");
-            orig(self, go, side, amount, type);
-        };
-        
         ModHooks.BeforePlayerDeadHook += () => { TriggerEvent("OnDeath"); };
-        
-        On.HeroController.TakeDamage += (orig, self, go, side, amount, type) =>
+
+        ModHooks.TakeDamageHook += (ref type, damage) =>
         {
             TriggerEvent("OnDamage");
+            HpBlock.LastHit = damage;
             if (type != 1) TriggerEvent("OnHazardRespawn");
-            orig(self, go, side, amount, type);
+            return damage;
         };
         
         ModHooks.SetPlayerBoolHook += (name, orig) =>
