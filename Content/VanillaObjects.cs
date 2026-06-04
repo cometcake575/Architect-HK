@@ -676,7 +676,8 @@ public static class VanillaObjects
         AddSolid("White Palace Platform 4", "wp_plat_4",
             ("White_Palace_07", "wp_plat_float_05 (1)"));
         Categories.Hazards.Add(new PreloadObject("White Palace Saw", "wp_saw",
-            ("White_Palace_07", "wp_saw")));
+            ("White_Palace_07", "wp_saw"))
+            .WithConfigGroup(ConfigGroup.WhiteSaw));
         
         Categories.Hazards.Add(new PreloadObject("White Spikes", "white_spikes",
             ("White_Palace_03_hub", "White_ Spikes"))
@@ -909,6 +910,22 @@ public static class VanillaObjects
         AddEnemy("Fluke Zoteling", "zoteling_fluke",
             ("GG_Mighty_Zote", "Battle Control/Zote Fluke"),
             postSpawnAction: EnemyFixers.FixFlukeZoteling).DoFlipX();
+
+        /*
+        Categories.Misc.Add(new PreloadObject("Score Counter", "score_counter",
+            ("GG_Mighty_Zote", "Battle Control"),
+            extraction: o =>
+            {
+                var counter = new GameObject("Score Counter");
+                counter.SetActive(false);
+                Object.DontDestroyOnLoad(counter);
+                
+                Object.Instantiate(o.transform.Find("Counter Icon").gameObject, counter.transform, true);
+                Object.Instantiate(o.transform.Find("Counter Text").gameObject, counter.transform, true);
+                Object.Instantiate(o.transform.Find("Counter Flash").gameObject, counter.transform, true);
+
+                return counter;
+            }, sprite: ResourceUtils.LoadSpriteResource("zote_counter", ppu:64)));*/
     }
 
     private static PlaceableObject AddEnemy(

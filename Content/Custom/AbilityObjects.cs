@@ -421,7 +421,7 @@ public static class AbilityObjects
     {
         fsm.InsertCustomAction("Dream Gate?", makerFsm =>
         {
-            if (!BindingCheck(true, "gate")) makerFsm.SendEvent("FINISHED");
+            if (!BindingCheck(true, "gate") || EditManager.IsEditing) makerFsm.SendEvent("FINISHED");
         }, 1);
     }
     

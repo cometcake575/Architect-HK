@@ -75,6 +75,7 @@ public class ArchitectPlugin : Mod,
         CursorManager.Init();
         
         VanillaObjects.Init();
+        SplineObjects.Init();
         UtilityObjects.Init();
         AbilityObjects.Init();
         MiscObjects.Init();

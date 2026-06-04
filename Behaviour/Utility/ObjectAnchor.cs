@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Architect.Content.Custom;
 using Architect.Events.Blocks.Objects;
 using Architect.Placements;
 using Architect.Prefabs;
@@ -50,6 +51,8 @@ public class ObjectAnchor : PreviewableBehaviour
     private AnchorReference _anchorRef;
     private RigidbodyConstraints2D _rigidbodyConstraints;
     [CanBeNull] private Rigidbody2D _rb2d;
+    
+    private SplineAnchor _splineAnchor;
 
     // Used for preview
     private Vector3 _previewPos;
@@ -111,8 +114,13 @@ public class ObjectAnchor : PreviewableBehaviour
 
             if (PlacementManager.TryGetValue(parentId, out var parent))
             {
-                var eh = parent.GetComponent<EnemyHook>();
-                transform.parent.SetParent(eh ? eh.hm.transform : parent.transform, true);
+                var sp = parent.GetComponent<SplineObjects.SplinePoint>();
+                if (sp && sp.Spline) SetupSpline(sp);
+                else
+                {
+                    var eh = parent.GetComponent<EnemyHook>();
+                    transform.parent.SetParent(eh ? eh.hm.transform : parent.transform, true);
+                }
             }
         }
 
@@ -213,6 +221,8 @@ public class ObjectAnchor : PreviewableBehaviour
         _offset = startOffset;
         rotation = startRotation + transform.rotation.eulerAngles.z;
         _currentSpeed = speed;
+        
+        if (_splineAnchor) _splineAnchor.Reset();
     }
 
     private void OnDisable()
@@ -404,5 +414,69 @@ public class ObjectAnchor : PreviewableBehaviour
     public class AnchorReference : MonoBehaviour
     {
         public int activeAnchors;
+    }
+
+    private void SetupSpline(SplineObjects.SplinePoint sp)
+    {
+        var splineAnchor = new GameObject(name + " Spline Anchor")
+        {
+            transform = { position = sp.transform.position.Where(z: transform.GetPositionZ()) }
+        };
+
+        _splineAnchor = splineAnchor.AddComponent<SplineAnchor>();
+        _splineAnchor.anchor = gameObject;
+        if (sp.Spline.points.Contains(sp.transform))
+        {
+            _splineAnchor.startTime = sp.Spline.points.IndexOf(sp.transform) * 25;
+            _splineAnchor.Reset();
+        }
+
+        _splineAnchor.spline = sp.Spline;
+
+        var pc = transform.parent.gameObject.AddComponent<PositionConstraint>();
+        
+        pc.AddSource(new ConstraintSource
+        {
+            sourceTransform = splineAnchor.transform,
+            weight = 1
+        });
+
+        pc.translationOffset = transform.position - sp.transform.position;
+        
+        pc.constraintActive = true;
+    }
+
+    public class SplineAnchor : MonoBehaviour
+    {
+        public SplineObjects.Spline spline;
+        public GameObject anchor;
+
+        public float startTime;
+        public float time;
+
+        private void LateUpdate()
+        {
+            if (!spline || !spline.setup) return;
+            
+            var pc = spline.segments.Length - 1;
+            if (time >= pc)
+            {
+                time %= pc;
+                anchor.BroadcastEvent("OnTrackEnd");
+            }
+
+            var index = Mathf.FloorToInt(time);
+
+            var p1 = spline.segments[index];
+            var p2 = spline.segments[index + 1];
+            
+            transform.SetPosition2D(Vector3.Lerp(p1, p2, time % 1) + spline.transform.position);
+
+            var d = Vector3.Distance(p1, p2);
+            if (d == 0) time = Mathf.Ceil(time);
+            else time += Time.deltaTime * spline.speed / d;
+        }
+
+        public void Reset() => time = startTime;
     }
 }

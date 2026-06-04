@@ -40,7 +40,7 @@ public static class ConfigGroup
             }).WithDefaultValue(false))
     ]);
     
-    public static readonly List<ConfigType> DisableEnemy = GroupUtils.Merge(Generic,
+    public static readonly List<ConfigType> DisableEnemy = GroupUtils.Merge(Disabler,
     [
         ConfigurationManager.RegisterConfigType(
             new BoolConfigType("Include Shade", "disabler_shade", (o, value) =>
@@ -457,6 +457,28 @@ public static class ConfigGroup
                     o.GetComponentInChildren<SpriteRenderer>().color = value.GetValue();
                 }, true).WithDefaultValue(Color.white).WithPriority(-1))
     ]);
+
+    public static readonly List<ConfigType> TrackPoint = [
+        ConfigurationManager.RegisterConfigType(
+            new IdConfigType("Track ID", "track_id", (o, value) =>
+            {
+                o.GetComponent<SplineObjects.SplinePoint>().id = value.GetValue();
+            }).WithDefaultValue("1").WithPriority(-1))
+    ];
+
+    public static readonly List<ConfigType> TrackStartPoint = GroupUtils.Merge(Visible, GroupUtils.Merge(TrackPoint, [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType("Speed", "track_speed", (o, value) =>
+            {
+                o.GetComponent<SplineObjects.Spline>().speed = value.GetValue();
+            }).WithDefaultValue(10)),
+        ConfigurationManager.RegisterConfigType(
+            new ColourConfigType("Colour", "track_colour", (o, value) =>
+            {
+                o.GetComponent<SplineObjects.Spline>().colour = value.GetValue();
+            }, true).WithDefaultValue(new Color(1, 1, 1, 0.1f))),
+        ZOffset
+    ]));
     
     public static readonly List<ConfigType> Vines = GroupUtils.Merge(Decorations, [
         ConfigurationManager.RegisterConfigType(
@@ -464,7 +486,7 @@ public static class ConfigGroup
                 (o, value) =>
                 {
                     if (value.GetValue()) return;
-                    o.RemoveComponent<CustomDamager>();
+                    o.RemoveComponent<DamageHero>();
                 })
                 .WithDefaultValue(true))
     ]);
@@ -553,8 +575,11 @@ public static class ConfigGroup
                         case 1:
                             o.layer = Default;
                             var collider = o.GetComponentInChildren<Collider2D>();
-                            collider.isTrigger = true;
-                            collider.gameObject.AddComponent<CustomDamager>().damageAmount = 1;
+                            collider.isTrigger = false;
+                            collider.gameObject.AddComponent<NonBouncer>();
+                            var dh = collider.gameObject.AddComponent<DamageHero>();
+                            dh.damageDealt = 1;
+                            dh.hazardType = 2;
                             break;
                         case 2:
                             o.GetComponentInChildren<Collider2D>().isTrigger = false;
@@ -1108,6 +1133,22 @@ public static class ConfigGroup
                     if (!value.GetValue()) return;
                     o.LocateMyFSM("Control").FsmVariables.FindFsmBool("Stationary").Value = true;
                 }).WithDefaultValue(true))
+    ]);
+
+    public static readonly List<ConfigType> WhiteSaw = GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Accurate Hitbox", "wp_saw_accurate",
+                (o, value) =>
+                {
+                    if (value.GetValue()) return;
+                    CircleCollider2D cc2d = null;
+                    foreach (var c in o.GetComponents<CircleCollider2D>())
+                    {
+                        if (!cc2d || c.radius > cc2d.radius) cc2d = c;
+                    }
+
+                    if (cc2d) cc2d.enabled = false;
+                }).WithDefaultValue(false))
     ]);
 
     public static readonly List<ConfigType> NonPersistentEnemies = GroupUtils.Merge(SimpleEnemies, [

@@ -7,7 +7,6 @@ using Architect.Config.Types;
 using Architect.Editor;
 using Architect.Events;
 using Architect.Objects.Placeable;
-using Architect.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 using Object = UnityEngine.Object;

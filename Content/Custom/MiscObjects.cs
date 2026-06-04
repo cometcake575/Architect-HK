@@ -73,15 +73,20 @@ public static class MiscObjects
         var obj = new GameObject(name);
         obj.SetActive(false);
         Object.DontDestroyOnLoad(obj);
+
+        obj.layer = (int)PhysLayers.ENEMIES;
         
         obj.transform.SetPositionZ(0.01f);
 
         var col = obj.AddComponent<EdgeCollider2D>();
-        col.isTrigger = true;
 
         col.points = points;
 
-        obj.AddComponent<CustomDamager>().damageAmount = 1;
+        var dh = obj.AddComponent<DamageHero>();
+        obj.AddComponent<NonBouncer>();
+        dh.damageDealt = 1;
+        dh.hazardType = 2;
+        
         obj.AddComponent<SpriteRenderer>().sprite = ResourceUtils.LoadSpriteResource(id, ppu:64);
 
         return new CustomObject(name, id, obj)

@@ -1,7 +1,5 @@
-using System;
 using Architect.Behaviour.Fixers;
 using Architect.Events;
-using Architect.Utils;
 using UnityEngine;
 
 namespace Architect.Behaviour.Utility;
@@ -19,7 +17,7 @@ public class TriggerZone : MonoBehaviour
     public int layer;
     public bool usingLayer;
 
-    public bool inside;
+    public int inside;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -45,7 +43,7 @@ public class TriggerZone : MonoBehaviour
         }
 
         EventManager.BroadcastEvent(gameObject, "ZoneEnter");
-        inside = true;
+        inside++;
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -63,15 +61,17 @@ public class TriggerZone : MonoBehaviour
                 if (!other.gameObject.GetComponent<HealthManager>()) return;
                 break;
             case 3:
-                if (!other.gameObject.GetComponent<TriggerZone>()) return;
+                var tz = other.gameObject.GetComponent<TriggerZone>();
+                if (!tz || (tz.layer != layer && usingLayer)) return;
                 break;
             case 4:
-                if (!other.gameObject.GetComponent<MiscFixers.TriggerActivator>()) return;
+                var kr = other.gameObject.GetComponentInParent<MiscFixers.TriggerActivator>();
+                if (!kr || (kr.layer != layer && usingLayer)) return;
                 break;
         }
 
         EventManager.BroadcastEvent(gameObject, "ZoneExit");
-        inside = false;
+        inside--;
     }
 
     private void OnEnable()

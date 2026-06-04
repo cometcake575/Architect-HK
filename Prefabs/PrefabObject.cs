@@ -234,7 +234,7 @@ public class Prefab : PreviewableBehaviour
         foreach (var block in o.ScriptBlocks)
         {
             var clone = block.Clone(name);
-            clone.Setup(false);
+            clone.Setup(false, noReference: isAPreview);
             switch (clone)
             {
                 case BroadcastBlock bb:
