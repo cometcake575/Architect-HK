@@ -1,12 +1,11 @@
 using System.Linq;
 using Architect.Placements;
-using Architect.Utils;
 using HutongGames.PlayMaker;
 using UnityEngine;
 
 namespace Architect.Behaviour.Utility;
 
-public class FsmHook : MonoBehaviour
+public class FsmHook : PreviewableBehaviour
 {
     public string targetId;
     public string fsmName;
@@ -93,6 +92,8 @@ public class FsmHook : MonoBehaviour
 
     private void Update()
     {
+        if (isAPreview) return;
+        
         if (!_setup) Setup();
         if (_fsm)
         {

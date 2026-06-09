@@ -514,8 +514,11 @@ public static class RequestManager
         
         var prefabs = JsonConvert.DeserializeObject<Dictionary<string, LevelData>>(result["level"], Converters.All)
             .Where(o => o.Key.StartsWith("Prefab_"));
-        PrefabsCategory.Prefabs = prefabs.Select(o => 
-            new PrefabObject(o.Key.Replace("Prefab_", ""))).ToList();
+        PrefabsCategory.Prefabs = prefabs.Select(o =>
+        {
+            StorageManager.SaveScene(o.Key, o.Value);
+            return new PrefabObject(o.Key.Replace("Prefab_", ""));
+        }).ToList();
         
         var data = JsonConvert.DeserializeObject<Dictionary<string, LevelData>>(result["level"], Converters.All);
         var wData = JsonConvert.DeserializeObject<WorkshopData>(result["workshop"], Converters.All);

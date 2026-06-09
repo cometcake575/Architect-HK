@@ -165,8 +165,7 @@ public static class MiscObjects
                 description:
                 $"Places a custom {name} in the game.\n\n" +
                 "URL should be a direct download anyone can access\n" +
-                "in order to work with the level sharer." + extDesc,
-                preview: preview)
+                "in order to work with the level sharer." + extDesc)
             .WithRotationGroup(RotationGroup.All);
     }
 

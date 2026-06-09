@@ -37,7 +37,7 @@ public static class EditManager
             EditorUI.LayerName.text = $"Layer\n{value}";
             EditorUI.LayerToggle.text = FlippedLayers.Contains(value) != ShowLayersByDefault ? "X" : "";
             foreach (var o in SelectedObjects) o.SetLayer(value);
-            foreach (var obj in PlacementManager.GetLevelData().Placements) obj.RefreshLockColour();
+            foreach (var obj in PlacementManager.GetLevelData().Placements) obj.RefreshColour();
         }
     }
 
@@ -62,6 +62,7 @@ public static class EditManager
             EditorUI.RefreshItem();
 
             EditorUI.RotationText.text = CurrentRotation.ToString(CultureInfo.InvariantCulture);
+            EditorUI.ZText.text = CurrentZ.ToString(CultureInfo.InvariantCulture);
             EditorUI.ScaleText.text = CurrentScale.ToString(CultureInfo.InvariantCulture);
             
             CursorManager.NeedsRefresh = true;
@@ -77,6 +78,7 @@ public static class EditManager
     private static readonly bool[] HotbarCurrentlyFlipped = [false, false, false, false, false, false, false, false, false];
     private static readonly float[] HotbarCurrentRotation = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     private static readonly float[] HotbarCurrentScale = [1, 1, 1, 1, 1, 1, 1, 1, 1];
+    private static readonly float[] HotbarCurrentZ = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     private static readonly List<(string, string, int)>[] HotbarReceivers = [[], [], [], [], [], [], [], [], []];
     private static readonly List<(string, string)>[] HotbarBroadcasters = [[], [], [], [], [], [], [], [], []];
@@ -104,6 +106,12 @@ public static class EditManager
     {
         get => HotbarCurrentScale[_hotbarIndex];
         set => HotbarCurrentScale[_hotbarIndex] = value;
+    }
+    
+    public static float CurrentZ
+    {
+        get => HotbarCurrentZ[_hotbarIndex];
+        set => HotbarCurrentZ[_hotbarIndex] = value;
     }
 
     public static List<(string, string, int)> Receivers => HotbarReceivers[_hotbarIndex];
@@ -210,6 +218,12 @@ public static class EditManager
         EditorUI.ScaleText.text = Mathf.Max(scale, 0.1f).ToString(CultureInfo.InvariantCulture);
         CursorManager.NeedsRefresh = true;
     }
+
+    public static void SetZ(float offset)
+    {
+        EditorUI.ZText.text = offset.ToString(CultureInfo.InvariantCulture);
+        CursorManager.NeedsRefresh = true;
+    }
     
     public static void Update()
     {
@@ -281,7 +295,7 @@ public static class EditManager
             var newObj = PlacementManager.FindObject(Input.mousePosition);
             if (HoveredObject != newObj)
             {
-                HoveredObject?.ClearColour();
+                HoveredObject?.ClearHoverColour();
 
                 newObj?.SetHoverColour();
                 HoveredObject = newObj;
@@ -289,7 +303,7 @@ public static class EditManager
         }
         else if (HoveredObject != null)
         {
-            HoveredObject.ClearColour();
+            HoveredObject.ClearHoverColour();
             HoveredObject = null;
         }
 
@@ -509,7 +523,7 @@ public static class EditManager
 
         if (HoveredObject != null)
         {
-            HoveredObject.ClearColour();
+            HoveredObject.ClearHoverColour();
             HoveredObject = null;
         }
         
@@ -596,7 +610,7 @@ public static class EditManager
         if (SelectedObjects.Contains(placement))
         {
             SelectedObjects.Remove(placement);
-            placement.ClearColour();
+            placement.ClearDraggedColour();
             return;
         }
         
@@ -676,7 +690,7 @@ public static class EditManager
         foreach (var obj in SelectedObjects)
         {
             movements.Add((obj, obj.GetPos(), obj.FinishMove()));
-            if (release) obj.ClearColour();
+            if (release) obj.ClearDraggedColour();
         }
 
         if (_dragging)

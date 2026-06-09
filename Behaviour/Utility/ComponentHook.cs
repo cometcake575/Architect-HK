@@ -2,12 +2,10 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Architect.Placements;
-using Architect.Utils;
-using UnityEngine;
 
 namespace Architect.Behaviour.Utility;
 
-public class ComponentHook : MonoBehaviour
+public class ComponentHook : PreviewableBehaviour
 {
     public bool recursive;
     public string id;
@@ -75,6 +73,9 @@ public class ComponentHook : MonoBehaviour
 
     private void Update()
     {
+        
+        if (isAPreview) return; 
+
         if (_done) return;
         _done = true;
         Setup();

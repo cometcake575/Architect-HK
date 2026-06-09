@@ -80,11 +80,11 @@ public static class ParticleObjects
         Categories.Effects.Add(co
             .WithConfigGroup(Particle)
             .WithInputGroup(InputGroup.Particles)
-            .WithReceiverGroup(ReceiverGroup.Particles));
+            .WithReceiverGroup(ReceiverGroup.Particles))
+            .DoIgnoreScale();
     }
 
     public static readonly List<ConfigType> Particle = GroupUtils.Merge(ConfigGroup.Stretchable, [
-        ConfigGroup.ZOffset,
         ConfigurationManager.RegisterConfigType(
             new BoolConfigType("Play on Start", "particles_play_on_awake",
                     (o, value) =>

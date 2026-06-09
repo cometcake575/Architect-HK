@@ -1,8 +1,9 @@
+using Architect.Behaviour.Utility;
 using UnityEngine;
 
 namespace Architect.Behaviour.Custom;
 
-public class SoundMaker : MonoBehaviour
+public class SoundMaker : PreviewableBehaviour
 {
     protected AudioSource Source;
     
@@ -10,14 +11,13 @@ public class SoundMaker : MonoBehaviour
     
     public virtual void Awake()
     {
-        if (muted) return;
         Source = gameObject.GetOrAddComponent<AudioSource>();
         Source.minDistance = 10;
     }
 
     public void PlaySound(AudioClip clip, float volume = 1, float pitch = 1, bool global = false, bool loop = false, bool setVol = true)
     {
-        if (muted) return;
+        if (muted || isAPreview) return;
 
         Source.spatialBlend = global ? 0 : 1;
         

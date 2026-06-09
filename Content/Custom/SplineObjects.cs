@@ -32,7 +32,6 @@ public static class SplineObjects
 
         return new CustomObject("Track Start Point", "start_node",
                 node,
-                preview: true,
                 sprite: ResourceUtils.LoadSpriteResource("track_start", FilterMode.Point, ppu:15),
                 description: "The start of a track.\n" +
                              "Place Track Points with the same Track ID to link together and form a track.\n\n" +
@@ -52,7 +51,6 @@ public static class SplineObjects
 
         return new CustomObject("Track Point", "node",
                 node,
-                preview: true,
                 sprite: ResourceUtils.LoadSpriteResource("track_node", FilterMode.Point, ppu:15),
                 description: "A point on a track.\n" +
                              "Use the Track Start Point to start a track.")

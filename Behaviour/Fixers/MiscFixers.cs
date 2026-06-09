@@ -684,4 +684,6 @@ public static class MiscFixers
                 target.value = enemy.gameObject;
         }, 0);
     }
+
+    public class AlphaClamp : MonoBehaviour;
 }

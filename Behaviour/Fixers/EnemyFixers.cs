@@ -1,5 +1,6 @@
 using System.Linq;
 using Architect.Content.Preloads;
+using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using UnityEngine;
 using ApplyMusicCue = On.HutongGames.PlayMaker.Actions.ApplyMusicCue;
@@ -748,6 +749,59 @@ public static class EnemyFixers
                 if (dive != 0) fsm.FsmVariables.FindFsmInt("Quake Level").value = dive - 1;
                 if (wraiths != 0) fsm.FsmVariables.FindFsmInt("Scream Level").value = wraiths - 1;
             }, 11);
+        }
+    }
+
+    public class Gorb : MonoBehaviour
+    {
+        public bool posPlayer;
+
+        public void Start()
+        {
+            gameObject.LocateMyFSM("Set Ghost PD Int").GetState("Set").DisableAction(0);
+            
+            var fsm = gameObject.LocateMyFSM("Movement");
+            var p1 = fsm.FsmVariables.FindFsmVector3("P1");
+            var p2 = fsm.FsmVariables.FindFsmVector3("P2");
+            var p3 = fsm.FsmVariables.FindFsmVector3("P3");
+            var p4 = fsm.FsmVariables.FindFsmVector3("P4");
+            var p5 = fsm.FsmVariables.FindFsmVector3("P5");
+            var p6 = fsm.FsmVariables.FindFsmVector3("P6");
+            var p7 = fsm.FsmVariables.FindFsmVector3("P7");
+
+            var heroTrans = HeroController.instance.transform;
+            if (posPlayer)
+            {
+                fsm.GetState("Choose Target").AddAction(() =>
+                {
+                    // Adjusted by +- 5 so Gorb can't just spawn on the player
+                    Reposition(heroTrans.position + new Vector3(Random.value > 0.5f ? 5 : -5, 0));
+                }, 0);
+            } else Reposition(transform.position);
+            
+            var hover = fsm.GetState("Hover");
+            hover.DisableAction(4);
+            hover.DisableAction(5);
+            hover.DisableAction(6);
+            
+            fsm.GetState("Set Warp").AddAction(() =>
+            {
+                fsm.SendEvent(transform.GetPositionX() > heroTrans.GetPositionX() ? "WARP L" : "WARP R");
+            }, 0);
+            
+            return;
+
+            void Reposition(Vector3 pos)
+            {
+                pos.z = 0.006f;
+                p1.value = pos;
+                p2.value = pos + new Vector3(0, -5);
+                p3.value = pos + new Vector3(-9.5f, -5);
+                p4.value = pos + new Vector3(9.5f, -5);
+                p5.value = pos + new Vector3(-9.5f, -3.3f);
+                p6.value = pos + new Vector3(9.5f, -3.3f);
+                p7.value = pos + new Vector3(0, -3.3f);
+            }
         }
     }
 }

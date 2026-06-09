@@ -14,7 +14,6 @@ using Architect.Objects.Tools;
 using Architect.Placements;
 using Architect.Prefabs;
 using Architect.Storage;
-using Architect.Utils;
 using GlobalEnums;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -57,6 +56,7 @@ public static class EditorUI
 
     public static InputField RotationText;
     public static InputField ScaleText;
+    public static InputField ZText;
 
     private static string _currentSearch = "";
 
@@ -482,6 +482,7 @@ public static class EditorUI
 
         EditManager.CurrentlyFlipped = false;
         EditManager.SetRotation(0);
+        EditManager.SetZ(0);
         EditManager.SetScale(1);
 
         CursorManager.ObjectChanged = true;
@@ -523,11 +524,15 @@ public static class EditorUI
 
                     EditManager.SetScale(prefab.Placement.GetScale());
                     EditManager.SetRotation(prefab.Placement.GetRotation());
+                    EditManager.SetZ(prefab.Placement.GetPos().z);
                     EditManager.CurrentlyFlipped = prefab.Placement.IsFlipped();
 
                     isPrefab = true;
                     break;
                 }
+                case PlaceableObject placeable:
+                    EditManager.SetZ(placeable.ZPosition);
+                    break;
             }
 
             EditManager.CurrentObject = obj;
@@ -898,6 +903,7 @@ public static class EditorUI
         _currentlySelectedDesc.textComponent.text = EditManager.CurrentObject.GetDescription();
 
         ScaleText.enabled = !(EditManager.CurrentObject?.DisableTransformations ?? true);
+        ZText.enabled = !(EditManager.CurrentObject?.DisableTransformations ?? true);
         RotationText.enabled = !(EditManager.CurrentObject?.DisableTransformations ?? true);
     }
 
@@ -1040,7 +1046,7 @@ public static class EditorUI
     private static void SetupPreciseSettings()
     {
         var anchor = new Vector2(1, 0);
-        RotationText = UIUtils.MakeTextbox("Rotation Box", _mapUI, new Vector3(-65, 170)
+        RotationText = UIUtils.MakeTextbox("Rotation Box", _mapUI, new Vector3(-65, 190)
             , anchor, anchor, 70, 32).Item1;
 
         RotationText.characterValidation = InputField.CharacterValidation.Decimal;
@@ -1050,15 +1056,12 @@ public static class EditorUI
             {
                 EditManager.CurrentRotation = Convert.ToSingle(s, CultureInfo.InvariantCulture);
             }
-            catch (FormatException)
-            {
-                EditManager.SetRotation(0);
-            }
+            catch (FormatException) {}
             
             CursorManager.NeedsRefresh = true;
         });
 
-        ScaleText = UIUtils.MakeTextbox("Scale Box", _mapUI, new Vector3(-65, 190)
+        ScaleText = UIUtils.MakeTextbox("Scale Box", _mapUI, new Vector3(-65, 210)
             , anchor, anchor, 70, 32).Item1;
 
         ScaleText.characterValidation = InputField.CharacterValidation.Decimal;
@@ -1068,26 +1071,44 @@ public static class EditorUI
             {
                 EditManager.CurrentScale = Convert.ToSingle(s, CultureInfo.InvariantCulture);
             }
-            catch (FormatException)
-            {
-                EditManager.SetScale(1);
-            }
+            catch (FormatException) {}
 
             CursorManager.NeedsRefresh = true;
         });
 
-        var rotLabel = UIUtils.MakeLabel("Rotation Label", _mapUI, new Vector3(-75, 170), anchor, anchor);
+        ZText = UIUtils.MakeTextbox("Offset Box", _mapUI, new Vector3(-65, 170)
+            , anchor, anchor, 70, 32).Item1;
+
+        ZText.characterValidation = InputField.CharacterValidation.Decimal;
+        ZText.onValueChanged.AddListener(s =>
+        {
+            try
+            {
+                EditManager.CurrentZ = Convert.ToSingle(s, CultureInfo.InvariantCulture);
+            }
+            catch (FormatException) {}
+
+            CursorManager.NeedsRefresh = true;
+        });
+
+        var zLabel = UIUtils.MakeLabel("Z Label", _mapUI, new Vector3(-75, 170), anchor, anchor);
+        zLabel.textComponent.text = "Z Position: ";
+        zLabel.textComponent.fontSize = 8;
+        zLabel.textComponent.alignment = TextAnchor.MiddleLeft;
+
+        var rotLabel = UIUtils.MakeLabel("Rotation Label", _mapUI, new Vector3(-75, 190), anchor, anchor);
         rotLabel.textComponent.text = "Rotation: ";
         rotLabel.textComponent.fontSize = 8;
         rotLabel.textComponent.alignment = TextAnchor.MiddleLeft;
 
-        var scaleLabel = UIUtils.MakeLabel("Scale Label", _mapUI, new Vector3(-75, 190), anchor, anchor);
+        var scaleLabel = UIUtils.MakeLabel("Scale Label", _mapUI, new Vector3(-75, 210), anchor, anchor);
         scaleLabel.textComponent.text = "Scale: ";
         scaleLabel.textComponent.fontSize = 8;
         scaleLabel.textComponent.alignment = TextAnchor.MiddleLeft;
 
         EditManager.SetRotation(0);
         EditManager.SetScale(1);
+        EditManager.SetZ(0);
     }
 
     private static void SetupAttributeSettings()

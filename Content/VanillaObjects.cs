@@ -38,12 +38,12 @@ public static class VanillaObjects
     private static void AddCrossroadsObjects()
     {
         Categories.Misc.Add(new PreloadObject("Bench", "common_bench", 
-                ("Crossroads_47", "RestBench"), preview: true))
+                ("Crossroads_47", "RestBench")))
             .WithConfigGroup(ConfigGroup.Benches)
             .WithRotateAction(MiscFixers.RotateBench);
         
         Categories.Misc.Add(new PreloadObject("Toll Bench", "toll_bench", 
-                ("Fungus3_50", "Toll Machine Bench"), preview: true))
+                ("Fungus3_50", "Toll Machine Bench")))
             .WithConfigGroup(ConfigGroup.TollBench)
             .WithRotateAction(MiscFixers.RotateBench);
         
@@ -51,7 +51,8 @@ public static class VanillaObjects
                 ("Room_Town_Stag_Station", "Gate Switch"),
                 postSpawnAction: MiscFixers.FixLever))
             .WithConfigGroup(ConfigGroup.Levers)
-            .WithBroadcasterGroup(BroadcasterGroup.Levers).DoFlipX();
+            .WithBroadcasterGroup(BroadcasterGroup.Levers)
+            .WithRotationGroup(RotationGroup.Eight);
 
         Categories.Misc.Add(new PreloadObject("Grub Bottle", "grub_bottle",
             ("Crossroads_31", "Grub Bottle"),
@@ -116,12 +117,12 @@ public static class VanillaObjects
             postSpawnAction: EnemyFixers.FixVengeflyKing);
         
         AddEnemy("Wandering Husk", "wandering_husk", ("Crossroads_21", "non_infected_event/Zombie Runner"));
-        AddEnemy("Husk Bully", "husk_bully", ("Crossroads_21", "Zombie Barger")).DoFlipX();
+        AddEnemy("Husk Bully", "husk_bully", ("Crossroads_21", "Zombie Barger"));
         AddEnemy("Leaping Husk", "leaping_husk", ("Crossroads_21", "non_infected_event/Zombie Leaper"));
         AddEnemy("Husk Hornhead", "husk_hornhead", ("Crossroads_16", "_Enemies/Zombie Hornhead"));
         AddEnemy("Husk Warrior", "husk_warrior", ("Crossroads_15", "_Enemies/Zombie Shield"));
-        AddEnemy("Husk Guard", "husk_guard", ("Crossroads_21", "non_infected_event/Zombie Guard")).DoFlipX();
-        AddEnemy("Maggot", "maggot", ("Crossroads_10_boss_defeated", "Prayer Room/Prayer Slug")).DoFlipX();
+        AddEnemy("Husk Guard", "husk_guard", ("Crossroads_21", "non_infected_event/Zombie Guard"));
+        AddEnemy("Maggot", "maggot", ("Crossroads_10_boss_defeated", "Prayer Room/Prayer Slug"));
         AddEnemy("Baldur", "baldur", ("Crossroads_ShamanTemple", "_Enemies/Roller"));
 
         AddEnemy("Volatile Gruzzer", "volatile_gruzzer",
@@ -140,7 +141,7 @@ public static class VanillaObjects
         AddEnemy("Menderbug", "menderbug", ("Crossroads_01", "_Scenery/Mender Bug"),
             postSpawnAction: EnemyFixers.FixMenderbug);
 
-        AddEnemy("Aspid Hunter", "aspid_hunter", ("Crossroads_19", "_Enemies/Spitter")).DoFlipX();
+        AddEnemy("Aspid Hunter", "aspid_hunter", ("Crossroads_19", "_Enemies/Spitter"));
         AddEnemy("Aspid Mother", "aspid_mother", ("Crossroads_19", "_Enemies/Hatcher"),
             postSpawnAction: EnemyFixers.FixAspidMother)
             .WithScaleAction(EnemyFixers.ScaleHatcher);
@@ -166,8 +167,23 @@ public static class VanillaObjects
             })
             .WithConfigGroup(ConfigGroup.PersistentBreakable));
 
+        Categories.Interactable.Add(new PreloadObject("Breakable Door", "breakable_door_1",
+            ("Crossroads_07", "_Props/Tute Door 1"))
+            .WithConfigGroup(ConfigGroup.PersistentBreakable)
+            .WithRotationGroup(RotationGroup.Four));
+
         Categories.Interactable.Add(new PreloadObject("Breakable Wall", "breakable_wall_1",
             ("Mines_25", "Breakable Wall"), preloadAction: MiscFixers.FixBreakableWall)
+            .WithConfigGroup(ConfigGroup.PersistentBreakable));
+
+        Categories.Interactable.Add(new PreloadObject("One Way Wall", "one_way_wall_1",
+            ("Cliffs_02", "One Way Wall"), 
+            uiSprite: ResourceUtils.LoadSpriteResource("one_way_wall"))
+            .WithConfigGroup(ConfigGroup.PersistentBreakable));
+
+        Categories.Interactable.Add(new PreloadObject("Breakable Floor", "breakable_floor_1",
+            ("Crossroads_04", "_Scenery/Break Floor 1"),
+            uiSprite: ResourceUtils.LoadSpriteResource("breakable_floor"))
             .WithConfigGroup(ConfigGroup.PersistentBreakable));
         
         Categories.Hazards.Add(new PreloadObject("Goam", "goam", ("Crossroads_12", "_Enemies/Worm"))
@@ -204,6 +220,12 @@ public static class VanillaObjects
             preloadAction: MiscFixers.BreakableZ)
             .WithBroadcasterGroup(BroadcasterGroup.Breakable)
             .WithConfigGroup(ConfigGroup.Decorations));
+
+        /*
+        AddEnemy("Gorb", "gorb",
+            ("Cliffs_02_boss", "Warrior/Ghost Warrior Slug"),
+            preloadAction: MiscFixers.AddComponent<EnemyFixers.Gorb>)
+            .WithConfigGroup(ConfigGroup.Gorb);*/
     }
 
     private static void AddGreenObjects()
@@ -218,10 +240,10 @@ public static class VanillaObjects
             ("Fungus1_31", "Toll Gate"))
             .WithReceiverGroup(ReceiverGroup.TollGate));
         
-        AddEnemy("Squit", "squit", ("Fungus1_22", "Mosquito")).DoFlipX();
+        AddEnemy("Squit", "squit", ("Fungus1_22", "Mosquito"));
         AddEnemy("Fool Eater", "fool_eater", ("Fungus1_22", "Plant Trap"))
             .WithRotationGroup(RotationGroup.Four)
-            .DoFlipX();
+            ;
         AddEnemy("Gulka", "gulka", ("Fungus1_12", "Plant Turret"))
             .WithRotationGroup(RotationGroup.Eight);
         
@@ -322,7 +344,7 @@ public static class VanillaObjects
         AddEnemy("Corpse Creeper (Husk Hornhead)", "corpse_creeper_b",
             ("Deepnest_33", "Zombie Hornhead Sp (2)"));
         
-        AddEnemy("Dirtcarver", "dirtcarver", ("Deepnest_17", "Baby Centipede")).DoFlipX();
+        AddEnemy("Dirtcarver", "dirtcarver", ("Deepnest_17", "Baby Centipede"));
         AddEnemy("Carver Hatcher", "carver_hatcher", ("Deepnest_26b", "Centipede Hatcher (4)"),
             postSpawnAction: EnemyFixers.FixCarverHatcher)
             .WithScaleAction(EnemyFixers.ScaleHatcher);
@@ -370,15 +392,14 @@ public static class VanillaObjects
             ("Ruins1_03", "Lift Call Lever"),
             postSpawnAction: InteractableFixers.FixReusableLever)
             .WithBroadcasterGroup(BroadcasterGroup.Activatable));
-        
+
         Categories.Interactable.Add(new PreloadObject("City Lever", "city_lever",
                 ("Ruins2_01", "Ruins Lever"),
+                preloadAction: MiscFixers.FixRotation,
                 postSpawnAction: MiscFixers.FixLever)
-            .WithRotateAction((o, r) => o.transform.SetRotation2D(r + 180))
             .WithBroadcasterGroup(BroadcasterGroup.Levers)
             .WithConfigGroup(ConfigGroup.Levers)
-            .WithRotationGroup(RotationGroup.Eight)
-            .DoFlipX()).Offset += new Vector3(0.9382f, 0.5817f) * 2;
+            .WithRotationGroup(RotationGroup.Eight));
         Categories.Interactable.Add(new PreloadObject("Battle Gate", "battle_gate",
                 ("Ruins2_01", "Battle Gate"))
             .WithConfigGroup(ConfigGroup.BattleGate)
@@ -418,11 +439,11 @@ public static class VanillaObjects
         AddEnemy("Mistake", "mistake", ("Ruins1_30", "Mage Blob 1"),
                 preloadAction: MiscFixers.AddComponent<EnemyFixers.Mistake>)
             .WithConfigGroup(ConfigGroup.Wakeable)
-            .WithReceiverGroup(ReceiverGroup.Wakeable).DoFlipX();
+            .WithReceiverGroup(ReceiverGroup.Wakeable);
         AddEnemy("Folly", "folly", ("Ruins1_30", "Mage Balloon"),
                 preloadAction: MiscFixers.AddComponent<EnemyFixers.Folly>)
             .WithConfigGroup(ConfigGroup.Wakeable)
-            .WithReceiverGroup(ReceiverGroup.Wakeable).DoFlipX();
+            .WithReceiverGroup(ReceiverGroup.Wakeable);
 
         AddEnemy("Volt Twister", "volt_twister",
             ("Room_Colosseum_Gold", "Colosseum Manager/Waves/Wave 25/Electric Mage New"),
@@ -450,7 +471,7 @@ public static class VanillaObjects
             .WithRotateAction(EnemyFixers.RotateShardmite);
         
         AddEnemy("Glimback", "glimback", ("Mines_20", "Crystal Crawler"));
-        AddEnemy("Crystal Crawler", "crystal_crawler", ("Mines_20", "Crystallised Lazer Bug (3)")).DoFlipX();
+        AddEnemy("Crystal Crawler", "crystal_crawler", ("Mines_20", "Crystallised Lazer Bug (3)"));
         AddEnemy("Crystal Hunter", "crystal_hunter", ("Mines_25", "Crystal Flyer"));
         AddEnemy("Husk Miner", "husk_miner", ("Mines_20", "Zombie Miner 1"));
         AddEnemy("Husk Myla", "husk_myla", ("Crossroads_45", "Zombie Myla"),
@@ -462,7 +483,7 @@ public static class VanillaObjects
             preloadAction: MiscFixers.FixRotation,
             postSpawnAction: o => o.LocateMyFSM("Laser Bug").GetState("Idle").DisableAction(2))
             .WithConfigGroup(ConfigGroup.LaserCrystal)
-            .WithRotationGroup(RotationGroup.Eight).DoFlipX());
+            .WithRotationGroup(RotationGroup.Eight));
         
         Categories.Hazards.Add(new PreloadObject("Stomper", "stomper", 
             ("Mines_37", "stomper_offset"), 
@@ -536,14 +557,14 @@ public static class VanillaObjects
 
         Categories.Misc.Add(new PreloadObject("Cloth (Ally)", "cloth_ally", 
             ("Fungus3_23_boss", "Battle Scene/Cloth Entry/Cloth Fighter"),
-            postSpawnAction: MiscFixers.FixCloth));
+            postSpawnAction: MiscFixers.FixCloth)).SpritePreview = true;
     }
     
     private static void AddEdgeObjects()
     {
         AddEnemy("Primal Aspid", "primal_aspid", ("Deepnest_East_07", "Super Spitter"));
         AddEnemy("Belfly", "belfly", ("Deepnest_East_07", "Ceiling Dropper"));
-        AddEnemy("Boofly", "boofly", ("Deepnest_East_07", "Blow Fly")).DoFlipX();
+        AddEnemy("Boofly", "boofly", ("Deepnest_East_07", "Blow Fly"));
         
         AddEnemy("Hopper", "hopper", ("Deepnest_East_06", "Hopper"))
             .WithFlipAction(EnemyFixers.FlipHopper);
@@ -558,11 +579,11 @@ public static class VanillaObjects
         AddColoEnemy("Heavy Fool", "heavy_fool", 
             "Colosseum Manager/Waves/Wave 1/Colosseum Cage Large");
         AddColoEnemy("Sturdy Fool", "sturdy_fool", 
-            "Colosseum Manager/Waves/Wave 1/Colosseum Cage Large (1)").DoFlipX();
+            "Colosseum Manager/Waves/Wave 1/Colosseum Cage Large (1)");
         AddColoEnemy("Armoured Squit", "armoured_squit", 
             "Colosseum Manager/Waves/Wave 2/Colosseum Cage Small");
         AddColoEnemy("Shielded Fool", "shielded_fool", 
-            "Colosseum Manager/Waves/Wave 3/Colosseum Cage Large").DoFlipX();
+            "Colosseum Manager/Waves/Wave 3/Colosseum Cage Large");
         AddColoEnemy("Winged Fool", "winged_fool", 
             "Colosseum Manager/Waves/Wave 4/Colosseum Cage Large");
         AddColoEnemy("Sharp Baldur", "sharp_baldur", 
@@ -593,9 +614,9 @@ public static class VanillaObjects
         
         return;
 
-        PlaceableObject AddColoEnemy(string name, string id, string path)
+        void AddColoEnemy(string name, string id, string path)
         {
-            return Categories.Enemies.Add(new PreloadObject(name, id, ("Room_Colosseum_Gold", path),
+            Categories.Enemies.Add(new PreloadObject(name, id, ("Room_Colosseum_Gold", path),
                     extraction: ExtractColoObject)
                 .WithReceiverGroup(ReceiverGroup.Enemies)
                 .WithBroadcasterGroup(BroadcasterGroup.Enemies)
@@ -657,7 +678,7 @@ public static class VanillaObjects
         AddEnemy("Infected Balloon", "infected_balloon", ("Abyss_20", "Parasite Balloon (6)"),
                 preloadAction: MiscFixers.AddComponent<EnemyFixers.InfectedBalloon>)
             .WithConfigGroup(ConfigGroup.Wakeable)
-            .WithReceiverGroup(ReceiverGroup.Wakeable).DoFlipX();
+            .WithReceiverGroup(ReceiverGroup.Wakeable);
 
         AddEnemy("Broken Vessel", "broken_vessel", ("GG_Broken_Vessel", "Infected Knight"),
             postSpawnAction: EnemyFixers.FixNormalBrokenVessel);
@@ -841,25 +862,25 @@ public static class VanillaObjects
                 ("Town", "_NPCs/Zote Town"), 
                 preloadAction: MiscFixers.FixZote)
             .WithConfigGroup(ConfigGroup.Npcs)
-            .WithBroadcasterGroup(BroadcasterGroup.Npcs)).DoFlipX();
+            .WithBroadcasterGroup(BroadcasterGroup.Npcs));
         
         Categories.Npcs.Add(new PreloadObject("Elderbug NPC", "elderbug", 
                 ("Town", "_NPCs/Elderbug"), 
                 preloadAction: MiscFixers.AddComponent<MiscFixers.Elderbug>)
             .WithConfigGroup(ConfigGroup.Elderbug)
-            .WithBroadcasterGroup(BroadcasterGroup.Npcs)).DoFlipX();
+            .WithBroadcasterGroup(BroadcasterGroup.Npcs));
 
         Categories.Npcs.Add(new PreloadObject("Quirrel NPC", "quirrel",
                 ("Room_temple", "Quirrel"),
                 preloadAction: MiscFixers.FixNpc<MiscFixers.Quirrel>)
             .WithConfigGroup(ConfigGroup.Npcs)
-            .WithBroadcasterGroup(BroadcasterGroup.Npcs).DoFlipX());
+            .WithBroadcasterGroup(BroadcasterGroup.Npcs));
 
         Categories.Npcs.Add(new PreloadObject("Hornet NPC", "hornet_npc",
                 ("Abyss_06_Core", "Hornet Abyss NPC"),
                 preloadAction: MiscFixers.FixNpc<MiscFixers.Hornet>)
             .WithConfigGroup(ConfigGroup.Npcs)
-            .WithBroadcasterGroup(BroadcasterGroup.Npcs).DoFlipX());
+            .WithBroadcasterGroup(BroadcasterGroup.Npcs));
         
         Categories.Npcs.Add(new PreloadObject("Midwife NPC", "midwife",
                 ("Deepnest_41", "Happy Spider NPC"),
@@ -878,14 +899,14 @@ public static class VanillaObjects
                 ("GG_Engine", "Godseeker EngineRoom NPC"), 
                 preloadAction: MiscFixers.AddComponent<MiscFixers.Godseeker>)
             .WithConfigGroup(ConfigGroup.Npcs)
-            .WithBroadcasterGroup(BroadcasterGroup.Npcs).DoFlipX());
+            .WithBroadcasterGroup(BroadcasterGroup.Npcs));
     }
     
     private static void AddOrdealObjects()
     {
         AddEnemy("Zoteling the Mighty", "zoteling",
             ("GG_Mighty_Zote", "Battle Control/Dormant Warriors/Zote Crew Normal (1)"),
-            postSpawnAction: EnemyFixers.FixZoteling).DoFlipX();
+            postSpawnAction: EnemyFixers.FixZoteling);
         
         AddEnemy("Winged Zoteling", "zoteling_winged",
             ("GG_Mighty_Zote", "Battle Control/Zotelings/Ordeal Zoteling"),
@@ -909,7 +930,7 @@ public static class VanillaObjects
         
         AddEnemy("Fluke Zoteling", "zoteling_fluke",
             ("GG_Mighty_Zote", "Battle Control/Zote Fluke"),
-            postSpawnAction: EnemyFixers.FixFlukeZoteling).DoFlipX();
+            postSpawnAction: EnemyFixers.FixFlukeZoteling);
 
         /*
         Categories.Misc.Add(new PreloadObject("Score Counter", "score_counter",

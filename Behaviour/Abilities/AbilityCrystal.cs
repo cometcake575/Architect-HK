@@ -69,6 +69,7 @@ public class AbilityCrystal : SoundMaker
 
     private void OnTriggerStay2D(Collider2D other)
     {
+        if (isAPreview) return;
         if (_remainingTime > 0) return;
         if (!other.gameObject.GetComponent<HeroController>()) return;
 

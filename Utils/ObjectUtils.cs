@@ -31,10 +31,10 @@ public static class ObjectUtils
         EventManager.BroadcastEvent(obj, triggerName);
     }
     
-    public static void RemoveComponentsInChildren<T>(this GameObject obj) where T : Component
+    public static void RemoveComponentsInChildren<T>(this GameObject obj)
     {
         var comps = obj.GetComponentsInChildren<T>(true);
-        foreach (var comp in comps) Object.Destroy(comp);
+        foreach (var comp in comps) if (comp is Component c) Object.Destroy(c);
     }
     
     public static string GetPath(this Transform current) {

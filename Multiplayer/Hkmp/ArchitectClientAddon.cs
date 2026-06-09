@@ -176,7 +176,6 @@ public class ArchitectClientAddon : ClientAddon
     private static void HandleEvent(EventPacketData packet)
     {
         ArchitectPlugin.Instance.Log("Receiving Event Packet");
-        if (packet.SceneName != GameManager.instance.sceneName) return;
         EventManager.BroadcastMp(packet.Event);
     }
 
