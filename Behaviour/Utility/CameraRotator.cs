@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Architect.Behaviour.Utility;
 
-public class CameraRotator : MonoBehaviour
+public class CameraRotator : PreviewableBehaviour
 {
     private static readonly List<CameraRotator> Rotators = [];
     
@@ -22,11 +22,13 @@ public class CameraRotator : MonoBehaviour
     
     private void OnEnable()
     {
+        if (isAPreview) return;
         Rotators.Add(this);
     }
     
     private void OnDisable()
     {
+        if (isAPreview) return;
         Rotators.Remove(this);
     }
 }

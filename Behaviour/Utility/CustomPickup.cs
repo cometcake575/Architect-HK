@@ -6,17 +6,13 @@ using UnityEngine;
 
 namespace Architect.Behaviour.Utility;
 
-public class CustomPickup : MonoBehaviour
+public class CustomPickup : PreviewableBehaviour
 {
     public string itemId = string.Empty;
     
-    public static void Init()
-    {
-        
-    }
-
     private void Start()
     {
+        if (isAPreview) return;
         var item = Finder.GetItem(itemId);
         if (item == null) return;
         

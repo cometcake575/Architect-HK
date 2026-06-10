@@ -32,6 +32,7 @@ public static class VanillaObjects
         AddAbyssObjects();
         AddSoulObjects();
         AddNpcObjects();
+        AddGhostObjects();
         AddOrdealObjects();
     }
 
@@ -541,6 +542,11 @@ public static class VanillaObjects
         AddEnemy("Mantis Traitor", "mantis_traitor", ("Fungus3_10", "Battle Scene/Completed/Mantis Heavy"));
         AddEnemy("Mantis Petra", "mantis_petra", ("Fungus3_48", "Mantis Heavy Flyer"));
 
+        AddEnemy("Traitor Lord", "traitor_lord",
+            ("Fungus3_23_boss", "Battle Scene/Wave 3/Mantis Traitor Lord"),
+            preloadAction: o => o.GetComponent<MeshRenderer>().enabled = true,
+            postSpawnAction: EnemyFixers.FixTraitorLord);
+
         AddSolid("Queen's Gardens Platform 1", "qg_plat_1", ("Fungus3_44", "Royal_garden_plat_float_08"));
         AddSolid("Queen's Gardens Platform 2", "qg_plat_2", ("Fungus3_44", "Royal_garden_plat_float_06"));
         
@@ -592,6 +598,15 @@ public static class VanillaObjects
             "Colosseum Manager/Waves/Wave 6/Colosseum Cage Small");
         AddColoEnemy("Death Loodle", "death_loodle", 
             "Colosseum Manager/Waves/Wave 9/Colosseum Cage Small (1)");
+
+        AddEnemy("Brooding Mawlek", "brooding_mawlek",
+            ("GG_Brooding_Mawlek", "Battle Scene/Mawlek Body"),
+            postSpawnAction: EnemyFixers.FixBroodingMawlek);
+
+        AddEnemy("Oblobble", "oblobble", ("GG_Oblobbles", "Mega Fat Bee"),
+            preloadAction: MiscFixers.AddComponent<EnemyFixers.Oblobble>)
+            .WithConfigGroup(ConfigGroup.Oblobble)
+            .WithReceiverGroup(ReceiverGroup.Oblobble);
 
         AddEnemy("God Tamer Beast", "god_tamer_beast",
             ("Room_Colosseum_Gold", "Colosseum Manager/Waves/Lobster Lancer/Entry Object/Lobster"),
@@ -784,7 +799,7 @@ public static class VanillaObjects
                 foreach (Transform child in o.transform) child.SetLocalPositionZ(child.localPosition.z + 2.7657f);
                 o.transform.SetLocalPositionZ(o.transform.localPosition.z - 2.7657f);
             },
-            sprite: ResourceUtils.LoadSpriteResource("shade_gate", new Vector2(0.66f, 0.227f), ppu: 64))
+            uiSprite: ResourceUtils.LoadSpriteResource("shade_gate", new Vector2(0.66f, 0.227f), ppu: 64))
             .WithRotationGroup(RotationGroup.Eight));
 
         Categories.Enemies.Add(new PreloadObject("Shade", "shade",
@@ -931,6 +946,11 @@ public static class VanillaObjects
         AddEnemy("Fluke Zoteling", "zoteling_fluke",
             ("GG_Mighty_Zote", "Battle Control/Zote Fluke"),
             postSpawnAction: EnemyFixers.FixFlukeZoteling);
+        
+        /*
+        AddEnemy("Grey Prince Zote", "grey_prince_zote",
+            ("Dream_Mighty_Zote", "Grey Prince"),
+            postSpawnAction: EnemyFixers.FixZote);*/
 
         /*
         Categories.Misc.Add(new PreloadObject("Score Counter", "score_counter",
@@ -940,7 +960,7 @@ public static class VanillaObjects
                 var counter = new GameObject("Score Counter");
                 counter.SetActive(false);
                 Object.DontDestroyOnLoad(counter);
-                
+
                 Object.Instantiate(o.transform.Find("Counter Icon").gameObject, counter.transform, true);
                 Object.Instantiate(o.transform.Find("Counter Text").gameObject, counter.transform, true);
                 Object.Instantiate(o.transform.Find("Counter Flash").gameObject, counter.transform, true);
@@ -948,7 +968,14 @@ public static class VanillaObjects
                 return counter;
             }, sprite: ResourceUtils.LoadSpriteResource("zote_counter", ppu:64)));*/
     }
-
+    
+    private static void AddGhostObjects()
+    {
+        AddEnemy("Marmu", "marmu",
+            ("GG_Ghost_Marmu", "Warrior/Ghost Warrior Marmu"),
+            postSpawnAction: EnemyFixers.FixMarmu);
+    }
+    
     private static PlaceableObject AddEnemy(
         string name,
         string id,

@@ -1,6 +1,5 @@
 using System.Linq;
 using Architect.Content.Preloads;
-using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using UnityEngine;
 using ApplyMusicCue = On.HutongGames.PlayMaker.Actions.ApplyMusicCue;
@@ -25,6 +24,9 @@ public static class EnemyFixers
 
     // Flukemarm
     private static GameObject _flukeCage;
+
+    // Marmu
+    private static ContactFilter2D _marmuFilter;
 
     public static void Init()
     {
@@ -99,6 +101,20 @@ public static class EnemyFixers
             {
                 orig(self);
             }
+        };
+
+        var marmuMask = 0;
+        for (var i = 0; i < 32; i++) {
+            if (!Physics.GetIgnoreLayerCollision(11, i) && 
+                LayerMask.LayerToName(i) != "Hero Box") {
+                marmuMask |= 1 << i;
+            }
+        }
+
+        _marmuFilter = new ContactFilter2D
+        {
+            layerMask = marmuMask,
+            useTriggers = false
         };
     }
 
@@ -803,5 +819,149 @@ public static class EnemyFixers
                 p7.value = pos + new Vector3(0, -3.3f);
             }
         }
+    }
+
+    public static void FixZote(GameObject obj)
+    {
+        obj.LocateMyFSM("Constrain X").enabled = false;
+        var fsm = obj.LocateMyFSM("Control");
+
+        fsm.GetState("Dormant").AddAction(() => fsm.SendEvent("ZOTE APPEAR"), 0);
+        fsm.GetState("Enter 2").AddAction(() => fsm.SendEvent("SHORT"), 0);
+        fsm.GetState("Roar").AddAction(() => fsm.SendEvent("ZOTE TITLE END"), 0);
+        fsm.GetState("Music").AddAction(() => fsm.SendEvent("FINISHED"), 0);
+    }
+
+    public static void FixMarmu(GameObject obj)
+    {
+        obj.LocateMyFSM("Broadcast Ghost Death").enabled = false;
+        var fsm = obj.LocateMyFSM("Control");
+
+        var xMax = fsm.FsmVariables.FindFsmFloat("Tele X Max");
+        var xMin = fsm.FsmVariables.FindFsmFloat("Tele X Min");
+            
+        var yMax = fsm.FsmVariables.FindFsmFloat("Tele Y Max");
+        var yMin = fsm.FsmVariables.FindFsmFloat("Tele Y Min");
+
+        var warpPos = fsm.FsmVariables.FindFsmVector3("Warp Pos");
+
+        var sp = fsm.GetState("Set Pos");
+        var sp2 = fsm.GetState("Set Pos 2");
+            
+        sp.AddAction(AdjustBounds, 0);
+        sp2.AddAction(AdjustBounds, 0);
+        sp.AddAction(CheckValidTp);
+        sp2.AddAction(CheckValidTp);
+
+        var ede = obj.GetComponent<EnemyDeathEffects>();
+        ede.PreInstantiate();
+        var corpse = ede.corpse;
+        if (corpse)
+        {
+            var end = corpse.LocateMyFSM("Control").GetState("End");
+            end.DisableAction(2);
+            end.transitions = [];
+            end.AddAction(() => Object.Destroy(corpse), 0);
+        }
+
+        return;
+
+        void AdjustBounds()
+        {
+            var heroTrans = HeroController.instance.transform;
+            xMin.Value = heroTrans.GetPositionX() - 15;
+            xMax.Value = heroTrans.GetPositionX() + 15;
+
+            yMin.Value = heroTrans.GetPositionY() - 6;
+            yMax.Value = heroTrans.GetPositionY() + 6;
+        }
+
+        void CheckValidTp()
+        {
+            var hits = new RaycastHit2D[1];
+            
+            Physics2D.Linecast(
+                warpPos.Value,
+                HeroController.instance.transform.position,
+                _marmuFilter, hits);
+            
+            if (hits[0]) fsm.SendEvent("CANCEL");
+        }
+    }
+
+    public abstract class Swooper : MonoBehaviour
+    {
+        public bool swoopIn;
+    }
+
+    public class Oblobble : Swooper
+    {
+        public int getAngry;
+        public bool angerOthers;
+
+        private void Awake()
+        {
+            var fsm = gameObject.LocateMyFSM("fat fly bounce");
+            if (!swoopIn) fsm.GetState("Swoop In").AddAction(() => fsm.SendEvent("SUMMON"), 0);
+            var f2 = fsm.GetState("Fly 2");
+            f2.DisableAction(7);
+            f2.DisableAction(8);
+            
+            if (!angerOthers) gameObject.LocateMyFSM("Rager").enabled = false;
+            
+            if (getAngry != 1)
+            {
+                var rageFsm = gameObject.LocateMyFSM("Set Rage");
+                if (getAngry == 0) rageFsm.GetState("Idle").transitions = [];
+                else fsm.GetState("Aim").AddAction(() => rageFsm.SendEvent("OBLOBBLE RAGE"), 0);
+            }
+        }
+    }
+
+    public static void FixBroodingMawlek(GameObject obj)
+    {
+        var fsm = obj.LocateMyFSM("Mawlek Control");
+
+        fsm.GetState("Dormant").AddAction(() => fsm.SendEvent("GG BOSS"), 0);
+        var roar = fsm.GetState("Wake Roar");
+        roar.DisableAction(0);
+        roar.DisableAction(1);
+    }
+
+    public static void FixTraitorLord(GameObject obj)
+    {
+        var fsm = obj.LocateMyFSM("Mantis");
+        
+        fsm.GetState("Cloth?").AddAction(() => fsm.SendEvent("FINISHED"), 0);
+        fsm.GetState("Emerge Dust").AddAction(() => fsm.SendEvent("FINISHED"), 0);
+        fsm.GetState("Fall").AddAction(() => fsm.SendEvent("LAND"), 0);
+        fsm.GetState("Intro Land").DisableAction(0);
+        var roar = fsm.GetState("Roar");
+        roar.DisableAction(2);
+        roar.DisableAction(3);
+        
+        fsm.GetState("DSlash").DisableAction(13);
+        var land = fsm.GetState("Land");
+        land.DisableAction(0);
+        land.AddAction(() => obj.transform.position += new Vector3(0, 1.15f), 0);
+        
+        
+        fsm.GetState("Check L").AddAction(() => fsm.SendEvent("CAN REPEAT"), 0);
+        fsm.GetState("Check R").AddAction(() => fsm.SendEvent("CAN REPEAT"), 0);
+
+        var throws = 0;
+        var throwState = fsm.GetState("Throw?");
+        throwState.DisableAction(0);
+        throwState.AddAction(() =>
+        {
+            if (throws / 2f > Random.value)
+            {
+                throws = 0;
+                fsm.SendEvent("FINISHED");
+            }
+            throws++;
+        }, 0);
+        
+        fsm.GetState("Walk").AddAction(() => throws = 0, 0);
     }
 }

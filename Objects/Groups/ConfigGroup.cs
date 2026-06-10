@@ -405,6 +405,10 @@ public static class ConfigGroup
                 {
                     foreach (var comp in o.GetComponentsInChildren<Renderer>())
                         comp.sortingOrder = value.GetValue();
+                }, (o, value, _) =>
+                {
+                    foreach (var comp in o.GetComponentsInChildren<Renderer>())
+                        comp.sortingOrder = value.GetValue();
                 })
             .WithDefaultValue(0));
 
@@ -1239,16 +1243,24 @@ public static class ConfigGroup
                 }).WithDefaultValue(true))
     ]);
 
-    private static readonly ConfigType StartAwake = ConfigurationManager.RegisterConfigType(
-        new BoolConfigType("Start Awake", "enemy_starts_awake",
-            (o, value) =>
-            {
-                if (!value.GetValue()) return;
-                o.GetComponent<EnemyFixers.Wakeable>().Wake();
-            }).WithDefaultValue(true));
-
     public static readonly List<ConfigType> Wakeable = GroupUtils.Merge(Enemies, [
-        StartAwake
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Start Awake", "enemy_starts_awake",
+                (o, value) =>
+                {
+                    if (!value.GetValue()) return;
+                    o.GetComponent<EnemyFixers.Wakeable>().Wake();
+                }).WithDefaultValue(true))
+    ]);
+
+    public static readonly List<ConfigType> Swooper = GroupUtils.Merge(Enemies, [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Swoop In", "enemy_swoop_in",
+                (o, value) =>
+                {
+                    if (!value.GetValue()) return;
+                    o.GetComponent<EnemyFixers.Swooper>().swoopIn = true;
+                }).WithDefaultValue(false).WithPriority(-1))
     ]);
 
     public static readonly List<ConfigType> Mantis = GroupUtils.Merge(Enemies, [
@@ -1291,6 +1303,24 @@ public static class ConfigGroup
                     if (value.GetValue()) return;
                     o.GetComponent<EnemyFixers.GruzMother>().spawnGruzzers = false;
                 }).WithDefaultValue(true))
+    ]);
+
+    public static readonly List<ConfigType> Oblobble = GroupUtils.Merge(Swooper, [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Cause Anger on Death", "oblobble_cause_anger",
+                (o, value) =>
+                {
+                    if (!value.GetValue()) return;
+                    o.GetComponent<EnemyFixers.Oblobble>().angerOthers = true;
+                })
+                .WithDefaultValue(false).WithPriority(-1)),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType("Anger Mode", "oblobble_self_anger",
+                (o, value) =>
+                {
+                    o.GetComponent<EnemyFixers.Oblobble>().getAngry = value.GetValue();
+                }).WithOptions("None", "Vanilla", "Start")
+                .WithDefaultValue(0).WithPriority(-1))
     ]);
 
     public static readonly List<ConfigType> Npcs = GroupUtils.Merge(Visible, [

@@ -477,6 +477,14 @@ public static class ReceiverGroup
         }))
     ]);
     
+    public static readonly List<EventReceiverType> Oblobble = GroupUtils.Merge(Enemies, [
+        EventManager.RegisterReceiverType(new EventReceiverType("oblobble_rage", "Rage", o =>
+        {
+            var fsm = o.LocateMyFSM("Set Rage");
+            if (fsm.ActiveStateName == "Idle") fsm.SetState("Set");
+        }))
+    ]);
+    
     public static readonly List<EventReceiverType> EnemyHook = GroupUtils.Merge(Enemies, [
         EventManager.RegisterReceiverType(new EventReceiverType("enemy_hook_set", "SetEnemy", (o, b) =>
         {

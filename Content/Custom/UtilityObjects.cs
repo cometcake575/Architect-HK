@@ -6,7 +6,6 @@ using Architect.Behaviour.Utility;
 using Architect.Objects.Categories;
 using Architect.Objects.Groups;
 using Architect.Objects.Placeable;
-using Architect.Storage;
 using JetBrains.Annotations;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -19,7 +18,7 @@ public static class UtilityObjects
     
     public static void Init()
     {
-        Categories.Utility.Add(CreateItem());
+        Categories.Utility.Add(CreateItem()).SpritePreview = true;
         Categories.Utility.Add(CreateWalkArea());
         Categories.Utility.Add(CreateShielder());
         
@@ -151,8 +150,6 @@ public static class UtilityObjects
 
     private static PlaceableObject CreateItem()
     {
-        CustomPickup.Init();
-        
         var pickup = new GameObject("Pickup Spawner");
         Object.DontDestroyOnLoad(pickup);
         pickup.SetActive(false);
@@ -735,24 +732,6 @@ public static class UtilityObjects
 
         return new CustomObject(name, id, obj, desc, sprite:sprite)
             .WithReceiverGroup(ReceiverGroup.Generic);
-    }
-
-    private static PlaceableObject CreateObjectEnabler()
-    {
-        var obj = new GameObject("Object Enabler");
-        Object.DontDestroyOnLoad(obj);
-        obj.SetActive(false);
-
-        obj.AddComponent<ObjectEnabler>();
-
-        var sprite = ResourceUtils.LoadSpriteResource("object_enabler", FilterMode.Point);
-        obj.transform.position = new Vector3(0, 0, -2);
-
-        return new CustomObject("Enable Object", "object_enabler", obj, 
-                "Enables a disabled object.\n\n" +
-                "The path to an object can be found with tools such as Unity Explorer.", sprite:sprite)
-            .WithReceiverGroup(ReceiverGroup.Generic)
-            .WithConfigGroup(ConfigGroup.ObjectEnabler);
     }
 
     public static Disabler[] GetObjects(ObjectRemover editor)
