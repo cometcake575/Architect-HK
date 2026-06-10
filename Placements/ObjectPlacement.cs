@@ -280,6 +280,10 @@ public class ObjectPlacement(
                 ebi.triggerName = broadcaster.Item1;
                 ebi.eventName = broadcaster.Item2.ToLower();
             }
+
+            if (!PlacementManager.Layers.TryGetValue(_layer, out var layerObjects))
+                layerObjects = PlacementManager.Layers[_layer] = [];
+            layerObjects.Add(obj);
         }
         
         foreach (var configVal in Config.Where(configVal => configVal.GetPriority() >= 0)

@@ -834,6 +834,8 @@ public static class EnemyFixers
 
     public static void FixMarmu(GameObject obj)
     {
+        BlockMusicOn(obj);
+        
         obj.LocateMyFSM("Broadcast Ghost Death").enabled = false;
         var fsm = obj.LocateMyFSM("Control");
 
@@ -901,6 +903,8 @@ public static class EnemyFixers
 
         private void Awake()
         {
+            BlockMusicOn(gameObject);
+            
             var fsm = gameObject.LocateMyFSM("fat fly bounce");
             if (!swoopIn) fsm.GetState("Swoop In").AddAction(() => fsm.SendEvent("SUMMON"), 0);
             var f2 = fsm.GetState("Fly 2");
@@ -920,6 +924,8 @@ public static class EnemyFixers
 
     public static void FixBroodingMawlek(GameObject obj)
     {
+        BlockMusicOn(obj);
+        
         var fsm = obj.LocateMyFSM("Mawlek Control");
 
         fsm.GetState("Dormant").AddAction(() => fsm.SendEvent("GG BOSS"), 0);
@@ -930,6 +936,8 @@ public static class EnemyFixers
 
     public static void FixTraitorLord(GameObject obj)
     {
+        BlockMusicOn(obj);
+        
         var fsm = obj.LocateMyFSM("Mantis");
         
         fsm.GetState("Cloth?").AddAction(() => fsm.SendEvent("FINISHED"), 0);

@@ -27,6 +27,7 @@ public static class PlacementManager
     private static tk2dTileMap _tileMap;
 
     public static readonly Dictionary<string, GameObject> Objects = [];
+    public static readonly Dictionary<int, List<GameObject>> Layers = [];
     
     public static readonly Dictionary<string, ObjectPlacement> PrefabPlacements = [];
     
@@ -103,6 +104,7 @@ public static class PlacementManager
         AbilityObjects.RefreshCrystalUI();
         
         Objects.Clear();
+        Layers.Clear();
 
         foreach (var block in ScriptManager.Blocks.Values)
         {
