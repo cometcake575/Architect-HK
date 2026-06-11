@@ -686,4 +686,35 @@ public static class MiscFixers
     }
 
     public class AlphaClamp : MonoBehaviour;
+
+    public static void FixAcid(GameObject obj)
+    {
+        obj.transform.localScale = Vector3.one;
+        obj.transform.SetPositionZ(0);
+        
+        obj.transform.GetChild(1).gameObject.SetActive(false);
+        obj.transform.GetChild(2).gameObject.SetActive(false);
+
+        var bc1 = obj.transform.GetChild(0).GetComponent<BoxCollider2D>();
+        var bc2 = obj.transform.GetChild(3).GetComponent<BoxCollider2D>();
+        bc1.size = new Vector2(5, 5);
+        bc2.size = new Vector2(5, 5);
+
+        bc1.offset += new Vector2(7.3787f, 5.5951f);
+        bc2.offset += new Vector2(7.3787f, 5.5951f);
+    }
+
+    public static void FixWater(GameObject obj)
+    {
+        obj.transform.localScale = Vector3.one;
+        obj.transform.SetPositionZ(0);
+
+        var bc1 = obj.GetComponent<BoxCollider2D>();
+        var bc2 = obj.transform.GetChild(0).GetComponent<BoxCollider2D>();
+        bc1.size = new Vector2(5, 5);
+        bc2.size = new Vector2(5, 5);
+
+        bc1.offset += new Vector2(14.6142f, 0.7963f);
+        bc2.offset += new Vector2(14.6142f, 0.7963f);
+    }
 }

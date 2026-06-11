@@ -336,6 +336,19 @@ public static class VanillaObjects
             ("Fungus2_18", "_Props/Bounce Shrooms 1/Bounce Shroom B (1)"),
             preloadAction: o => o.transform.SetPositionZ(-0.01f))
             .WithConfigGroup(ConfigGroup.BounceShroom));
+        
+        Categories.Platforming.Add(new PreloadObject("Water Area", "water_area",
+                ("Ruins1_03", "Surface Water Region"),
+                sprite: ResourceUtils.LoadSpriteResource("water", FilterMode.Point, ppu: 25.6f),
+                preloadAction: MiscFixers.FixWater)
+            .WithConfigGroup(ConfigGroup.Water));
+        var acid = new PreloadObject("Acid Area", "acid_area",
+            ("Fungus2_04", "Acid Control v2"),
+            sprite: ResourceUtils.LoadSpriteResource("acid", FilterMode.Point, ppu: 25.6f),
+            preloadAction: MiscFixers.FixAcid)
+            .WithConfigGroup(ConfigGroup.Water);
+        Categories.Platforming.Add(acid);
+        Categories.Hazards.Add(acid);
     }
 
     private static void AddDeepnestObjects()

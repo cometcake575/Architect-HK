@@ -15,7 +15,8 @@ public class AllCategory : AbstractCategory
             .OfType<Category>()
             .Where(category => category.Priority >= 0)
             .OrderBy(category => category.Priority)
-            .SelectMany(category => category.GetObjects()).ToList();
+            .SelectMany(category => category.GetObjects())
+            .Distinct().ToList();
     }
 
     public override string GetName()

@@ -182,6 +182,40 @@ public static class ConfigGroup
             }).WithOptions("Both", "Gameplay", "Binoculars").WithDefaultValue(0))
     ]);
 
+    public static readonly List<ConfigType> Water = GroupUtils.Merge(Generic, [
+        ConfigurationManager.RegisterConfigType(new Vector2ConfigType(
+                "Scale", "water_scale",
+                (o, value) =>
+                {
+                    var ns = o.transform.localScale * value.GetValue();
+                    o.transform.SetScaleX(ns.x);
+                    o.transform.SetScaleY(ns.y);
+
+                    var fsm = o.GetComponentsInChildren<PlayMakerFSM>()
+                        .FirstOrDefault(f => f.FsmName == "Surface Water Region");
+                    if (fsm) fsm.FsmVariables.FindFsmFloat("Hero Offset").Value = ns.y * 3;
+
+                    var ab = o.transform.Find("Acid Box");
+                    if (ab) ab.localPosition /= ns.y;
+                },
+                (o, value, ctx) =>
+                {
+                    if (ctx != ConfigurationManager.PreviewContext.Cursor) return;
+                    if (EditManager.CurrentObject is not PlaceableObject placeable) return;
+                    var ns = placeable.Prefab.transform.localScale * value.GetValue() * EditManager.CurrentScale;
+                    o.transform.SetScaleX(EditManager.CurrentlyFlipped ? -ns.x : ns.x);
+                    o.transform.SetScaleY(ns.y);
+                })
+            .WithDefaultValue(Vector2.one)),
+        ConfigurationManager.RegisterConfigType(new BoolConfigType(
+                "Black Water", "water_black", (o, value) =>
+                {
+                    var fsm = o.GetComponentsInChildren<PlayMakerFSM>()
+                        .FirstOrDefault(f => f.FsmName == "Surface Water Region");
+                    if (fsm) fsm.FsmVariables.FindFsmBool("Black").value = value.GetValue();
+                }).WithDefaultValue(false))
+    ]);
+
     public static readonly List<ConfigType> Item = GroupUtils.Merge(Generic, [
         ConfigurationManager.RegisterConfigType(
             new StringConfigType("Item ID", "item_id", (o, value) =>
