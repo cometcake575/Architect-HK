@@ -972,4 +972,13 @@ public static class EnemyFixers
         
         fsm.GetState("Walk").AddAction(() => throws = 0, 0);
     }
+
+    public static void FixThk(GameObject obj)
+    {
+        BlockMusicOn(obj);
+        
+        var fsm = obj.LocateMyFSM("Control");
+        
+        fsm.GetState("Long Roar End").DisableAction(2);
+    }
 }

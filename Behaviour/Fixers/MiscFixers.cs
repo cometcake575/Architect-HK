@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Architect.Behaviour.Custom;
 using Architect.Content.Preloads;
 using Architect.Events.Blocks.Operators;
+using GlobalEnums;
 using HutongGames.PlayMaker.Actions;
 using UnityEngine;
 
@@ -716,5 +717,81 @@ public static class MiscFixers
 
         bc1.offset += new Vector2(14.6142f, 0.7963f);
         bc2.offset += new Vector2(14.6142f, 0.7963f);
+    }
+
+    public static void ScaleEnemyBullet(GameObject obj, float scale)
+    {
+        obj.transform.localScale *= scale;
+        var eb = obj.GetComponent<EnemyBullet>();
+        eb.scale *= scale;
+        eb.scaleMin *= scale;
+        eb.scaleMax *= scale;
+    }
+
+    public static void ScaleSoulOrb(GameObject obj, float scale)
+    {
+        obj.transform.localScale *= scale;
+        var setScale = (SetScale)obj.LocateMyFSM("Orb Control").GetState("Init").actions[1];
+        setScale.x.value *= scale;
+        setScale.y.value *= scale;
+    }
+
+    public static GameObject PogoableExplosionL;
+    public static GameObject PogoableExplosionM;
+
+    public static void FixOomaCore(GameObject obj)
+    {
+        var explosionPrefab = ((SpawnObjectFromGlobalPool)obj.LocateMyFSM("Lil Jelly")
+                .GetState("Die").actions[1]).gameObject.value;
+
+        explosionPrefab.SetActive(false);
+        PogoableExplosionL = Object.Instantiate(explosionPrefab);
+        PogoableExplosionL.name = "[Architect] Bounceable Explosion L";
+        explosionPrefab.SetActive(true);
+        
+        var fsm = PogoableExplosionL.LocateMyFSM("Explosion Control");
+        fsm.AddState("Prefab");
+
+        var oldStart = fsm.fsm.startState;
+        fsm.fsm.startState = "Prefab";
+        foreach (Transform child in PogoableExplosionL.transform) child.gameObject.SetActive(false);
+        
+        Object.DontDestroyOnLoad(PogoableExplosionL);
+        PogoableExplosionL.SetActive(true);
+
+        fsm.fsm.startState = oldStart;
+
+        PogoableExplosionL.GetComponent<NonBouncer>().active = false;
+        PogoableExplosionL.layer = (int)PhysLayers.ENEMIES;
+
+        PogoableExplosionL.CreatePool();
+    }
+
+    public static void FixSporgBullet(GameObject obj)
+    {
+        var explosionPrefab = ((SpawnObjectFromGlobalPool)obj.LocateMyFSM("Spore Bomb")
+            .GetState("Explode").actions[1]).gameObject.value;
+
+        explosionPrefab.SetActive(false);
+        PogoableExplosionM = Object.Instantiate(explosionPrefab);
+        PogoableExplosionM.name = "[Architect] Bounceable Explosion M";
+        explosionPrefab.SetActive(true);
+        
+        var fsm = PogoableExplosionM.LocateMyFSM("Explosion Control");
+        fsm.AddState("Prefab");
+
+        var oldStart = fsm.fsm.startState;
+        fsm.fsm.startState = "Prefab";
+        foreach (Transform child in PogoableExplosionM.transform) child.gameObject.SetActive(false);
+        
+        Object.DontDestroyOnLoad(PogoableExplosionM);
+        PogoableExplosionM.SetActive(true);
+
+        fsm.fsm.startState = oldStart;
+
+        PogoableExplosionM.GetComponent<NonBouncer>().active = false;
+        PogoableExplosionM.layer = (int)PhysLayers.ENEMIES;
+
+        PogoableExplosionM.CreatePool();
     }
 }

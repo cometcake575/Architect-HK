@@ -13,6 +13,8 @@ using Architect.Editor;
 using Architect.Objects.Placeable;
 using Architect.Prefabs;
 using Architect.Storage;
+using GlobalEnums;
+using HutongGames.PlayMaker.Actions;
 using MonoMod.RuntimeDetour;
 using UnityEngine;
 using UnityEngine.Video;
@@ -1195,6 +1197,43 @@ public static class ConfigGroup
                     o.GetComponent<EnemyFixers.Gorb>().posPlayer = true;
                 }).WithOptions("Spawn", "Player").WithDefaultValue(0))
     ]);
+    
+    public static readonly List<ConfigType> OomaCore =  GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Can Pogo Explosion", "can_pogo_ooma_core_explosion", (o, value) =>
+            {
+                if (!value.GetValue()) return;
+                ((SpawnObjectFromGlobalPool)o.LocateMyFSM("Lil Jelly").GetState("Die").actions[1])
+                    .gameObject = MiscFixers.PogoableExplosionL;
+            }).WithDefaultValue(false))
+    ]);
+    
+    public static readonly List<ConfigType> SporgBullet =  GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Can Pogo Explosion", "can_pogo_sporg_bullet_explosion", (o, value) =>
+            {
+                if (!value.GetValue()) return;
+                ((SpawnObjectFromGlobalPool)o.LocateMyFSM("Spore Bomb").GetState("Explode").actions[1])
+                    .gameObject = MiscFixers.PogoableExplosionM;
+            }).WithDefaultValue(false))
+    ]);
+    
+    public static readonly List<ConfigType> Sporg =  GroupUtils.Merge(Enemies, [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Can Pogo Bullet Explosion", "can_pogo_sporg_explosion", (o, value) =>
+            {
+                if (!value.GetValue()) return;
+                var fsm = o.LocateMyFSM("Shroom Turret");
+                var projectile = fsm.FsmVariables.FindFsmGameObject("Projectile");
+                fsm.GetState("Fire").AddAction(() =>
+                {
+                    var pObj = projectile.value;
+                    if (!pObj) return;
+                    ((SpawnObjectFromGlobalPool)pObj.LocateMyFSM("Spore Bomb").GetState("Explode").actions[1])
+                        .gameObject = MiscFixers.PogoableExplosionM;
+                }, 3);
+            }).WithDefaultValue(false))
+    ]);
 
     public static readonly List<ConfigType> Teleplane = GroupUtils.Merge(Enemies, [
         ConfigurationManager.RegisterConfigType(
@@ -1337,6 +1376,18 @@ public static class ConfigGroup
                     if (value.GetValue()) return;
                     o.GetComponent<EnemyFixers.GruzMother>().spawnGruzzers = false;
                 }).WithDefaultValue(true))
+    ]);
+
+    public static readonly List<ConfigType> Thk = GroupUtils.Merge(Wakeable, [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Phase Roar Stun", "thk_roar_stun",
+                (o, value) =>
+                {
+                    if (value.GetValue()) return;
+                    var fsm = o.LocateMyFSM("Control");
+                    fsm.GetState("Roar").DisableActions(4, 5);
+                    fsm.GetState("Roar P3").DisableActions(5, 6);
+                }).WithDefaultValue(false))
     ]);
 
     public static readonly List<ConfigType> Oblobble = GroupUtils.Merge(Swooper, [

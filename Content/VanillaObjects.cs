@@ -3,6 +3,7 @@ using Architect.Behaviour.Fixers;
 using Architect.Objects.Categories;
 using Architect.Objects.Groups;
 using Architect.Objects.Placeable;
+using HutongGames.PlayMaker.Actions;
 using JetBrains.Annotations;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -34,6 +35,7 @@ public static class VanillaObjects
         AddNpcObjects();
         AddGhostObjects();
         AddOrdealObjects();
+        AddGodObjects();
     }
 
     private static void AddCrossroadsObjects()
@@ -128,6 +130,7 @@ public static class VanillaObjects
 
         AddEnemy("Volatile Gruzzer", "volatile_gruzzer",
             ("Crossroads_07", "Infected Parent/Bursting Bouncer"));
+        
         AddEnemy("Furious Vengefly", "furious_vengefly",
             ("Crossroads_16", "infected_event/Angry Buzzer"));
         AddEnemy("Violent Husk", "violent_husk",
@@ -243,8 +246,7 @@ public static class VanillaObjects
         
         AddEnemy("Squit", "squit", ("Fungus1_22", "Mosquito"));
         AddEnemy("Fool Eater", "fool_eater", ("Fungus1_22", "Plant Trap"))
-            .WithRotationGroup(RotationGroup.Four)
-            ;
+            .WithRotationGroup(RotationGroup.Four);
         AddEnemy("Gulka", "gulka", ("Fungus1_12", "Plant Turret"))
             .WithRotationGroup(RotationGroup.Eight);
         
@@ -270,6 +272,12 @@ public static class VanillaObjects
             .WithConfigGroup(ConfigGroup.Wakeable)
             .WithReceiverGroup(ReceiverGroup.Wakeable);
         
+        AddAttack("Moss Bullet", "moss_bullet", ("Fungus1_32", "Moss Knight C"),
+                "Moss Knight Control", "Shoot", 2)
+            .WithConfigGroup(ConfigGroup.Velocity)
+            .WithInputGroup(InputGroup.Velocity)
+            .WithReceiverGroup(ReceiverGroup.Velocity);
+        
         AddEnemy("Mosscreep", "mosscreep", ("Fungus1_22", "Moss Walker"));
         AddEnemy("Obble", "obble", ("Fungus1_31", "_Enemies/Fat Fly (1)"));
     }
@@ -285,6 +293,15 @@ public static class VanillaObjects
         
         AddEnemy("Ooma", "ooma", ("Fungus3_26", "Jellyfish"));
         AddEnemy("Uoma", "uoma", ("Fungus3_26", "Jellyfish Baby"));
+        
+        Categories.Attacks.Add(new PreloadObject("Ooma Core", "ooma_core",
+            ("Fungus3_26", "Jellyfish"),
+            preloadAction: MiscFixers.FixOomaCore,
+            extraction: o => ((CreateObject)o.GetComponent<EnemyDeathEffects>().corpsePrefab
+                .LocateMyFSM("corpse")
+                .GetState("Explode")
+                .actions[3]).gameObject.value)
+            .WithConfigGroup(ConfigGroup.OomaCore));
 
         AddSolid("Fog Canyon Platform 1", "fog_plat_1", ("Fungus3_26", "fung_plat_float_01"));
         AddSolid("Fog Canyon Platform 2", "fog_plat_2", ("Fungus3_26", "fung_plat_float_04"));
@@ -316,7 +333,14 @@ public static class VanillaObjects
         AddEnemy("Fungoon", "fungoon", ("Fungus2_18", "_Scenery/Fungus Flyer"));
         AddEnemy("Shrumal Warrior", "shrumal_warrior", ("Fungus2_28", "Mushroom Roller"));
         AddEnemy("Ambloom", "ambloom", ("Fungus2_18", "Fung Crawler"));
-        AddEnemy("Sporg", "sporg", ("Fungus2_04", "Mushroom Turret"), preloadAction: MiscFixers.FixRotation);
+        AddEnemy("Sporg", "sporg", ("Fungus2_04", "Mushroom Turret"), 
+            preloadAction: MiscFixers.FixRotation)
+            .WithConfigGroup(ConfigGroup.Sporg);
+
+        AddAttack("Sporg Bullet", "sporg_bullet",
+            ("Fungus2_04", "Mushroom Turret"), "Shroom Turret", "Fire", 2,
+            preloadAction: MiscFixers.FixSporgBullet)
+            .WithConfigGroup(ConfigGroup.SporgBullet);
         
         AddEnemy("Mantis", "mantis", ("Fungus2_12", "Mantis"))
             .WithConfigGroup(ConfigGroup.Mantis);
@@ -435,7 +459,15 @@ public static class VanillaObjects
 
         AddEnemy("Husk Sentry", "husk_sentry", ("Ruins2_01", "Ruins Sentry 1"));
         AddEnemy("Winged Sentry", "winged_sentry", ("Ruins2_01", "Ruins Flying Sentry"));
+        
         AddEnemy("Lance Sentry", "lance_sentry", ("Ruins2_01", "Ruins Flying Sentry Javelin"));
+        
+        AddAttack("Javelin", "lance_sentry_javelin", ("Ruins2_01", "Ruins Flying Sentry Javelin"),
+            "Flying Sentry Javelin", "Throw", 1)
+            .WithInputGroup(InputGroup.Velocity)
+            .WithReceiverGroup(ReceiverGroup.Velocity)
+            .WithConfigGroup(ConfigGroup.Velocity);
+        
         AddEnemy("Heavy Sentry", "heavy_sentry", ("Ruins2_01", "Ruins Sentry Fat"));
         
         AddEnemy("Cowardly Husk", "cowardly_husk", ("Ruins2_01", "Royal Zombie Coward (1)"));
@@ -466,10 +498,18 @@ public static class VanillaObjects
         AddEnemy("Soul Twister", "soul_twister",
             ("Ruins1_30", "Mage"),
             postSpawnAction: EnemyFixers.FixSoulTwister)
-            .WithConfigGroup(ConfigGroup.Teleplane);
+            .WithConfigGroup(ConfigGroup.Teleplane).SpritePreview = true;
+
+        AddAttack("Soul Orb", "soul_orb",
+                ("Ruins1_30", "Mage"), "Mage", "Fire", 0,
+                preloadAction: o =>
+                {
+                    var anim = o.GetComponent<tk2dSpriteAnimator>();
+                    anim.defaultClipId = anim.GetClipIdByName("Orb Idle");
+                }).WithScaleAction(MiscFixers.ScaleSoulOrb);
         
         AddEnemy("Soul Warrior", "soul_warrior", ("GG_Mage_Knight", "Mage Knight"),
-            postSpawnAction: EnemyFixers.FixSoulWarrior);
+            postSpawnAction: EnemyFixers.FixSoulWarrior).SpritePreview = true;
 
         AddEnemy("Watcher Knight", "watcher_knight", ("GG_Watcher_Knights", "Battle Control/Black Knight 1"),
                 preloadAction: EnemyFixers.FixWatcherKnight)
@@ -488,6 +528,13 @@ public static class VanillaObjects
         AddEnemy("Crystal Crawler", "crystal_crawler", ("Mines_20", "Crystallised Lazer Bug (3)"));
         AddEnemy("Crystal Hunter", "crystal_hunter", ("Mines_25", "Crystal Flyer"));
         AddEnemy("Husk Miner", "husk_miner", ("Mines_20", "Zombie Miner 1"));
+        
+        AddAttack("Pickaxe", "husk_miner_pick", ("Mines_20", "Zombie Miner 1"),
+            "Zombie Miner", "Spawn Bullet R", 0)
+            .WithInputGroup(InputGroup.Velocity)
+            .WithReceiverGroup(ReceiverGroup.Velocity)
+            .WithConfigGroup(ConfigGroup.Velocity);
+        
         AddEnemy("Husk Myla", "husk_myla", ("Crossroads_45", "Zombie Myla"),
             preloadAction: MiscFixers.KeepActive);
         AddEnemy("Crystallised Husk", "crystallised_husk", ("Mines_25", "Zombie Beam Miner"));
@@ -554,11 +601,24 @@ public static class VanillaObjects
         AddEnemy("Loodle", "loodle", ("Fungus3_48", "Grass Hopper"));
         AddEnemy("Mantis Traitor", "mantis_traitor", ("Fungus3_10", "Battle Scene/Completed/Mantis Heavy"));
         AddEnemy("Mantis Petra", "mantis_petra", ("Fungus3_48", "Mantis Heavy Flyer"));
+        
+        AddAttack("Petra Sickle", "mantis_petra_sickle", ("Fungus3_48", "Mantis Heavy Flyer"),
+            "Heavy Flyer", "Shoot", 4)
+            .WithInputGroup(InputGroup.Velocity)
+            .WithReceiverGroup(ReceiverGroup.Velocity)
+            .WithConfigGroup(ConfigGroup.Velocity);
 
         AddEnemy("Traitor Lord", "traitor_lord",
             ("Fungus3_23_boss", "Battle Scene/Wave 3/Mantis Traitor Lord"),
             preloadAction: o => o.GetComponent<MeshRenderer>().enabled = true,
             postSpawnAction: EnemyFixers.FixTraitorLord);
+        
+        AddAttack("Traitor Sickle", "traitor_lord_sickle",
+            ("Fungus3_23_boss", "Battle Scene/Wave 3/Mantis Traitor Lord"),
+            "Mantis", "Sickle Throw", 8)
+            .WithReceiverGroup(ReceiverGroup.Velocity)
+            .WithInputGroup(InputGroup.Velocity)
+            .WithConfigGroup(ConfigGroup.Velocity);
 
         AddSolid("Queen's Gardens Platform 1", "qg_plat_1", ("Fungus3_44", "Royal_garden_plat_float_08"));
         AddSolid("Queen's Gardens Platform 2", "qg_plat_2", ("Fungus3_44", "Royal_garden_plat_float_06"));
@@ -582,6 +642,14 @@ public static class VanillaObjects
     private static void AddEdgeObjects()
     {
         AddEnemy("Primal Aspid", "primal_aspid", ("Deepnest_East_07", "Super Spitter"));
+        
+        AddAttack("Infection Bullet", "aspid_bullet",
+            ("Deepnest_East_07", "Super Spitter"), "spitter", "Fire", 1)
+            .WithScaleAction(MiscFixers.ScaleEnemyBullet)
+            .WithConfigGroup(ConfigGroup.Velocity)
+            .WithInputGroup(InputGroup.Velocity)
+            .WithReceiverGroup(ReceiverGroup.Velocity);
+        
         AddEnemy("Belfly", "belfly", ("Deepnest_East_07", "Ceiling Dropper"));
         AddEnemy("Boofly", "boofly", ("Deepnest_East_07", "Blow Fly"));
         
@@ -1008,6 +1076,25 @@ public static class VanillaObjects
             .WithBroadcasterGroup(BroadcasterGroup.Enemies)
             .WithConfigGroup(ConfigGroup.Enemies)
             .WithOutputGroup(OutputGroup.Enemies));
+    }
+
+    private static PlaceableObject AddAttack(string name, string id, (string, string) path,
+        string fsmName, string stateName, int index,
+        Action<GameObject> preloadAction = null)
+    {
+        return Categories.Attacks.Add(new PreloadObject(name, id,
+                path,
+                preloadAction: preloadAction,
+                extraction: o => ((SpawnObjectFromGlobalPool)o.LocateMyFSM(fsmName)
+                    .GetState(stateName).actions[index]).gameObject.value));
+    }
+
+    private static void AddGodObjects()
+    {
+        /*AddEnemy("The Hollow Knight", "hollow_knight",
+            ("Room_Final_Boss_Core", "Boss Control/Hollow Knight Boss"),
+            postSpawnAction: EnemyFixers.FixThk)
+            .WithConfigGroup(ConfigGroup.Thk);*/
     }
 
     private static void AddSolid(string name, string id, (string, string) path,

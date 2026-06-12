@@ -12,6 +12,8 @@ public static class Categories
     public static readonly Category Npcs = RegisterCategory("Npcs", 7);
     /** Effects such as particles */
     public static readonly Category Effects = RegisterCategory("Effects", 8);
+    /** Hazards taken from enemy attacks */
+    public static readonly Category Attacks = RegisterCategory("Attacks", 6);
     /** Things that do damage */
     public static readonly Category Hazards = RegisterCategory("Hazards", 5);
     /** Usable objects like levers, doors etc. */

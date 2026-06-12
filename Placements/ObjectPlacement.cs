@@ -31,15 +31,15 @@ public class ObjectPlacement(
     public string ID = id;
     
     private GameObject _previewObject;
-    private PreviewUtils.Preview _preview;
+    public PreviewUtils.Preview Preview;
 
     public bool Touching(Vector3 mousePos)
     {
-        if (!_preview) return false;
+        if (!Preview) return false;
 
         var pos = EditManager.GetWorldPos(mousePos, offset:_previewObject.transform.position.z);
 
-        return _preview.Touching(pos);
+        return Preview.Touching(pos);
     }
 
     public bool IsWithinZone(Vector2 pos1, Vector2 pos2)
@@ -92,7 +92,7 @@ public class ObjectPlacement(
 
     public void RefreshColour()
     {
-        if (!_preview) return;
+        if (!Preview) return;
 
         var r = 1f;
         var g = 1f;
@@ -106,7 +106,7 @@ public class ObjectPlacement(
             r *= 0.2f;
             g *= 0.2f;
         }
-        _preview.Settings = new PreviewUtils.PreviewSettings(r, g, b, ShowCurrentLayer() ? IsLocked() ? 0.2f : 0.5f : 0);
+        Preview.Settings = new PreviewUtils.PreviewSettings(r, g, b, ShowCurrentLayer() ? IsLocked() ? 0.2f : 0.5f : 0);
     }
 
     public readonly (string, string)[] Broadcasters = broadcasters;
@@ -188,8 +188,8 @@ public class ObjectPlacement(
             _previewObject.AddComponent<PreviewObject>().offset = _offset;
         }
         
-        _preview = _previewObject.AddComponent<PreviewUtils.Preview>();
-        _preview.Setup(type);
+        Preview = _previewObject.AddComponent<PreviewUtils.Preview>();
+        Preview.Setup(type);
         
         if (store) PlacementManager.Objects[ID] = _previewObject;
         

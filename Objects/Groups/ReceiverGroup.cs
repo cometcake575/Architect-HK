@@ -29,6 +29,17 @@ public static class ReceiverGroup
         }))
     ]);
     
+    public static readonly List<EventReceiverType> Velocity = GroupUtils.Merge(Generic, [
+        EventManager.RegisterReceiverType(new EventReceiverType("set_velocity", "SetVelocity", (o, b) =>
+        {
+            if (b == null) return;
+            o.GetComponent<Rigidbody2D>().velocity = new Vector2(
+                b.GetVariable<float>("New X"),
+                b.GetVariable<float>("New Y")
+            );
+        }))
+    ]);
+    
     public static readonly List<EventReceiverType> ColoWall = GroupUtils.Merge(Generic, [
         EventManager.RegisterReceiverType(new EventReceiverType("colo_wall_move", "Move", (o, b) =>
         {

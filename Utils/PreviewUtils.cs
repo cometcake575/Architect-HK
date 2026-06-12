@@ -65,13 +65,13 @@ public static class PreviewUtils
 
     public class Preview : MonoBehaviour
     {
-        private readonly List<PreviewRenderer> _renderers = [];
+        public readonly List<PreviewRenderer> Renderers = [];
 
         public PreviewSettings Settings
         {
             set
             {
-                foreach (var renderer in _renderers) renderer.Apply(value);
+                foreach (var renderer in Renderers) renderer.Apply(value);
             }
         }
 
@@ -81,7 +81,7 @@ public static class PreviewUtils
 
             if (type.SpritePreview)
             {
-                _renderers.Add(new PreviewSpriteRenderer(GetComponent<SpriteRenderer>(), false));
+                Renderers.Add(new PreviewSpriteRenderer(GetComponent<SpriteRenderer>(), false));
                 foreach (var r in GetComponentsInChildren<Renderer>(true)) 
                     if (r.gameObject != gameObject) r.enabled = false;
             }
@@ -92,16 +92,16 @@ public static class PreviewUtils
                     var sp = mr.GetComponent<tk2dSprite>();
                     if (sp)
                     {
-                        _renderers.Add(new PreviewTk2dSprite(sp, mr.GetComponent<MeshFilter>()));
+                        Renderers.Add(new PreviewTk2dSprite(sp, mr.GetComponent<MeshFilter>()));
                         set = true;
                     }
-                    else _renderers.Add(new PreviewMeshRenderer(mr, mr.GetComponent<MeshFilter>()));
+                    else Renderers.Add(new PreviewMeshRenderer(mr, mr.GetComponent<MeshFilter>()));
                 }
 
                 foreach (var sr in GetComponentsInChildren<SpriteRenderer>())
                 {
                     if (sr.name.Contains("haze") || sr.name.Contains("Light")) continue;
-                    _renderers.Add(new PreviewSpriteRenderer(sr, set));
+                    Renderers.Add(new PreviewSpriteRenderer(sr, set));
                 }
             }
 
@@ -139,11 +139,11 @@ public static class PreviewUtils
 
         public bool Touching(Vector3 pos)
         {
-            return _renderers.Any(renderer => renderer.Touching(pos));
+            return Renderers.Any(renderer => renderer.Touching(pos));
         }
     }
 
-    private abstract class PreviewRenderer(Color startColour)
+    public abstract class PreviewRenderer(Color startColour)
     {
         protected abstract void SetColour(Color color);
         

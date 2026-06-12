@@ -20,6 +20,11 @@ public static class FsmUtils
     {
         state.Actions[index].Enabled = false;
     }
+    
+    public static void DisableActions(this FsmState state, params int[] indexes)
+    {
+        foreach (var index in indexes) state.Actions[index].Enabled = false;
+    }
 
     public static void AddAction(this FsmState state, Action action, int index = -1)
     {
