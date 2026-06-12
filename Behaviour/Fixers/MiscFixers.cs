@@ -764,7 +764,10 @@ public static class MiscFixers
         PogoableExplosionL.GetComponent<NonBouncer>().active = false;
         PogoableExplosionL.layer = (int)PhysLayers.ENEMIES;
 
+        PogoableExplosionL.AddComponent<EnableCollider>();
         PogoableExplosionL.CreatePool();
+
+        PogoableExplosionL.GetComponent<Collider2D>().enabled = false;
     }
 
     public static void FixSporgBullet(GameObject obj)
@@ -792,6 +795,17 @@ public static class MiscFixers
         PogoableExplosionM.GetComponent<NonBouncer>().active = false;
         PogoableExplosionM.layer = (int)PhysLayers.ENEMIES;
 
+        PogoableExplosionM.AddComponent<EnableCollider>();
         PogoableExplosionM.CreatePool();
+
+        PogoableExplosionM.GetComponent<Collider2D>().enabled = false;
+    }
+
+    public class EnableCollider : MonoBehaviour
+    {
+        public void OnEnable()
+        {
+            GetComponent<Collider2D>().enabled = true;
+        }
     }
 }

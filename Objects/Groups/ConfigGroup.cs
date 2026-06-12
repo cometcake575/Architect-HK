@@ -342,7 +342,8 @@ public static class ConfigGroup
                 {
                     if (ctx != ConfigurationManager.PreviewContext.Cursor) return;
                     if (EditManager.CurrentObject is not PlaceableObject placeable) return;
-                    var ns = placeable.Prefab.transform.localScale * value.GetValue() * EditManager.CurrentScale;
+                    var ns = (placeable.IgnoreScale ? Vector2.one : placeable.Prefab.transform.localScale) 
+                             * value.GetValue() * EditManager.CurrentScale;
                     o.transform.SetScaleX(EditManager.CurrentlyFlipped ? -ns.x : ns.x);
                     o.transform.SetScaleY(ns.y);
                 })
