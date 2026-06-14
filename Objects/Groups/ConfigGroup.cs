@@ -602,7 +602,7 @@ public static class ConfigGroup
                             o.RemoveComponentsInChildren<Collider2D>();
                             break;
                         case 1:
-                            o.layer = Default;
+                            o.layer = (int)PhysLayers.ENEMIES;
                             var collider = o.GetComponentInChildren<Collider2D>();
                             collider.isTrigger = false;
                             collider.gameObject.AddComponent<NonBouncer>();

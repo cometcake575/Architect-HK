@@ -559,6 +559,7 @@ public static class MiscFixers
 
         public bool CheckTouchingGround()
         {
+            if (!_col2d) return false;
             var bounds1 = _col2d.bounds;
             double x1 = bounds1.min.x;
             bounds1 = _col2d.bounds;

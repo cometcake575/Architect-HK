@@ -544,7 +544,16 @@ public static class VanillaObjects
             preloadAction: MiscFixers.FixRotation,
             postSpawnAction: o => o.LocateMyFSM("Laser Bug").GetState("Idle").DisableAction(2))
             .WithConfigGroup(ConfigGroup.LaserCrystal)
-            .WithRotationGroup(RotationGroup.Eight));
+            .WithRotationGroup(RotationGroup.Eight)
+            .WithScaleAction((o, s) =>
+            {
+                o.transform.localScale *= s;
+                var beam = o.transform.Find("Beam");
+                if (!beam) return;
+                var fsm = beam.GetComponent<PlayMakerFSM>();
+                if (!fsm) return;
+                ((FloatDivide)fsm.GetState("Extend").actions[1]).divideBy.value *= s;
+            }));
         
         Categories.Hazards.Add(new PreloadObject("Stomper", "stomper", 
             ("Mines_37", "stomper_offset"), 

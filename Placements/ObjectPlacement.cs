@@ -226,7 +226,6 @@ public class ObjectPlacement(
         if (extraId != null) cId += extraId;
 
         if (pos == default) pos = _position;
-        else pos.z = _position.z;
         var wasPrefabActive = type.Prefab.activeSelf;
         type.Prefab.SetActive(false);
         var obj = Object.Instantiate(type.Prefab, pos, type.Prefab.transform.rotation);
