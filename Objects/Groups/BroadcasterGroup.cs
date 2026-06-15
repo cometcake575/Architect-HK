@@ -58,7 +58,7 @@ public static class BroadcasterGroup
     
     public static readonly List<string> Interaction = ["OnInteract"];
     
-    public static readonly List<string> Killable = ["OnDeath"];
+    public static readonly List<string> BounceShroom = ["OnBounce", "OnLargeBounce"];
     
     public static readonly List<string> Openable = ["OnOpen", "FirstOpen", "LoadedOpen"];
 }

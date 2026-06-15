@@ -335,6 +335,7 @@ public static class VanillaObjects
         AddEnemy("Ambloom", "ambloom", ("Fungus2_18", "Fung Crawler"));
         AddEnemy("Sporg", "sporg", ("Fungus2_04", "Mushroom Turret"), 
             preloadAction: MiscFixers.FixRotation)
+            .WithRotationGroup(RotationGroup.Eight)
             .WithConfigGroup(ConfigGroup.Sporg);
 
         AddAttack("Sporg Bullet", "sporg_bullet",
@@ -359,7 +360,8 @@ public static class VanillaObjects
         Categories.Platforming.Add(new PreloadObject("Bounce Shroom", "bounce_shroom",
             ("Fungus2_18", "_Props/Bounce Shrooms 1/Bounce Shroom B (1)"),
             preloadAction: o => o.transform.SetPositionZ(-0.01f))
-            .WithConfigGroup(ConfigGroup.BounceShroom));
+            .WithConfigGroup(ConfigGroup.BounceShroom)
+            .WithBroadcasterGroup(BroadcasterGroup.BounceShroom));
         
         Categories.Platforming.Add(new PreloadObject("Water Area", "water_area",
                 ("Ruins1_03", "Surface Water Region"),
@@ -382,7 +384,7 @@ public static class VanillaObjects
         AddEnemy("Corpse Creeper (Husk Hornhead)", "corpse_creeper_b",
             ("Deepnest_33", "Zombie Hornhead Sp (2)"));
         
-        AddEnemy("Dirtcarver", "dirtcarver", ("Deepnest_17", "Baby Centipede"));
+        AddEnemy("Dirtcarver", "dirtcarver", ("Deepnest_17", "Baby Centipede")).SpritePreview = true;
         AddEnemy("Carver Hatcher", "carver_hatcher", ("Deepnest_26b", "Centipede Hatcher (4)"),
             postSpawnAction: EnemyFixers.FixCarverHatcher)
             .WithScaleAction(EnemyFixers.ScaleHatcher);
@@ -429,6 +431,7 @@ public static class VanillaObjects
         Categories.Interactable.Add(new PreloadObject("Reusable Lever", "reusable_lever", 
             ("Ruins1_03", "Lift Call Lever"),
             postSpawnAction: InteractableFixers.FixReusableLever)
+            .WithRotationGroup(RotationGroup.Eight)
             .WithBroadcasterGroup(BroadcasterGroup.Activatable));
 
         Categories.Interactable.Add(new PreloadObject("City Lever", "city_lever",
@@ -829,6 +832,7 @@ public static class VanillaObjects
             }, postSpawnAction: o =>
             {
                 var fsm = o.LocateMyFSM("FSM");
+                fsm.fsmTemplate = null;
                 var bc2d = o.GetComponent<BoxCollider2D>();
                 fsm.GetState("Downed").AddAction(() => bc2d.enabled = false);
                 fsm.GetState("Upped").AddAction(() => bc2d.enabled = true);

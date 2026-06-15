@@ -53,5 +53,17 @@ public static class BroadcasterHooks
                 orig(self);
             }
         );
+
+        On.BounceShroom.BounceSmall += (orig, self) =>
+        {
+            orig(self);
+            self.gameObject.BroadcastEvent("OnBounce");
+        };
+
+        On.BounceShroom.BounceLarge += (orig, self, effects) => 
+        {
+            orig(self, effects);
+            self.gameObject.BroadcastEvent("OnLargeBounce");
+        };
     }
 }

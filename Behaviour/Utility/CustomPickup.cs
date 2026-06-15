@@ -23,6 +23,8 @@ public class CustomPickup : PreviewableBehaviour
         var fsm = shiny.LocateMyFSM("Shiny Control");
         ShinyUtility.DontFlingShiny(fsm);
         ShinyUtility.ModifyMultiShiny(fsm, FlingType.DirectDeposit, null!, [item]);
+        
+        fsm.GetState("Trink Flash").AddAction(() => gameObject.BroadcastEvent("BeforePickup"), 0);
 
         shiny.GetComponent<Rigidbody2D>().gravityScale = 1;
         
