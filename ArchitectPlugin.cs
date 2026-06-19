@@ -101,12 +101,14 @@ public class ArchitectPlugin : Mod,
                 orig(self);
             });
         
-        return PreloadManager.ToPreload.SelectMany(kvp =>
+        if (Settings.UseMapiPreloads.Value) return PreloadManager.ToPreload.SelectMany(kvp =>
         {
             List<(string, string)> s = [];
             foreach (var (val, _) in kvp.Value) s.Add((kvp.Key, val));
             return s;
         }).Distinct().ToList();
+        
+        return [("Crossroads_47", "RestBench")];
     }
 
     public override string GetVersion()
@@ -116,18 +118,23 @@ public class ArchitectPlugin : Mod,
     
     public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
     {
-        foreach (var (scene, items) in PreloadManager.ToPreload)
+        if (Settings.UseMapiPreloads.Value)
         {
-            foreach (var (path, preload) in items)
+            foreach (var (scene, items) in PreloadManager.ToPreload)
             {
-                if (preloadedObjects[scene].TryGetValue(path, out var obj))
+                foreach (var (path, preload) in items)
                 {
-                    Object.DontDestroyOnLoad(obj);
-                    preload.OnPreload(obj);
-                } else preload.OnPreload(null);
+                    if (preloadedObjects[scene].TryGetValue(path, out var obj))
+                    {
+                        Object.DontDestroyOnLoad(obj);
+                        preload.OnPreload(obj);
+                    }
+                    else preload.OnPreload(null);
+                }
             }
-        }
-        PreloadManager.HasPreloaded = true;
+
+            PreloadManager.HasPreloaded = true;
+        } else PreloadManager.DoPreload(true);
         
         SharerManager.Init();
         
@@ -151,7 +158,7 @@ public class ArchitectPlugin : Mod,
         {
             Log("Could not load external maps");
         }
-        
+
         ArrowPromptNew = preloadedObjects["Crossroads_47"]["RestBench"].LocateMyFSM("Bench Control")
             .GetAction<ShowPromptMarker>("In Range", 0).prefab.Value;
     }

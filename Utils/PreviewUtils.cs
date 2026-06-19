@@ -129,6 +129,7 @@ public static class PreviewUtils
             gameObject.RemoveComponentsInChildren<EnemyBullet>();
             gameObject.RemoveComponentsInChildren<Climber>();
             gameObject.RemoveComponentsInChildren<Walker>();
+            gameObject.RemoveComponentsInChildren<Crawler>();
             gameObject.RemoveComponentsInChildren<LiftPlatform>();
             gameObject.RemoveComponentsInChildren<ParticleSystemRenderer>();
             if (!Storage.Settings.HitboxesInEditor.Value && !type.HitboxPreview)

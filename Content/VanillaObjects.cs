@@ -1082,7 +1082,6 @@ public static class VanillaObjects
         return Categories.Enemies.Add(new PreloadObject(name, id,
                 path,
                 description,
-                notSceneBundle: notSceneBundle,
                 preloadAction: preloadAction,
                 postSpawnAction: postSpawnAction)
             .WithReceiverGroup(ReceiverGroup.Enemies)

@@ -6,8 +6,7 @@ namespace Architect.Content.Preloads;
 public class BasicPreload(
     string scene, 
     string path,
-    Action<GameObject> callback,
-    bool notSceneBundle = false) : IPreload
+    Action<GameObject> callback) : IPreload
 {
     public bool Loaded { get; private set; }
 
@@ -18,6 +17,5 @@ public class BasicPreload(
     
     public void MarkLoaded() => Loaded = true;
 
-    public bool IsNotSceneBundle => notSceneBundle;
     public bool ShouldAlwaysLoad => true;
 }

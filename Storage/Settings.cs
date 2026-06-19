@@ -41,6 +41,7 @@ public static class Settings
 
     public static readonly List<Element> MiscConfig = [];
 
+    public static ConfigEntry<bool> UseMapiPreloads;
     public static ConfigEntry<bool> TestMode;
     public static ConfigEntry<bool> HitboxesInEditor;
     public static ConfigEntry<bool> ShowRespawnPoint;
@@ -262,6 +263,13 @@ public static class Settings
             "TestMode",
             false,
             "Stops the game from storing persistent data in such as enemies being killed"
+        );
+        
+        UseMapiPreloads = Bind(
+            "Options",
+            "UseMapiPreloads",
+            false,
+            "Whether to use standard modding API preloads instead of using UnitySceneRepacker directly"
         );
         
         HitboxesInEditor = Bind(

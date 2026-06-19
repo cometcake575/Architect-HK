@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Architect.Behaviour.Fixers;
-using Architect.Behaviour.Utility;
 using Architect.Config;
 using Architect.Config.Types;
 using Architect.Editor;
@@ -233,6 +232,7 @@ public class ObjectPlacement(
         obj.name = $"[Architect] {type.GetName()} ({cId})";
 
         type.PostSpawnAction?.Invoke(obj);
+        if (type.HasSetZ) obj.GetComponent<SetZ>().z = pos.z;
         
         if (type.FlipAction != null) type.FlipAction.Invoke(obj, _flipped != extraFlip);
         else if (_flipped != extraFlip) obj.transform.SetScaleX(-obj.transform.GetScaleX());

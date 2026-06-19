@@ -119,6 +119,22 @@ public static class ReceiverGroup
             oh.FindObject();
             var target = oh.o;
             if (target) target.SetActive(true);
+        })),
+        EventManager.RegisterReceiverType(new EventReceiverType("hook_rescan", "FindObject", o =>
+        {
+            var oh = o.GetComponent<ObjectHook>();
+            oh.FindObject(true);
+        }))
+    ];
+    
+    public static readonly List<EventReceiverType> CollisionChanger = [
+        EventManager.RegisterReceiverType(new EventReceiverType("collision_changer_disable", "DisableCollision", o =>
+        {
+            o.GetComponent<CollisionChanger>().DisableCollision();
+        })),
+        EventManager.RegisterReceiverType(new EventReceiverType("collision_changer_enable", "EnableCollision", o =>
+        {
+            o.GetComponent<CollisionChanger>().EnableCollision();
         }))
     ];
     
@@ -268,7 +284,15 @@ public static class ReceiverGroup
         })),
         EventManager.RegisterReceiverType(new EventReceiverType("fsm_send_event", "SendEvent", (o, b) =>
         {
-            o.GetComponent<FsmHook>().SendEvent(b.GetVariable<string>("Event"));
+            o.GetComponent<FsmHook>().SendEvent(b?.GetVariable<string>("Event") ?? "");
+        })),
+        EventManager.RegisterReceiverType(new EventReceiverType("fsm_disable_action", "DisableAction", (o, b) =>
+        {
+            o.GetComponent<FsmHook>().DisableAction(Mathf.RoundToInt(b?.GetVariable<float>("Action") ?? 0));
+        })),
+        EventManager.RegisterReceiverType(new EventReceiverType("fsm_enable_action", "EnableAction", (o, b) =>
+        {
+            o.GetComponent<FsmHook>().EnableAction(Mathf.RoundToInt(b?.GetVariable<float>("Action") ?? 0));
         }))
     ]);
     

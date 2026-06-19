@@ -146,6 +146,24 @@ public static class ConfigGroup
             }).WithDefaultValue(2))
     ]);
     
+    public static readonly List<ConfigType> CollisionChanger = [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Disable on Start", "collision_changer_disable", (o, value) =>
+            {
+                o.GetComponent<CollisionChanger>().startDisabled = value.GetValue();
+            }).WithDefaultValue(true)),
+        ConfigurationManager.RegisterConfigType(
+            new IdConfigType("First Object", "collision_changer_a", (o, value) =>
+            {
+                o.GetComponent<CollisionChanger>().id1 = value.GetValue();
+            })),
+        ConfigurationManager.RegisterConfigType(
+            new IdConfigType("Second Object", "collision_changer_b", (o, value) =>
+            {
+                o.GetComponent<CollisionChanger>().id2 = value.GetValue();
+            }))
+    ];
+    
     public static readonly List<ConfigType> Visible = GroupUtils.Merge(Generic, [
         ConfigurationManager.RegisterConfigType(
             new BoolConfigType("Visible", "is_visible", (o, value) =>

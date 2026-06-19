@@ -14,10 +14,8 @@ public class PreloadObject : PlaceableObject, IPreload
 
     public void MarkLoaded() { }
 
-    public bool IsNotSceneBundle { get; }
-
     public bool ShouldLoad;
-    public bool ShouldAlwaysLoad => true;
+    public bool ShouldAlwaysLoad => ShouldLoad;
 
     private readonly Action<GameObject> _preloadAction;
     private readonly Func<GameObject, GameObject> _extraction;
@@ -30,14 +28,12 @@ public class PreloadObject : PlaceableObject, IPreload
         Action<GameObject> postSpawnAction = null, 
         Action<GameObject> preloadAction = null,
         Func<GameObject, GameObject> extraction = null,
-        bool notSceneBundle = false,
         Sprite sprite = null,
         Sprite uiSprite = null)
         : base(name, id, description, postSpawnAction, sprite, uiSprite)
     {
         Scene = path.Item1;
         Path = path.Item2;
-        IsNotSceneBundle = notSceneBundle;
 
         _preloadAction = preloadAction;
         _extraction = extraction;
@@ -47,35 +43,27 @@ public class PreloadObject : PlaceableObject, IPreload
 
     public override IEnumerator EnsureLoaded()
     {
-        Loaded = true;
-        yield break;/*
         if (Loaded) yield break;
 
-        PreloadManager.IsLoading = true;
-        yield return _asset.Load();
-        if (_asset.Handle.OperationException != null || Loaded)
-        {
-            PreloadManager.IsLoading = false;
-            yield break;
-        }
+        var assetName = $"{Scene}/{Path}.prefab";
+        var request = PreloadManager.Bundles[Scene].LoadAssetAsync<GameObject>(assetName);
 
+        yield return request;
+        if (Loaded) yield break;
+        
         Loaded = true;
-        OnPreload(_asset.Handle.Result);
-        PreloadManager.IsLoading = false;*/
+        
+
+        var go = (GameObject)request.asset;
+        var modGo = Object.Instantiate(go);
+        Object.DontDestroyOnLoad(modGo);
+        modGo.SetActive(false);
+        
+        OnPreload(go);
     }
 
     public virtual void OnPreload(GameObject preload)
     {
-        if (IsNotSceneBundle && preload.GetComponent<HealthManager>())
-        {
-            var active = preload.activeSelf;
-            preload.SetActive(false);
-            var p = preload;
-            preload = Object.Instantiate(preload);
-            Object.DontDestroyOnLoad(preload);
-            if (active) p.SetActive(true);
-        }
-        
         if (_extraction != null) preload = _extraction(preload);
         
         _preloadAction?.Invoke(preload);

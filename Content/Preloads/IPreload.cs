@@ -13,7 +13,5 @@ public interface IPreload
 
     public void MarkLoaded();
 
-    public bool IsNotSceneBundle { get; }
-    
     public bool ShouldAlwaysLoad { get; }
 }

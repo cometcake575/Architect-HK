@@ -36,6 +36,7 @@ public abstract class PlaceableObject : SelectableObject
     public float ChildRotation;
     public int Tk2dRotation;
     public float ZPosition;
+    public bool HasSetZ;
 
     public bool IgnoreScale;
     
@@ -90,7 +91,7 @@ public abstract class PlaceableObject : SelectableObject
             var pos = Prefab.transform.position;
             pos.z = setZ.z;
             Prefab.transform.position = pos;
-            Object.Destroy(setZ);
+            HasSetZ = true;
         }
         
         ZPosition = Prefab.transform.position.z;

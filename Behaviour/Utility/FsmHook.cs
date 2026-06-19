@@ -27,6 +27,28 @@ public class FsmHook : PreviewableBehaviour
     {
         return _state;
     }
+    
+    public void DisableAction(int i)
+    {
+        if (_fsm)
+        {
+            var state = _fsm.GetState(stateName);
+            if (state == null) return;
+            if (state.actions.Length <= i) return;
+            state.actions[i].enabled = false;
+        }
+    }
+
+    public void EnableAction(int i)
+    {
+        if (_fsm)
+        {
+            var state = _fsm.GetState(stateName);
+            if (state == null) return;
+            if (state.actions.Length <= i) return;
+            state.actions[i].enabled = true;
+        }
+    }
 
     public void SendEvent(string eventName)
     {

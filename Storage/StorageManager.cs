@@ -14,7 +14,6 @@ using Architect.Objects.Categories;
 using Architect.Objects.Placeable;
 using Architect.Placements;
 using Architect.Prefabs;
-using Architect.Utils;
 using Architect.Workshop;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -30,7 +29,6 @@ public static class StorageManager
     public static string DataPath;
     
     private static readonly Dictionary<string, List<IScheduledEdit>> ScheduledEdits = [];
-    
     
     public static void Init()
     {
@@ -495,6 +493,13 @@ public static class StorageManager
 
             PrefabsCategory.Prefabs = LoadPrefabs(DataPath);
             LoadWorkshopData();
+
+            if (!Settings.UseMapiPreloads.Value)
+            {
+                FindLoadRequirements();
+                PreloadManager.HasPreloaded = false;
+                PreloadManager.DoPreload(false);
+            }
         }
         catch
         {
