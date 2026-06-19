@@ -135,15 +135,10 @@ public class ArchitectPlugin : Mod,
             }
 
             PreloadManager.HasPreloaded = true;
+            PreloadingDone();
         } else PreloadManager.DoPreload(true);
         
         SharerManager.Init();
-        
-        WorkshopManager.Setup();
-        FavouritesCategory.Favourites = StorageManager.LoadFavourites();
-        SavedCategory.Objects = StorageManager.LoadSavedObjects();
-        PrefabsCategory.Prefabs = StorageManager.LoadPrefabs(StorageManager.DataPath);
-        
         EditorUI.SetupCategories();
 
         ModHooks.SavegameLoadHook += _ =>
@@ -162,6 +157,14 @@ public class ArchitectPlugin : Mod,
 
         ArrowPromptNew = preloadedObjects["Crossroads_47"]["RestBench"].LocateMyFSM("Bench Control")
             .GetAction<ShowPromptMarker>("In Range", 0).prefab.Value;
+    }
+
+    public static void PreloadingDone()
+    {
+        WorkshopManager.Setup();
+        FavouritesCategory.Favourites = StorageManager.LoadFavourites();
+        SavedCategory.Objects = StorageManager.LoadSavedObjects();
+        PrefabsCategory.Prefabs = StorageManager.LoadPrefabs(StorageManager.DataPath);
     }
 
     private Manager _manager;

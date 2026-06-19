@@ -133,5 +133,6 @@ public static class PreloadManager
         ArchitectPlugin.Instance.Log("Done");
         HasPreloaded = true;
         Object.Destroy(_canvasObj);
+        ArchitectPlugin.PreloadingDone();
     }
 }
