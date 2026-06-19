@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Architect.Events.Blocks.Operators;
 
-public class SceneNameBlock : TimeBlockType
+public class SceneNameBlock : ScriptBlock
 {
     protected override string Name => "Scene Name";
 
@@ -18,7 +18,7 @@ public class SceneNameBlock : TimeBlockType
     }
 }
 
-public class GameplayBlock : TimeBlockType
+public class GameplayBlock : ScriptBlock
 {
     protected override string Name => "Gameplay Control";
 
