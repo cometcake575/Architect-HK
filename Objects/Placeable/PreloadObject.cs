@@ -46,14 +46,15 @@ public class PreloadObject : PlaceableObject, IPreload
         if (Loaded) yield break;
 
         var assetName = $"{Scene}/{Path}.prefab";
-        var request = PreloadManager.Bundles[Scene].LoadAssetAsync<GameObject>(assetName);
+        if (!PreloadManager.Bundles.TryGetValue(Scene, out var bundle)) yield break;
+        
+        var request = bundle.LoadAssetAsync<GameObject>(assetName);
 
         yield return request;
         if (Loaded) yield break;
         
         Loaded = true;
         
-
         var go = (GameObject)request.asset;
         var modGo = Object.Instantiate(go);
         Object.DontDestroyOnLoad(modGo);

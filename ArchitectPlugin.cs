@@ -124,6 +124,7 @@ public class ArchitectPlugin : Mod,
             {
                 foreach (var (path, preload) in items)
                 {
+                    preload.MarkLoaded();
                     if (preloadedObjects[scene].TryGetValue(path, out var obj))
                     {
                         Object.DontDestroyOnLoad(obj);
