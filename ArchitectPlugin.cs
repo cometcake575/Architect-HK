@@ -118,6 +118,15 @@ public class ArchitectPlugin : Mod,
     
     public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
     {
+        try
+        {
+            FindMaps();
+        }
+        catch
+        {
+            Log("Could not load external maps");
+        }
+        
         if (Settings.UseMapiPreloads.Value)
         {
             foreach (var (scene, items) in PreloadManager.ToPreload)
@@ -145,15 +154,6 @@ public class ArchitectPlugin : Mod,
         {
             ItemChangerMod.CreateSettingsProfile(false, false);
         };
-
-        try
-        {
-            FindMaps();
-        }
-        catch
-        {
-            Log("Could not load external maps");
-        }
 
         ArrowPromptNew = preloadedObjects["Crossroads_47"]["RestBench"].LocateMyFSM("Bench Control")
             .GetAction<ShowPromptMarker>("In Range", 0).prefab.Value;
