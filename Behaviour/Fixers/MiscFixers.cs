@@ -292,6 +292,24 @@ public static class MiscFixers
         }
     }
 
+    public class Ghost : Npc
+    {
+        private void Start()
+        {
+            var cc = gameObject.LocateMyFSM("Conversation Control");
+            
+            cc.GetState("Convo Choice").AddAction(() => cc.SendEvent("REPEAT"), 0);
+            
+            var p = ((CallMethodProper)cc.GetState("Repeat").actions[0]).parameters;
+            p[1].stringValue = "ArchitectMod";
+            
+            cc.GetState("Set Convos")
+                .AddAction(() => cc.FsmVariables.FindFsmString("Repeat Convo").value = dialogue);
+
+            cc.GetState("End").AddAction(() => gameObject.BroadcastEvent("OnFinish"), 0);
+        }
+    }
+
     public static void RotateBench(GameObject obj, float rot)
     {
         obj.transform.SetRotation2D(rot);
@@ -808,5 +826,10 @@ public static class MiscFixers
         {
             GetComponent<Collider2D>().enabled = true;
         }
+    }
+
+    public static void FixPkCorpse(GameObject obj)
+    {
+        obj.LocateMyFSM("Control").GetState("Break").AddAction(() => obj.BroadcastEvent("OnBreak"), 0);
     }
 }

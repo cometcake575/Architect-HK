@@ -105,6 +105,13 @@ public static class ReceiverGroup
         }))
     ]);
     
+    public static readonly List<EventReceiverType> Ghosts = GroupUtils.Merge(Generic, [
+        EventManager.RegisterReceiverType(new EventReceiverType("ghost_die", "Die", o =>
+        {
+            o.LocateMyFSM("ghost_npc_death").SendEvent("DREAMNAIL");
+        }))
+    ]);
+    
     public static readonly List<EventReceiverType> ObjectHook = [
         EventManager.RegisterReceiverType(new EventReceiverType("hook_disable_target", "Disable", o =>
         {

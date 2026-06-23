@@ -843,6 +843,12 @@ public static class VanillaObjects
             ("White_Palace_03_hub", "White Palace Lift"),
             preloadAction: MiscFixers.AddComponent<MiscFixers.WpLift>)
             .WithConfigGroup(ConfigGroup.WpLift));
+
+        Categories.Misc.Add(new PreloadObject("Pale King Corpse",
+            "pk_corpse", ("White_Palace_09", "White King Corpse"),
+            preloadAction: MiscFixers.KeepActive,
+            postSpawnAction: MiscFixers.FixPkCorpse)
+            .WithBroadcasterGroup(BroadcasterGroup.Breakable));
     }
 
     private static void AddDreamObjects()
@@ -1009,6 +1015,38 @@ public static class VanillaObjects
                 preloadAction: MiscFixers.AddComponent<MiscFixers.Godseeker>)
             .WithConfigGroup(ConfigGroup.Npcs)
             .WithBroadcasterGroup(BroadcasterGroup.Npcs));
+
+        AddGhost("Gravedigger", "Town", "_NPCs/Gravedigger NPC");
+        AddGhost("Kcin");
+        AddGhost("Atra");
+        AddGhost("Wyatt");
+        AddGhost("Boss");
+        AddGhost("Chagax");
+        AddGhost("Hex");
+        AddGhost("Garro");
+        AddGhost("Perpetos");
+        AddGhost("Molten");
+        AddGhost("Hundred Nail Warrior", path: "Ghost NPC 100 nail");
+        AddGhost("Caspian");
+        AddGhost("Waldie");
+        AddGhost("Milly");
+        AddGhost("Magnus");
+        AddGhost("Grohac");
+        AddGhost("Wayner");
+        AddGhost("Thistlewind");
+
+        return;
+
+        void AddGhost(string name, string scene = "RestingGrounds_08", string path = null)
+        {
+            path ??= $"Ghost {name.ToLower()}";
+            Categories.Npcs.Add(new PreloadObject($"{name} Ghost NPC", $"{name.ToLower()}_ghost_npc",
+                (scene, path),
+                preloadAction: MiscFixers.AddComponent<MiscFixers.Ghost>)
+                .WithConfigGroup(ConfigGroup.GhostNpcs)
+                .WithBroadcasterGroup(BroadcasterGroup.Npcs)
+                .WithReceiverGroup(ReceiverGroup.Ghosts));
+        }
     }
     
     private static void AddOrdealObjects()

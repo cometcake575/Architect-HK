@@ -252,21 +252,6 @@ public static class ConfigGroup
             }).WithDefaultValue(false).WithPriority(-1))
     ]);
     
-    public static readonly List<ConfigType> Conveyor = GroupUtils.Merge(Visible, [
-        ConfigurationManager.RegisterConfigType(
-            new FloatConfigType("Belt Speed", "conveyor_speed", (o, value) =>
-            {
-                var val = value.GetValue();
-                if (val < 0)
-                {
-                    o.transform.SetScaleX(-o.transform.GetScaleX());
-                }
-
-                o.GetComponentInChildren<ConveyorBelt>().speed *= val;
-                o.GetComponent<Animator>().speed *= Math.Abs(val);
-            }).WithDefaultValue(1))
-    ]);
-    
     public static readonly List<ConfigType> Cocoon =  GroupUtils.Merge(Visible, [
         ConfigurationManager.RegisterConfigType(
             new IntConfigType("Lifeseed Count", "lifeseed_count", (o, value) =>
@@ -367,6 +352,21 @@ public static class ConfigGroup
                 })
             .WithDefaultValue(Vector2.one))
     ]);
+    
+    public static readonly List<ConfigType> Conveyor = GroupUtils.Merge(Stretchable, GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType("Belt Speed", "conveyor_speed", (o, value) =>
+            {
+                var val = value.GetValue();
+                if (val < 0)
+                {
+                    o.transform.SetScaleX(-o.transform.GetScaleX());
+                }
+
+                o.GetComponentInChildren<ConveyorBelt>().speed *= val;
+                o.GetComponent<Animator>().speed *= Math.Abs(val);
+            }).WithDefaultValue(1))
+    ]));
 
     public static readonly List<ConfigType> DreamBlock = GroupUtils.Merge(Visible, GroupUtils.Merge(Stretchable, [
         ConfigurationManager.RegisterConfigType(
@@ -1460,6 +1460,10 @@ public static class ConfigGroup
         {
             o.GetComponent<MiscFixers.Npc>().dialogue = value.GetValue();
         }).WithDefaultValue("Sample Text"))
+    ]);
+
+    public static readonly List<ConfigType> GhostNpcs = GroupUtils.Merge(Npcs, [
+        ConfigurationManager.RegisterConfigType(MakePersistenceConfigType("Stay Dead", "ghost_stay_dead"))
     ]);
 
     public static readonly List<ConfigType> Midwife = GroupUtils.Merge(Npcs, [
