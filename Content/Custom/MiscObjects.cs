@@ -1,11 +1,9 @@
 using System;
 using Architect.Behaviour.Custom;
 using Architect.Behaviour.Utility;
-using Architect.Content.Preloads;
 using Architect.Objects.Categories;
 using Architect.Objects.Groups;
 using Architect.Objects.Placeable;
-using Architect.Utils;
 using GlobalEnums;
 using UnityEngine;
 using UnityEngine.Video;
@@ -21,6 +19,8 @@ public static class MiscObjects
         Categories.Misc.AddStart(CreateTriangle());
         Categories.Misc.AddStart(CreateCircle());
         Categories.Misc.AddStart(CreateSquare());
+        
+        Categories.Effects.AddStart(CreateAudioObject());
         
         //Categories.Effects.AddStart(CreateAudioObject());
         
@@ -167,6 +167,24 @@ public static class MiscObjects
                 "URL should be a direct download anyone can access\n" +
                 "in order to work with the level sharer." + extDesc)
             .WithRotationGroup(RotationGroup.All);
+    }
+
+    private static PlaceableObject CreateAudioObject()
+    {
+        AudioPlayer.Init();
+        
+        var obj = new GameObject("Audio Player");
+        obj.SetActive(false);
+        Object.DontDestroyOnLoad(obj);
+
+        obj.AddComponent<AudioPlayer>();
+
+        return new CustomObject("Audio Player", "vanilla_audio_player", obj, 
+                "Can play vanilla atmosphere or music cues.\n" +
+                "A list of all cues can be found in the guide.",
+                sprite: ResourceUtils.LoadSpriteResource("audio_player", ppu: 300))
+            .WithConfigGroup(ConfigGroup.AudioPlayer)
+            .WithReceiverGroup(ReceiverGroup.AudioPlayer);
     }
 
     private static PlaceableObject CreateSquare()

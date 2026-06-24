@@ -130,7 +130,7 @@ public static class PreloadManager
                            $"{total-queue.Count} / {total}";
             yield return null;
         }
-        ArchitectPlugin.Instance.Log("Done");
+        ArchitectPlugin.Instance.Log("Done Preloading");
         HasPreloaded = true;
         Object.Destroy(_canvasObj);
         ArchitectPlugin.PreloadingDone();

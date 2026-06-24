@@ -44,6 +44,10 @@ public static class WorkshopManager
             new Vector2(-100, -262.5f),
             ConfigGroup.SpriteItem,
             ConfigGroup.Item);
+        
+        Register<CustomCue>("Audio Cue",
+            new Vector2(-300, -300),
+            ConfigGroup.Cue);
     }
 
     private static readonly List<WorkshopData> ExtWorkshops = [];

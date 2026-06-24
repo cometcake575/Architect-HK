@@ -134,6 +134,13 @@ public static class ReceiverGroup
         }))
     ];
     
+    public static readonly List<EventReceiverType> AudioPlayer = [
+        EventManager.RegisterReceiverType(new EventReceiverType("audio_player_play", "Play", o =>
+        {
+            o.GetComponent<AudioPlayer>().Play();
+        }))
+    ];
+    
     public static readonly List<EventReceiverType> CollisionChanger = [
         EventManager.RegisterReceiverType(new EventReceiverType("collision_changer_disable", "DisableCollision", o =>
         {

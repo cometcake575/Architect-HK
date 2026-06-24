@@ -30,6 +30,16 @@ public static class ConfigGroup
         )
     ];
     
+    public static readonly List<ConfigType> Cue =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<CustomCue>("WAV URL", "music_cue_wav_url", (item, value) =>
+            {
+                item.WavUrl = value.GetValue();
+            })
+        )
+    ];
+    
     public static readonly List<ConfigType> Scene = [
         ConfigurationManager.RegisterConfigType(
             new StringConfigType<CustomScene>("Group ID", "scene_group", (item, value) =>

@@ -146,6 +146,34 @@ public static class ConfigGroup
             }).WithDefaultValue(2))
     ]);
     
+    public static readonly List<ConfigType> AudioPlayer = [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Play on Start", "audio_player_start", (o, value) =>
+            {
+                o.GetComponent<AudioPlayer>().playOnStart = value.GetValue();
+            }).WithDefaultValue(true)),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType("Mode", "audio_player_cue_type", (o, value) =>
+            {
+                o.GetComponent<AudioPlayer>().isAtmos = value.GetValue() == 1;
+            }).WithDefaultValue(0).WithOptions("Music", "Atmos")),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType("Fade Time", "audio_player_fade_time", (o, value) =>
+            {
+                o.GetComponent<AudioPlayer>().fadeTime = value.GetValue();
+            }).WithDefaultValue(0)),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Lock", "audio_player_lock", (o, value) =>
+            {
+                o.GetComponent<AudioPlayer>().lockMusic = value.GetValue();
+            }).WithDefaultValue(true)),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType("Audio Cue", "audio_player_cue", (o, value) =>
+            {
+                o.GetComponent<AudioPlayer>().cueId = value.GetValue();
+            }).WithDefaultValue("None"))
+    ];
+    
     public static readonly List<ConfigType> CollisionChanger = [
         ConfigurationManager.RegisterConfigType(
             new BoolConfigType("Disable on Start", "collision_changer_disable", (o, value) =>
