@@ -32,7 +32,7 @@ public class ObjectExtractor : PreviewableBehaviour
                 _bundle.Unload(true);
                 _bundle = null;
             }
-
+            
             _bundleReady = false;
         };
 
@@ -53,8 +53,8 @@ public class ObjectExtractor : PreviewableBehaviour
         {
             _shouldRepack = true;
             _bundleReady = false;
-            _needsToSpawn = true;
         }
+        _needsToSpawn = true;
     }
 
     private void Update()
@@ -63,7 +63,7 @@ public class ObjectExtractor : PreviewableBehaviour
         if (!_bundleReady) return;
         
         _spawned = true;
-        _needsToSpawn = false; 
+        _needsToSpawn = false;
         var assetName = $"{sceneName}/{path}.prefab";
         StartCoroutine(Spawn(assetName));
     }
