@@ -1101,6 +1101,21 @@ public static class ConfigGroup
             ).WithDefaultValue(true))
     ]);
 
+    public static readonly List<ConfigType> ObjectExtractor = GroupUtils.Merge(Generic, [
+            ConfigurationManager.RegisterConfigType(new StringConfigType("Scene ID", "extractor_scene_id", 
+                (o, value) => 
+                {
+                    o.GetComponent<ObjectExtractor>().sceneName = value.GetValue();
+                }
+            )),
+            ConfigurationManager.RegisterConfigType(new IdConfigType("Object Path", "extractor_path", 
+                (o, value) => 
+                {
+                    o.GetComponent<ObjectExtractor>().path = value.GetValue();
+                }
+            ))
+    ]);
+
     public static readonly List<ConfigType> ObjectMover = GroupUtils.Merge(Generic, [
             ConfigurationManager.RegisterConfigType(new IdConfigType("Object ID", "mover_target", 
                 (o, value) => 
@@ -2079,6 +2094,11 @@ public static class ConfigGroup
             new BoolConfigType("Remove Other", "remove_other",
                     (o, value) => { o.GetOrAddComponent<RoomClearerConfig>().removeOther = value.GetValue(); })
                 .WithDefaultValue(true).WithPriority(-1)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Recursive", "recursive_clear_room",
+                    (o, value) => { o.GetOrAddComponent<RoomClearerConfig>().recursive = value.GetValue(); })
+                .WithDefaultValue(false).WithPriority(-1)
         )
     ]);
 

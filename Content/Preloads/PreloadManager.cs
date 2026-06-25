@@ -10,7 +10,7 @@ namespace Architect.Content.Preloads;
 
 public static class PreloadManager
 {
-    private const string PRELOAD_BUNDLE_NAME = "architect_asset_bundle";
+    public const string PRELOAD_BUNDLE_NAME = "architect_asset_bundle";
     
     public static bool HasPreloaded;
     public static readonly Dictionary<string, List<(string, IPreload)>> ToPreload = [];

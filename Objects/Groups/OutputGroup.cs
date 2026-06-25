@@ -18,6 +18,13 @@ public static class OutputGroup
             new OutputType("object_self", "Self", "Object", o => o)
         )
     ];
+    
+    public static readonly List<OutputType> ObjectExtractor = [
+        EventManager.RegisterOutputType(
+            new OutputType("object_extractor_spawn", "Spawned", "Object", 
+                o => o.GetComponent<ObjectExtractor>().spawn)
+        )
+    ];
 
     public static readonly List<OutputType> Enemies =
     [
