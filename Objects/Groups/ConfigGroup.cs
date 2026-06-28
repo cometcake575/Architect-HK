@@ -593,6 +593,14 @@ public static class ConfigGroup
             }).WithDefaultValue(0))
     ]);
 
+    public static readonly List<ConfigType> QgDoor = GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new Vector2ConfigType("Open Offset", "qg_door_open_offset", (o, value) =>
+            {
+                ((iTweenMoveBy)o.LocateMyFSM("Control").GetState("Slide").actions[0]).vector.value = value.GetValue();
+            }).WithDefaultValue(new Vector2(4.7f, 0)))
+    ]);
+
     public static readonly List<ConfigType> BattleGate = GroupUtils.Merge(Visible, [
         ConfigurationManager.RegisterConfigType(
             new BoolConfigType("Start Closed", "bg_start_closed", (o, value) =>

@@ -981,4 +981,31 @@ public static class EnemyFixers
         
         fsm.GetState("Long Roar End").DisableAction(2);
     }
+
+    public static void FixHornetProtector(GameObject obj)
+    {
+        var fsm = obj.LocateMyFSM("Control");
+        fsm.GetState("Inert").AddAction(() => fsm.SendEvent("WAKE"), 0);
+    }
+
+    public static void FixFk(GameObject obj)
+    {
+        var fsm = obj.LocateMyFSM("FalseyControl");
+
+        fsm.FsmVariables.FindFsmFloat("Final Point X").value = obj.transform.GetPositionX();
+        fsm.FsmVariables.FindFsmFloat("Rage Point X").value = obj.transform.GetPositionX();
+
+        var rMin = fsm.FsmVariables.FindFsmFloat("Range Min");
+        var rMax = fsm.FsmVariables.FindFsmFloat("Range Max");
+        
+        
+        fsm.GetState("Dormant").AddAction(() => fsm.SendEvent("BATTLE START"), 1);
+        
+        fsm.GetState("Idle").AddAction(() =>
+        {
+            var heroPos = HeroController.instance.transform.position;
+            rMin.value = heroPos.x - 13.5f;
+            rMax.value = heroPos.x + 13.5f;
+        }, 0);
+    }
 }

@@ -230,6 +230,13 @@ public static class VanillaObjects
             ("Cliffs_02_boss", "Warrior/Ghost Warrior Slug"),
             preloadAction: MiscFixers.AddComponent<EnemyFixers.Gorb>)
             .WithConfigGroup(ConfigGroup.Gorb);*/
+
+        /*Categories.Misc.Add(new PreloadObject("Standard Godhome Arena", "godhome_arena",
+            ("GG_False_Knight", "GG_Arena_Prefab")));*/
+        
+        AddEnemy("False Knight", "false_knight",
+            ("GG_False_Knight", "Battle Scene/False Knight New"),
+            postSpawnAction: EnemyFixers.FixFk).SpritePreview = true;
     }
 
     private static void AddGreenObjects()
@@ -280,6 +287,12 @@ public static class VanillaObjects
         
         AddEnemy("Mosscreep", "mosscreep", ("Fungus1_22", "Moss Walker"));
         AddEnemy("Obble", "obble", ("Fungus1_31", "_Enemies/Fat Fly (1)"));
+
+        /*
+        AddEnemy("Hornet Protector", "hornet_protector_boss",
+            ("GG_Hornet_1", "Boss Holder/Hornet Boss 1"),
+            preloadAction: ObjectUtils.RemoveComponent<ConstrainPosition>,
+            postSpawnAction: EnemyFixers.FixHornetProtector);*/
     }
     
     private static void AddCanyonObjects()
@@ -644,7 +657,8 @@ public static class VanillaObjects
             ("Fungus3_04", "Garden Slide Floor"),
             preloadAction: ObjectUtils.RemoveComponent<PersistentBoolItem>,
             postSpawnAction: o => o.LocateMyFSM("Control").GetState("Tween In").DisableAction(1))
-            .WithReceiverGroup(ReceiverGroup.Gate));
+            .WithReceiverGroup(ReceiverGroup.Gate)
+            .WithConfigGroup(ConfigGroup.QgDoor));
 
         Categories.Misc.Add(new PreloadObject("Cloth (Ally)", "cloth_ally", 
             ("Fungus3_23_boss", "Battle Scene/Cloth Entry/Cloth Fighter"),
