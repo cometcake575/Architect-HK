@@ -36,6 +36,7 @@ public static class VanillaObjects
         AddGhostObjects();
         AddOrdealObjects();
         AddGodObjects();
+        AddMiscObjects();
     }
 
     private static void AddCrossroadsObjects()
@@ -230,13 +231,10 @@ public static class VanillaObjects
             ("Cliffs_02_boss", "Warrior/Ghost Warrior Slug"),
             preloadAction: MiscFixers.AddComponent<EnemyFixers.Gorb>)
             .WithConfigGroup(ConfigGroup.Gorb);*/
-
-        /*Categories.Misc.Add(new PreloadObject("Standard Godhome Arena", "godhome_arena",
-            ("GG_False_Knight", "GG_Arena_Prefab")));*/
         
-        AddEnemy("False Knight", "false_knight",
+        /*AddEnemy("False Knight", "false_knight",
             ("GG_False_Knight", "Battle Scene/False Knight New"),
-            postSpawnAction: EnemyFixers.FixFk).SpritePreview = true;
+            postSpawnAction: EnemyFixers.FixFk).SpritePreview = true;*/
     }
 
     private static void AddGreenObjects()
@@ -1159,6 +1157,36 @@ public static class VanillaObjects
             ("Room_Final_Boss_Core", "Boss Control/Hollow Knight Boss"),
             postSpawnAction: EnemyFixers.FixThk)
             .WithConfigGroup(ConfigGroup.Thk);*/
+        
+        Categories.Misc.Add(new PreloadObject("Standard Godhome Arena", "godhome_arena",
+            ("GG_False_Knight", "GG_Arena_Prefab")));
+    }
+
+    private static void AddMiscObjects()
+    {
+        Categories.Attacks.Add(new PreloadObject("Vengeful Spirit", "vengeful_spirit", ("Knight_Pickup", "Knight"),
+            extraction: o => ((SpawnObjectFromGlobalPool)((SpawnObjectFromGlobalPool)o.LocateMyFSM("Spell Control")
+                    .GetState("Fireball 1").Actions[3]).gameObject.value.LocateMyFSM("Fireball Cast")
+                .GetState("Cast Right").Actions[7]).gameObject.value,
+            postSpawnAction: MiscFixers.FixVs)
+            .WithRotateAction(MiscFixers.RotateFireball)
+            .WithConfigGroup(ConfigGroup.Fireball));
+        Categories.Attacks.Add(new PreloadObject("Shade Soul", "shade_soul", ("Knight_Pickup", "Knight"),
+            extraction: o => ((SpawnObjectFromGlobalPool)((SpawnObjectFromGlobalPool)o.LocateMyFSM("Spell Control")
+                    .GetState("Fireball 2").Actions[3]).gameObject.value.LocateMyFSM("Fireball Cast")
+                .GetState("Cast Right").Actions[4]).gameObject.value,
+            postSpawnAction: MiscFixers.FixSs)
+            .WithRotateAction(MiscFixers.RotateFireball)
+            .WithConfigGroup(ConfigGroup.Fireball));
+        
+        Categories.Attacks.Add(new PreloadObject("Howling Wraiths", "howling_wraiths",
+            ("Knight_Pickup", "Knight/Spells/Scr Heads"),
+            postSpawnAction: MiscFixers.FixScream)
+            .WithConfigGroup(ConfigGroup.Scream));
+        Categories.Attacks.Add(new PreloadObject("Abyss Shriek", "abyss_shriek",
+            ("Knight_Pickup", "Knight/Spells/Scr Heads 2"),
+            postSpawnAction: MiscFixers.FixScream)
+            .WithConfigGroup(ConfigGroup.Scream));
     }
 
     private static void AddSolid(string name, string id, (string, string) path,

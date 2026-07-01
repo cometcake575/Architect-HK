@@ -381,6 +381,66 @@ public static class ConfigGroup
             .WithDefaultValue(Vector2.one))
     ]);
     
+    public static readonly List<ConfigType> Fireball = GroupUtils.Merge(Stretchable, GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType("Enemy Damage", "fireball_enemy_damage", (o, value) =>
+            {
+                var fsm = o.LocateMyFSM("damages_enemy");
+                if (value.GetValue() == 0) fsm.enabled = false;
+                else fsm.FsmVariables.FindFsmInt("damageDealt").value = value.GetValue();
+            }).WithDefaultValue(15)),
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType("Player Damage", "fireball_player_damage", (o, value) =>
+            {
+                if (value.GetValue() == 0) return;
+                o.AddComponent<DamageHero>().damageDealt = value.GetValue();
+            }).WithDefaultValue(0)),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Can Pogo", "fireball_can_pogo", (o, value) =>
+            {
+                if (value.GetValue()) return;
+                o.AddComponent<NonBouncer>();
+            }).WithDefaultValue(true))
+    ]));
+    
+    public static readonly List<ConfigType> Scream = GroupUtils.Merge(Stretchable, GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType("Enemy Damage", "scream_enemy_damage", (o, value) =>
+            {
+                var fsms = o.GetComponentsInChildren<PlayMakerFSM>()
+                    .Where(f => f.FsmName == "damages_enemy");
+                foreach (var fsm in fsms)
+                {
+                    if (value.GetValue() == 0) fsm.enabled = false;
+                    else fsm.FsmVariables.FindFsmInt("damageDealt").value = value.GetValue();
+                }
+            }).WithDefaultValue(20)),
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType("Player Damage", "scream_player_damage", (o, value) =>
+            {
+                if (value.GetValue() == 0) return;
+                
+                var fsms = o.GetComponentsInChildren<PlayMakerFSM>()
+                    .Where(f => f.FsmName == "damages_enemy");
+                foreach (var fsm in fsms)
+                {
+                    fsm.gameObject.AddComponent<DamageHero>().damageDealt = value.GetValue();
+                }
+            }).WithDefaultValue(0)),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Can Pogo", "scream_can_pogo", (o, value) =>
+            {
+                if (value.GetValue()) return;
+                
+                var fsms = o.GetComponentsInChildren<PlayMakerFSM>()
+                    .Where(f => f.FsmName == "damages_enemy");
+                foreach (var fsm in fsms)
+                {
+                    fsm.gameObject.AddComponent<NonBouncer>();
+                }
+            }).WithDefaultValue(true))
+    ]));
+    
     public static readonly List<ConfigType> Conveyor = GroupUtils.Merge(Stretchable, GroupUtils.Merge(Visible, [
         ConfigurationManager.RegisterConfigType(
             new FloatConfigType("Belt Speed", "conveyor_speed", (o, value) =>

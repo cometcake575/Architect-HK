@@ -1,6 +1,9 @@
 using System;
 using HutongGames.PlayMaker;
 using Satchel;
+using Satchel.Futils;
+using SFCore.Utils;
+using FsmUtil = SFCore.Utils.FsmUtil;
 
 namespace Architect.Utils;
 
@@ -34,26 +37,13 @@ public static class FsmUtils
     
     public static void AddAction(this FsmState state, FsmStateAction customAction, int index = -1)
     {
-        var actions = state.Actions;
+        if (index == -1) FsmUtil.AddAction(state, customAction);
+        else FsmUtil.InsertAction(state, customAction, index);
+    }
 
-        if (index == -1) index = actions.Length;
-        
-        var fsmStateActionArray = new FsmStateAction[actions.Length + 1];
-        var index1 = 0;
-        var index2 = 0;
-        while (index1 < fsmStateActionArray.Length)
-        {
-            if (index1 == index)
-            {
-                fsmStateActionArray[index1] = customAction;
-                ++index1;
-            }
-            if (index2 < actions.Length)
-                fsmStateActionArray[index1] = actions[index2];
-            ++index1;
-            ++index2;
-        }
-        state.Actions = fsmStateActionArray;
-        customAction.Init(state);
+    public class EveryFrameAction(Action method) : FsmStateAction
+    {
+        public override void OnEnter() => method();
+        public override void OnUpdate() => method();
     }
 }

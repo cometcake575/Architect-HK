@@ -10,7 +10,6 @@ using Architect.Events.Blocks.Operators;
 using Architect.Events.Blocks.Outputs;
 using Architect.Objects.Tools;
 using Architect.Placements;
-using Architect.Utils;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -20,16 +19,20 @@ namespace Architect.Events.Blocks;
 
 public static class ScriptManager
 {
-    private static bool _local;
-
     public static bool IsLocal
     {
-        get => _local;
+        get;
         set
         {
-            _local = value;
+            field = value;
             ScriptEditorUI.LocalParent.SetActive(value);
             ScriptEditorUI.GlobalParent.SetActive(!value);
+            
+            if (ScriptEditorUI.Rainbow && ScriptEditorUI.Trans)
+            {
+                ScriptEditorUI.Rainbow.SetActive(value);
+                ScriptEditorUI.Trans.SetActive(!value);
+            }
 
             if (CurrentStart)
             {
@@ -39,7 +42,7 @@ public static class ScriptManager
             }
         }
     }
-    
+
     public static void Init()
     {
         EventBlocks.Init();

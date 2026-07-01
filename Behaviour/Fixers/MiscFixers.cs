@@ -6,6 +6,7 @@ using Architect.Behaviour.Custom;
 using Architect.Content.Preloads;
 using Architect.Events.Blocks.Operators;
 using GlobalEnums;
+using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using UnityEngine;
 
@@ -831,5 +832,86 @@ public static class MiscFixers
     public static void FixPkCorpse(GameObject obj)
     {
         obj.LocateMyFSM("Control").GetState("Break").AddAction(() => obj.BroadcastEvent("OnBreak"), 0);
+    }
+
+    public static void FixScream(GameObject obj)
+    {
+        var fsm = obj.LocateMyFSM("FSM");
+        fsm.fsmTemplate = null;
+        fsm.GetState("Reposition?").DisableAction(2);
+        fsm.GetState("Set Rotation?").DisableAction(1);
+        fsm.GetState("Unparent?").DisableAction(3);
+        fsm.GetState("Reparent?").DisableAction(1);
+
+        obj.LocateMyFSM("Deactivate on Hit").enabled = false;
+
+        foreach (var dfsm in obj.GetComponentsInChildren<PlayMakerFSM>()
+                     .Where(f => f.FsmName == "Set Damage"))
+            dfsm.enabled = false;
+    }
+
+    public static void FixVs(GameObject obj)
+    {
+        var fsm = obj.LocateMyFSM("Fireball Control");
+        var rb2d = obj.GetComponent<Rigidbody2D>();
+
+        var sd = fsm.GetState("Set Damage");
+        sd.DisableAction(0);
+        sd.AddAction(() => fsm.SendEvent("FINISHED"), 2);
+        
+        fsm.GetState("L").DisableAction(1);
+
+        var vel = Vector2.zero;
+        fsm.GetState("Init").AddAction(() =>
+        {
+            vel = new Vector2(45, 0);
+            if (obj.transform.GetScaleX() < 0) vel.x *= -1;
+            vel = obj.transform.rotation * vel;
+            rb2d.velocity = vel;
+        }, 0);
+        
+        var idle = fsm.GetState("Idle");
+        idle.DisableAction(4);
+        idle.DisableAction(6);
+        
+        idle.AddAction(new FsmUtils.EveryFrameAction(() =>
+        {
+            if (rb2d.velocity.magnitude < 0.1f) fsm.SendEvent("WALL");
+        }), 6);
+        idle.AddAction(() => rb2d.velocity = vel, 4);
+    }
+
+    public static void FixSs(GameObject obj)
+    {
+        var fsm = obj.LocateMyFSM("Fireball Control");
+        var rb2d = obj.GetComponent<Rigidbody2D>();
+
+        var sd = fsm.GetState("Set Damage");
+        sd.DisableAction(0);
+        sd.AddAction(() => fsm.SendEvent("FINISHED"), 2);
+        
+        fsm.GetState("L").DisableAction(1);
+
+        fsm.GetState("Init").AddAction(() =>
+        {
+            var vel = new Vector2(45, 0);
+            if (obj.transform.GetScaleX() < 0) vel.x *= -1;
+            vel = obj.transform.rotation * vel;
+            rb2d.velocity = vel;
+        }, 0);
+        
+        var idle = fsm.GetState("Idle");
+        idle.DisableAction(2);
+        
+        idle.AddAction(new FsmUtils.EveryFrameAction(() =>
+        {
+            if (rb2d.velocity.magnitude < 0.1f) fsm.SendEvent("WALL");
+        }));
+    }
+
+    public static void RotateFireball(GameObject obj, float rot)
+    {
+        obj.transform.SetRotation2D(rot);
+        obj.LocateMyFSM("damages_enemy").FsmVariables.FindFsmFloat("direction").value = rot;
     }
 }
