@@ -5,12 +5,14 @@ using Architect.Config;
 using Architect.Config.Types;
 using Architect.Objects.Placeable;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Architect.Updater;
 
 public class DcmObjectType(string aName, 
     float scaleMultiplier, 
-    Dictionary<string, string> configMappings)
+    Dictionary<string, string> configMappings,
+    Vector3 offset)
 {
     public PlaceableObject GetPlaceableObject()
     {
@@ -18,6 +20,8 @@ public class DcmObjectType(string aName,
     }
 
     public float GetScaleMultiplier() => scaleMultiplier;
+    
+    public Vector3 GetOffset() => offset;
     
     public ConfigValue[] TranslateConfigValues(Dictionary<string, string> oldValues)
     {
@@ -49,6 +53,9 @@ public class DcmObjectType(string aName,
         {
             var name = string.Empty;
             var scaleMultiplier = 1f;
+            var xOffset = 0f;
+            var yOffset = 0f;
+            var zOffset = 0f;
             Dictionary<string, string> map = [];
 
             while (reader.Read() && reader.Value is string s)
@@ -61,6 +68,15 @@ public class DcmObjectType(string aName,
                     case "scale":
                         scaleMultiplier = (float)reader.ReadAsDouble()!;
                         break;
+                    case "x_offset":
+                        xOffset = (float)reader.ReadAsDouble()!;
+                        break;
+                    case "y_offset":
+                        yOffset = (float)reader.ReadAsDouble()!;
+                        break;
+                    case "z_offset":
+                        zOffset = (float)reader.ReadAsDouble()!;
+                        break;
                     case "config":
                         reader.Read();
                         map = serializer.Deserialize<Dictionary<string, string>>(reader);
@@ -68,7 +84,7 @@ public class DcmObjectType(string aName,
                 }
             }
 
-            return new DcmObjectType(name, scaleMultiplier, map);
+            return new DcmObjectType(name, scaleMultiplier, map, new Vector3(xOffset, yOffset, zOffset));
         }
     }
 }

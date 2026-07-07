@@ -25,6 +25,7 @@
   },
   "HK_trap_spike": {
     "name": "wp_trap_spikes",
+    "z_offset": 4.538,
     "config": {
       "time_offset": "stomper_offset"
     }
@@ -175,6 +176,7 @@
   },
   "HK_lore_tablet_1": {
     "name": "strange_tablet",
+    "y_offset": 2.5,
     "config": {
       "Text": "npc_dialogue"
     }

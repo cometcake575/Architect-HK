@@ -827,8 +827,10 @@ public static class VanillaObjects
         Categories.Hazards.Add(new PreloadObject("White Spikes", "white_spikes",
             ("White_Palace_03_hub", "White_ Spikes"))
             .WithRotationGroup(RotationGroup.Four));
+
+        // Used to not break old objects
         Categories.Hazards.Add(new PreloadObject("White Trap Spikes", "wp_trap_spikes",
-                ("White_Palace_07", "wp_trap_spikes"))
+            ("White_Palace_07", "wp_trap_spikes"))
             .WithRotationGroup(RotationGroup.Four)
             .WithConfigGroup(ConfigGroup.Stomper));
         

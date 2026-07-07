@@ -2,6 +2,61 @@
   "placements": [
     {
       "placement": {
+        "id": "object_colourer",
+        "pid": "c788133b",
+        "pos": {
+          "Item1": 94.9528351,
+          "Item2": 96.60231,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "False",
+        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "1",
+        "colourer_target": "51e46170",
+        "colourer_alpha": "1"
+      }
+    },
+    {
+      "placement": {
+        "id": "custom_png",
+        "pid": "8b60cab0",
+        "pos": {
+          "Item1": 113.461533,
+          "Item2": 103.773384,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "png_glow": "False",
+        "png_sprite_colour": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}",
+        "png_antialias": "True",
+        "png_ppu": "100",
+        "png_allframecount": "{\"Item1\":1,\"Item2\":1}",
+        "png_eframecount": "0",
+        "png_sframe": "0",
+        "png_frametime": "10",
+        "png_loop": "True",
+        "png_start_playing": "True",
+        "png_url": "https://github.com/ygsbzr/HollowKnight.Decoration/blob/master/images/seal_wall.png?raw=true"
+      }
+    },
+    {
+      "placement": {
         "id": "custom_png",
         "pid": "51e46170",
         "pos": {
@@ -11,7 +66,7 @@
         },
         "flipped": false,
         "locked": false,
-        "rotation": 270.0,
+        "rotation": 0.0,
         "scale": 1.0,
         "layer": 0
       },
@@ -42,7 +97,7 @@
         },
         "flipped": false,
         "locked": false,
-        "rotation": 0.0,
+        "rotation": 90.0,
         "scale": 1.0,
         "layer": 0
       },
@@ -54,54 +109,6 @@
         "collider_type": "2",
         "start_active": "False",
         "is_visible": "False"
-      }
-    },
-    {
-      "placement": {
-        "id": "object_colourer",
-        "pid": "60896411",
-        "pos": {
-          "Item1": 96.26916,
-          "Item2": 101.084229,
-          "Item3": 0.0
-        },
-        "flipped": false,
-        "locked": false,
-        "rotation": 0.0,
-        "scale": 1.0,
-        "layer": 0
-      },
-      "config": {
-        "colourer_active": "False",
-        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
-        "colourer_particles": "0",
-        "colourer_mode": "1",
-        "colourer_target": "51e46170",
-        "colourer_alpha": "0"
-      }
-    },
-    {
-      "placement": {
-        "id": "object_colourer",
-        "pid": "c788133b",
-        "pos": {
-          "Item1": 94.9528351,
-          "Item2": 96.60231,
-          "Item3": 0.0
-        },
-        "flipped": false,
-        "locked": false,
-        "rotation": 0.0,
-        "scale": 1.0,
-        "layer": 0
-      },
-      "config": {
-        "colourer_active": "False",
-        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
-        "colourer_particles": "0",
-        "colourer_mode": "1",
-        "colourer_target": "51e46170",
-        "colourer_alpha": "1"
       }
     }
   ],
