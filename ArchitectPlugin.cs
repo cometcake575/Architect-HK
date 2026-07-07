@@ -19,6 +19,7 @@ using Architect.Placements;
 using Architect.Prefabs;
 using Architect.Sharer;
 using Architect.Storage;
+using Architect.Updater;
 using Architect.Workshop;
 using ItemChanger;
 using Newtonsoft.Json;
@@ -100,7 +101,19 @@ public class ArchitectPlugin : Mod,
                 StringVarBlock.SemiVars.Clear();
                 orig(self);
             });
-        
+
+        PrefabsCategory.Prefabs = StorageManager.LoadPrefabs(StorageManager.DataPath);
+        DcmPorter.Init();
+
+        try
+        {
+            DcmPorter.Port();
+        }
+        catch
+        {
+            Log("Error porting DcM map");
+        }
+
         if (Settings.UseMapiPreloads.Value) return PreloadManager.ToPreload.SelectMany(kvp =>
         {
             List<(string, string)> s = [];
@@ -164,7 +177,6 @@ public class ArchitectPlugin : Mod,
         WorkshopManager.Setup();
         FavouritesCategory.Favourites = StorageManager.LoadFavourites();
         SavedCategory.Objects = StorageManager.LoadSavedObjects();
-        PrefabsCategory.Prefabs = StorageManager.LoadPrefabs(StorageManager.DataPath);
     }
 
     private Manager _manager;

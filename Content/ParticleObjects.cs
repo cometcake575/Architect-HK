@@ -25,6 +25,15 @@ public static class ParticleObjects
             .WithInputGroup(InputGroup.Particles)
             .WithReceiverGroup(ReceiverGroup.Particles));
         
+        Categories.Effects.Add(new PreloadObject("Damaging Falling Crystals", "falling_crystals_dmg",
+            ("Mines_31", "Pt Crystal Dropping (13)"),
+            preloadAction: MiscFixers.AddComponent<ParticleObject>,
+            postSpawnAction: MiscFixers.FixDamagingCrystals,
+            sprite: ResourceUtils.LoadSpriteResource("falling_crystal"))
+            .WithConfigGroup(Particle)
+            .WithInputGroup(InputGroup.Particles)
+            .WithReceiverGroup(ReceiverGroup.Particles));
+        
         On.GameCameras.SetupGameRefs += (orig, self) =>
         {
             orig(self);

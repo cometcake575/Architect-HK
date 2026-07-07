@@ -9,6 +9,9 @@ public class CustomScene : SpriteItem
     
     public int TilemapWidth = 500;
     public int TilemapHeight = 500;
+
+    public Color HeroLight = Color.white;
+    public Color AmbientLight = Color.white;
     
     public Vector3 MapPos;
     

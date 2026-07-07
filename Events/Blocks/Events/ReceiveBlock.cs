@@ -6,6 +6,8 @@ namespace Architect.Events.Blocks.Events;
 public class ReceiveBlock : LocalBlock
 {
     protected override IEnumerable<string> Outputs => ["OnReceive"];
+    protected override IEnumerable<string> Inputs => ["SetEvent"];
+    protected override IEnumerable<(string, string)> InputVars => [("New Event", "Text")];
 
     protected override string Name => "Receive";
     
@@ -17,7 +19,11 @@ public class ReceiveBlock : LocalBlock
         var te = new GameObject("[Architect] Receive Block").AddComponent<RcEvent>();
         te.Block = this;
     }
-
+    protected override void Trigger(string id)
+    {
+        EventName = GetVariable<string>("New Event", "");
+    }
+    
     public class RcEvent : MonoBehaviour
     {
         public ReceiveBlock Block;

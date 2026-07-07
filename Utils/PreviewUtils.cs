@@ -132,6 +132,7 @@ public static class PreviewUtils
             gameObject.RemoveComponentsInChildren<Crawler>();
             gameObject.RemoveComponentsInChildren<LiftPlatform>();
             gameObject.RemoveComponentsInChildren<ParticleSystemRenderer>();
+            gameObject.RemoveComponentsInChildren<FlipPlatform>();
             if (!Storage.Settings.HitboxesInEditor.Value && !type.HitboxPreview)
             {
                 gameObject.RemoveComponentsInChildren<Collider2D>();

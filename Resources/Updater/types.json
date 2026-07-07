@@ -1,0 +1,223 @@
+{
+  "HK_infinte_soul": {
+    "name": "pv_totem",
+    "scale": 1.225
+  },
+  "HK_crystal_barrel": {
+    "name": "crystal_peak_barrel",
+    "scale": 0.625
+  },
+  "IMG_RespawnPoint": {
+    "name": "hazard_respawn_point",
+    "scale": 2.5
+  },
+  "IMG_Lantern": {
+    "name": "darkness"
+  },
+  "remove_scene": {
+    "name": "room_remover"
+  },
+  "HK_break_wall": {
+    "name": "breakable_wall_1"
+  },
+  "HK_turret": {
+    "name": "prefab_DCM_Sporg"
+  },
+  "HK_trap_spike": {
+    "name": "wp_trap_spikes",
+    "config": {
+      "time_offset": "stomper_offset"
+    }
+  },
+  "HK_zap_cloud": {
+    "name": "charged_lumaflies",
+    "config": {
+      "time_offset": "lumaflies_offset"
+    }
+  },
+  "back_colorfull_fill": {
+    "name": "coloured_square",
+    "scale": 1.2,
+    "config": {
+      "size_x": "size_x",
+      "size_y": "size_y",
+      "Order": "obj_layer",
+      "R": "colour_red",
+      "G": "colour_green",
+      "B": "colour_blue"
+    }
+  },
+  "white_thorn": {
+    "name": "white_thorns",
+    "scale": 0.64
+  },
+  "HK_laser_turret": {
+    "name": "laser_crystal"
+  },
+  "HK_bench": {
+    "name": "common_bench"
+  },
+  "HK_shadow_gate": {
+    "name": "shade_gate"
+  },
+  "HK_zote_head": {
+    "name": "zote_head"
+  },
+  "HK_soul_totem": {
+    "name": "horned_totem",
+    "scale": 1.37
+  },
+  "HK_spike": {
+    "name": "cave_spikes"
+  },
+  "HK_garden_plat_s": {
+    "name": "collapsing_plat_s"
+  },
+  "HK_flip_platform": {
+    "name": "flipping_platform"
+  },
+  "HK_platform_rect": {
+    "name": "peak_plat_1"
+  },
+  "HK_platform_small": {
+    "name": "plat_generic_5"
+  },
+  "HK_crystal": {
+    "name": "crystal_peak_crystals"
+  },
+  "HK_bounce_shroom": {
+    "name": "bounce_shroom"
+  },
+  "HK_fly": {
+    "name": "wingsmould"
+  },
+  "HK_quake_floor": {
+    "name": "collapser_dive_1"
+  },
+  "lazer_bug": {
+    "name": "crystal_crawler"
+  },
+  "edge": {
+    "name": "prefab_DCM_Line"
+  },
+  "hazard_saver": {
+    "name": "prefab_DCM_RespawnPlat"
+  },
+  "IMG_recoverDash": {
+    "name": "dash_1"
+  },
+  "IMG_recoverJump": {
+    "name": "wings_1"
+  },
+  "IMG_fireball": {
+    "name": "spirit_binding"
+  },
+  "IMG_MothwingCloak": {
+    "name": "dash_binding"
+  },
+  "IMG_MonarchWings": {
+    "name": "wings_binding"
+  },
+  "IMG_MantisClaw": {
+    "name": "claw_binding"
+  },
+  "IMG_quake": {
+    "name": "dive_binding"
+  },
+  "IMG_DownSlash": {
+    "name": "pogo_binding"
+  },
+  "HK_stomper": {
+    "name": "prefab_DCM_Stomper"
+  },
+  "stomper_switch": {
+    "name": "prefab_DCM_StomperLever"
+  },
+  "IMG_scream": {
+    "name": "wraiths_binding"
+  },
+  "IMG_supserdash": {
+    "name": "cdash_binding"
+  },
+  "HK_unbreak_wall": {
+    "name": "prefab_DCM_Wall"
+  },
+  "simple_conveyor": {
+    "name": "prefab_DCM_Conveyor"
+  },
+  "disable_hazard_spawn": {
+    "name": "hrp_remover"
+  },
+  "disable_col": {
+    "name": "collision_remover"
+  },
+  "binoculars": {
+    "name": "freecam"
+  },
+  "white_spike": {
+    "name": "prefab_DCM_Spikes"
+  },
+  "jarcol_floor": {
+    "name": "prefab_DCM_Jarcol"
+  },
+  "zote_detection": {
+    "name": "prefab_DCM_ZoteMachine"
+  },
+  "zote_wall": {
+    "name": "prefab_DCM_ZoteGate"
+  },
+  "HK_crystal_dropping": {
+    "name": "falling_crystals_dmg",
+    "config": {
+      "rate": "particles_rate",
+      "xspeed": "particles_velocity_x"
+    }
+  },
+  "HK_lore_tablet_1": {
+    "name": "strange_tablet",
+    "config": {
+      "Text": "npc_dialogue"
+    }
+  },
+  "HK_lever": {
+    "name": "prefab_DCM_Lever",
+    "config": {
+      "Number": "prefab_config_431c4c67-7766-47e0-85e0-08395f906ec1"
+    }
+  },
+  "HK_gate": {
+    "name": "prefab_DCM_Gate",
+    "config": {
+      "Number": "prefab_config_9cc750cc-8e69-4302-9964-25a031cd4415"
+    }
+  },
+  "twinkle_platform": {
+    "name": "prefab_DCM_Twinkle",
+    "config": {
+      "Time": "prefab_config_9a52dda9-fcb2-40e8-b059-d1a7ee8e3737",
+      "Offset": "prefab_config_c1226010-88ad-48cf-96fa-5263fc122d12"
+    }
+  },
+  "IMG_TP": {
+    "name": "prefab_DCM_Tp",
+    "config": {
+      "Destination": "prefab_config_3376a9f8-9c6e-43c9-a1ba-7489c1b13d67",
+      "DestinationScene": "prefab_config_0323914f-6b5f-49a1-b010-6fce3e907fc2"
+    }
+  },
+  "transgate": {
+    "name": "transition_gate",
+    "config": {
+      "door_id": "trans_id",
+      "trigger_type": "trans_collide"
+    }
+  },
+  "HK_saw": {
+    "name": "prefab_DCM_Saw",
+    "config": {
+      "speed": "prefab_config_6653ed1d-8b51-409a-8355-52cef4ddb77f",
+      "span": "prefab_config_cf530044-cf09-4200-bf3d-e1b220bbfe2b",
+      "offset": "prefab_config_519163eb-3be8-4dd7-9a2b-27fb5c4b183d"
+    }
+  }
+}

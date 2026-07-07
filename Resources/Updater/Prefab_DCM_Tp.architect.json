@@ -1,0 +1,270 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "coloured_square",
+        "pid": "5ec1a5f5",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 45.0,
+        "scale": 0.1698318,
+        "layer": 0
+      },
+      "config": {
+        "sprite_colour": "{\"Item1\":0.5,\"Item2\":0.5,\"Item3\":1.0,\"Item4\":1.0}",
+        "coloured_shapes_has_physics": "False",
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}"
+      }
+    },
+    {
+      "placement": {
+        "id": "trigger_zone",
+        "pid": "9a4bdb4d",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": true,
+        "rotation": 0.0,
+        "scale": 0.4744783,
+        "layer": 0
+      },
+      "config": {
+        "trigger_type": "0",
+        "trigger_shape": "0",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}"
+      }
+    },
+    {
+      "placement": {
+        "id": "trigger_zone",
+        "pid": "eff61240",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": true,
+        "rotation": 0.0,
+        "scale": 0.4254394,
+        "layer": 0
+      },
+      "config": {
+        "trigger_type": "0",
+        "trigger_shape": "0",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}",
+        "start_active": "False"
+      }
+    },
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "5ce12eee",
+        "pos": {
+          "Item1": 96.88436,
+          "Item2": 101.990616,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "True",
+        "colourer_colour_set": "{\"Item1\":0.0,\"Item2\":0.0,\"Item3\":0.6,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "1",
+        "colourer_target": "5ec1a5f5"
+      }
+    },
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "0c07ebe7",
+        "pos": {
+          "Item1": 99.6598053,
+          "Item2": 102.366356,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "False",
+        "colourer_colour_set": "{\"Item1\":0.5,\"Item2\":0.5,\"Item3\":1.0,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "1",
+        "colourer_target": "5ec1a5f5"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": -61.7778,
+        "Item2": -62.66667
+      },
+      "block_id": "cb85d345-12e3-4c79-b446-8108c7a1a255",
+      "events": {
+        "ZoneExit": [
+          {
+            "Item1": "69a1ff9c-f82f-439c-96d0-17a9d9ea9258",
+            "Item2": "In"
+          }
+        ],
+        "ZoneEnter": []
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "9a4bdb4d",
+        "object_type": "trigger_zone"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 239.777771,
+        "Item2": 84.22224
+      },
+      "block_id": "8bbb8570-8dde-4d58-b6da-b2280880279e",
+      "events": {
+        "ZoneEnter": [
+          {
+            "Item1": "0fd51a34-dedb-4765-9f21-621b9d5bd61d",
+            "Item2": "Transition"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "eff61240",
+        "object_type": "trigger_zone"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 165.1111,
+        "Item2": -70.66664
+      },
+      "block_id": "69a1ff9c-f82f-439c-96d0-17a9d9ea9258",
+      "events": {
+        "Out": [
+          {
+            "Item1": "8bbb8570-8dde-4d58-b6da-b2280880279e",
+            "Item2": "enable"
+          },
+          {
+            "Item1": "4b63f18a-67dc-481e-8cda-d0b651a4381b",
+            "Item2": "do_colour"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Delay",
+      "config": {
+        "delay_num": "3"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 416.222229,
+        "Item2": 16.444458
+      },
+      "block_id": "0fd51a34-dedb-4765-9f21-621b9d5bd61d",
+      "events": {},
+      "vars": {
+        "Scene": {
+          "Item1": "0323914f-6b5f-49a1-b010-6fce3e907fc2",
+          "Item2": "Value"
+        },
+        "Door": {
+          "Item1": "3376a9f8-9c6e-43c9-a1ba-7489c1b13d67",
+          "Item2": "Value"
+        }
+      },
+      "type": "Transition",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 377.1715,
+        "Item2": 153.603668
+      },
+      "block_id": "0323914f-6b5f-49a1-b010-6fce3e907fc2",
+      "events": {},
+      "vars": {},
+      "type": "Constant Text",
+      "config": {
+        "prefab_configurable": "True",
+        "constant_text": "Town",
+        "prefab_configurable_name": "Scene"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 512.888855,
+        "Item2": 176.444443
+      },
+      "block_id": "3376a9f8-9c6e-43c9-a1ba-7489c1b13d67",
+      "events": {},
+      "vars": {},
+      "type": "Constant Text",
+      "config": {
+        "prefab_configurable": "True",
+        "constant_text": "bot1",
+        "prefab_configurable_name": "ID"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -63.1111145,
+        "Item2": 122.222229
+      },
+      "block_id": "23a360b0-1877-4083-9c10-c62d6f5a6eaf",
+      "events": {
+        "OnStart": [
+          {
+            "Item1": "69a1ff9c-f82f-439c-96d0-17a9d9ea9258",
+            "Item2": "In"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Start",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 469.322083,
+        "Item2": -117.834969
+      },
+      "block_id": "4b63f18a-67dc-481e-8cda-d0b651a4381b",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "0c07ebe7",
+        "object_type": "object_colourer"
+      }
+    }
+  ]
+}

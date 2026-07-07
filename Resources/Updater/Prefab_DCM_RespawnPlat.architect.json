@@ -1,0 +1,183 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "trigger_zone",
+        "pid": "5c61bd03",
+        "pos": {
+          "Item1": 100,
+          "Item2": 100,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": true,
+        "rotation": 0.0,
+        "scale": 3.102372,
+        "layer": 0
+      },
+      "config": {
+        "trigger_type": "0",
+        "trigger_shape": "0",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}"
+      }
+    },
+    {
+      "placement": {
+        "id": "hazard_respawn_point",
+        "pid": "3bdaf034",
+        "pos": {
+          "Item1": 100,
+          "Item2": 101.5,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "hrp_collision": "True",
+        "hrp_width": "1",
+        "hrp_height": "1"
+      }
+    },
+    {
+      "placement": {
+        "id": "wp_gate",
+        "pid": "7e9eb53e",
+        "pos": {
+          "Item1": 100.263588,
+          "Item2": 100.18705,
+          "Item3": -0.27
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 270.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "wp_gate_start_closed": "False",
+        "wp_gate_fade_up": "0",
+        "wp_gate_fade_down": "1"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": -56.444458,
+        "Item2": -124.0
+      },
+      "block_id": "d550d2d1-1e35-42fb-a469-e2321348c157",
+      "events": {
+        "ZoneEnter": [
+          {
+            "Item1": "c3357db0-a741-4f42-b425-fd32455f0a25",
+            "Item2": "set_spawn"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "5c61bd03",
+        "object_type": "trigger_zone"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 213.333344,
+        "Item2": -169.777771
+      },
+      "block_id": "c3357db0-a741-4f42-b425-fd32455f0a25",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "3bdaf034",
+        "object_type": "hazard_respawn_point"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 273.555542,
+        "Item2": 40.66667
+      },
+      "block_id": "abe0d324-3626-48f2-a5fe-db852364a433",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "7e9eb53e",
+        "object_type": "wp_gate"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -114.222183,
+        "Item2": 60.66667
+      },
+      "block_id": "ad50113b-9fd9-43fe-bfa1-75fa5173c183",
+      "events": {
+        "OnHazardRespawn": [
+          {
+            "Item1": "abe0d324-3626-48f2-a5fe-db852364a433",
+            "Item2": "wp_gate_close"
+          },
+          {
+            "Item1": "9b309215-016e-4c2d-bd69-b17e05b777db",
+            "Item2": "In"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Health Control",
+      "config": {
+        "health_amount": "1"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 108.2223,
+        "Item2": 126.0
+      },
+      "block_id": "9b309215-016e-4c2d-bd69-b17e05b777db",
+      "events": {
+        "Out": [
+          {
+            "Item1": "abe0d324-3626-48f2-a5fe-db852364a433",
+            "Item2": "wp_gate_open"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Delay",
+      "config": {
+        "delay_num": "0.5"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 37.3333435,
+        "Item2": -3.55555725
+      },
+      "block_id": "c9661438-4543-4816-9ccd-10cf76370b97",
+      "events": {
+        "OnStart": [
+          {
+            "Item1": "abe0d324-3626-48f2-a5fe-db852364a433",
+            "Item2": "wp_gate_open"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Start",
+      "ext": {}
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "custom_png",
+        "pid": "b97662f1",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "png_glow": "False",
+        "png_sprite_colour": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}",
+        "png_antialias": "True",
+        "png_ppu": "100",
+        "png_allframecount": "{\"Item1\":1,\"Item2\":1}",
+        "png_eframecount": "0",
+        "png_sframe": "0",
+        "png_frametime": "10",
+        "png_loop": "True",
+        "png_start_playing": "True",
+        "png_url": "https://github.com/ygsbzr/HollowKnight.Decoration/blob/master/images/jarcol_floor.png?raw=true"
+      }
+    },
+    {
+      "placement": {
+        "id": "coloured_square",
+        "pid": "3318646b",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 101.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "sprite_colour": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "coloured_shapes_has_physics": "False",
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":3.4,\"Item2\":0.25}"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": []
+}

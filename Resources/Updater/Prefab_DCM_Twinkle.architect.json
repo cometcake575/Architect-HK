@@ -1,0 +1,354 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "custom_png",
+        "pid": "51e46170",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 270.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "png_glow": "False",
+        "png_sprite_colour": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}",
+        "png_antialias": "True",
+        "png_ppu": "100",
+        "png_allframecount": "{\"Item1\":1,\"Item2\":1}",
+        "png_eframecount": "0",
+        "png_sframe": "0",
+        "png_frametime": "10",
+        "png_loop": "True",
+        "png_start_playing": "True",
+        "png_url": "https://github.com/ygsbzr/HollowKnight.Decoration/blob/master/images/seal_wall.png?raw=true"
+      }
+    },
+    {
+      "placement": {
+        "id": "coloured_square",
+        "pid": "3f865402",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "sprite_colour": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "coloured_shapes_has_physics": "False",
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":1.35,\"Item2\":0.3}",
+        "collider_type": "2",
+        "start_active": "False",
+        "is_visible": "False"
+      }
+    },
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "60896411",
+        "pos": {
+          "Item1": 96.26916,
+          "Item2": 101.084229,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "False",
+        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "1",
+        "colourer_target": "51e46170",
+        "colourer_alpha": "0"
+      }
+    },
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "c788133b",
+        "pos": {
+          "Item1": 94.9528351,
+          "Item2": 96.60231,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "False",
+        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "1",
+        "colourer_target": "51e46170",
+        "colourer_alpha": "1"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": 393.023438,
+        "Item2": -143.555573
+      },
+      "block_id": "63491fcd-c0e9-4bef-b7af-7affcfb2205b",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "3f865402",
+        "object_type": "coloured_square"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -30.74364,
+        "Item2": -116.549744
+      },
+      "block_id": "e2f2d287-a5fa-487e-9f19-b1582fb18560",
+      "events": {},
+      "vars": {
+        "Fade Time": {
+          "Item1": "9a52dda9-fcb2-40e8-b059-d1a7ee8e3737",
+          "Item2": "Value"
+        }
+      },
+      "type": "object",
+      "ext": {
+        "object": "60896411",
+        "object_type": "object_colourer"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 65.55556,
+        "Item2": 51.1111145
+      },
+      "block_id": "9a52dda9-fcb2-40e8-b059-d1a7ee8e3737",
+      "events": {},
+      "vars": {},
+      "type": "Constant Num",
+      "config": {
+        "prefab_configurable": "True",
+        "prefab_configurable_name": "Time",
+        "constant_num": "1"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -27.3578186,
+        "Item2": -246.98288
+      },
+      "block_id": "9ce58750-56ca-41c9-a741-f9d49fe02711",
+      "events": {
+        "Out": [
+          {
+            "Item1": "2de1d986-7043-41fa-9988-e88974d91028",
+            "Item2": "Trigger"
+          },
+          {
+            "Item1": "9ce58750-56ca-41c9-a741-f9d49fe02711",
+            "Item2": "In"
+          }
+        ]
+      },
+      "vars": {
+        "Extra Delay": {
+          "Item1": "a129a7a1-523d-4659-888a-d34ce84292c0",
+          "Item2": "Value"
+        }
+      },
+      "type": "Delay",
+      "config": {
+        "delay_num": "0"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 117.555557,
+        "Item2": -94.44444
+      },
+      "block_id": "a129a7a1-523d-4659-888a-d34ce84292c0",
+      "events": {},
+      "vars": {
+        "2": {
+          "Item1": "f535608e-8df3-4acd-8bb7-c14564ecf6ac",
+          "Item2": "Value"
+        },
+        "1": {
+          "Item1": "9a52dda9-fcb2-40e8-b059-d1a7ee8e3737",
+          "Item2": "Value"
+        }
+      },
+      "type": "Operation",
+      "config": {
+        "maths_mode": "3"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 244.222229,
+        "Item2": 119.111115
+      },
+      "block_id": "f535608e-8df3-4acd-8bb7-c14564ecf6ac",
+      "events": {},
+      "vars": {},
+      "type": "Constant Num",
+      "config": {
+        "prefab_configurable": "False",
+        "constant_num": "2"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -187.999985,
+        "Item2": 21.3333282
+      },
+      "block_id": "c1226010-88ad-48cf-96fa-5263fc122d12",
+      "events": {},
+      "vars": {},
+      "type": "Constant Num",
+      "config": {
+        "prefab_configurable": "True",
+        "prefab_configurable_name": "Offset",
+        "constant_num": "0"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -45.9713,
+        "Item2": -365.40625
+      },
+      "block_id": "9311fb94-ad67-4011-87f2-e60763767d53",
+      "events": {
+        "True": [
+          {
+            "Item1": "2de1d986-7043-41fa-9988-e88974d91028",
+            "Item2": "Trigger"
+          }
+        ]
+      },
+      "vars": {
+        "Check": {
+          "Item1": "a4576d27-4bd4-4c32-9fc3-2de46f4b4371",
+          "Item2": "Value"
+        }
+      },
+      "type": "If",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -251.111115,
+        "Item2": -77.33334
+      },
+      "block_id": "a4576d27-4bd4-4c32-9fc3-2de46f4b4371",
+      "events": {},
+      "vars": {
+        "1": {
+          "Item1": "c1226010-88ad-48cf-96fa-5263fc122d12",
+          "Item2": "Value"
+        },
+        "2": {
+          "Item1": "487e9353-ebf2-4f3c-b292-69bd9e242422",
+          "Item2": "Value"
+        }
+      },
+      "type": "Compare",
+      "config": {
+        "compare_mode": "0"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -16.8888779,
+        "Item2": 62.0
+      },
+      "block_id": "487e9353-ebf2-4f3c-b292-69bd9e242422",
+      "events": {},
+      "vars": {},
+      "type": "Constant Num",
+      "config": {
+        "prefab_configurable": "False",
+        "constant_num": "1"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 166.444458,
+        "Item2": -242.888885
+      },
+      "block_id": "2de1d986-7043-41fa-9988-e88974d91028",
+      "events": {},
+      "vars": {},
+      "type": "Step Counter",
+      "ext": {
+        "children": "[{\"pos\":{\"Item1\":31.3333435,\"Item2\":-105.777786},\"block_id\":\"ab0d7441-29f1-4d34-bda0-bc76087e09ca\",\"events\":{\"OnTrigger\":[{\"Item1\":\"63491fcd-c0e9-4bef-b7af-7affcfb2205b\",\"Item2\":\"disable\"}]},\"vars\":{},\"type\":\"Step Trigger\",\"ext\":{}},{\"pos\":{\"Item1\":31.3333435,\"Item2\":-105.777786},\"block_id\":\"39c49475-bf67-47ef-ac44-262af9fe7cd9\",\"events\":{\"OnTrigger\":[{\"Item1\":\"63491fcd-c0e9-4bef-b7af-7affcfb2205b\",\"Item2\":\"enable\"},{\"Item1\":\"983496db-1157-42d2-a80a-772e56fcca75\",\"Item2\":\"do_colour\"},{\"Item1\":\"e2f2d287-a5fa-487e-9f19-b1582fb18560\",\"Item2\":\"do_colour\"}]},\"vars\":{},\"type\":\"Step Trigger\",\"ext\":{}}]"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -229.8177,
+        "Item2": -357.022461
+      },
+      "block_id": "8110e85d-4f1a-495a-b829-02dbc0ff1b9c",
+      "events": {
+        "OnStart": [
+          {
+            "Item1": "9ce58750-56ca-41c9-a741-f9d49fe02711",
+            "Item2": "In"
+          },
+          {
+            "Item1": "9311fb94-ad67-4011-87f2-e60763767d53",
+            "Item2": "In"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Start",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 412.542664,
+        "Item2": -306.9079
+      },
+      "block_id": "983496db-1157-42d2-a80a-772e56fcca75",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "c788133b",
+        "object_type": "object_colourer"
+      }
+    }
+  ]
+}

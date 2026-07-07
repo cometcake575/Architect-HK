@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Architect.Behaviour.Abilities;
 using Architect.Behaviour.Custom;
-using Architect.Behaviour.Utility;
 using Architect.Editor;
 using Architect.Events.Blocks.Events;
 using Architect.Objects.Categories;

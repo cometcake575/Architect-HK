@@ -664,6 +664,7 @@ public static class UtilityObjects
             .WithBroadcasterGroup(BroadcasterGroup.TriggerZone)
             .WithReceiverGroup(ReceiverGroup.TriggerZone)
             .WithOutputGroup(OutputGroup.TriggerZone)
+            .WithInputGroup(InputGroup.TriggerZone)
             .WithConfigGroup(ConfigGroup.TriggerZones);
     }
 

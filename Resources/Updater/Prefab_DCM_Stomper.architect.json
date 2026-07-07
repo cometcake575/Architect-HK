@@ -1,0 +1,161 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "stomper",
+        "pid": "a12548e0",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "stomper_speed": "1",
+        "stomper_offset": "0"
+      }
+    },
+    {
+      "placement": {
+        "id": "component_toggle",
+        "pid": "67b0fc2c",
+        "pos": {
+          "Item1": 102.815262,
+          "Item2": 101.830734,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "component_hook_recursive": "True",
+        "component_hook_mode": "1",
+        "component_hook_target": "a12548e0",
+        "component_hook_name": "Animator"
+      }
+    },
+    {
+      "placement": {
+        "id": "component_toggle",
+        "pid": "748eba49",
+        "pos": {
+          "Item1": 92.8812256,
+          "Item2": 99.52032,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "component_hook_recursive": "True",
+        "component_hook_mode": "2",
+        "component_hook_target": "a12548e0",
+        "component_hook_name": "Animator"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": -296.12915,
+        "Item2": -73.6593
+      },
+      "block_id": "a2848095-851e-44f0-a4c2-3291ff1c855a",
+      "events": {
+        "OnReceive": [
+          {
+            "Item1": "701d77c8-ef4f-4d5c-b09e-b5db8163ea60",
+            "Item2": "component_hook_apply"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Receive",
+      "config": {
+        "out_local": "False",
+        "out_name": "STOMPER_OFF"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -6.77009869,
+        "Item2": -146.625916
+      },
+      "block_id": "701d77c8-ef4f-4d5c-b09e-b5db8163ea60",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "67b0fc2c",
+        "object_type": "component_toggle"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -152.954086,
+        "Item2": 50.2084274
+      },
+      "block_id": "7a6b459c-7e5b-4765-8ec2-bafdbbda6e9e",
+      "events": {
+        "OnStart": [
+          {
+            "Item1": "39c8312f-3adb-4461-ba3f-e52ad536c835",
+            "Item2": "component_hook_apply"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Start",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 158.7212,
+        "Item2": 29.6473923
+      },
+      "block_id": "39c8312f-3adb-4461-ba3f-e52ad536c835",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "748eba49",
+        "object_type": "component_toggle"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -278.82782,
+        "Item2": 135.963028
+      },
+      "block_id": "5787316f-21fd-4091-a44c-a6fe3ce6f0ec",
+      "events": {
+        "OnReceive": [
+          {
+            "Item1": "39c8312f-3adb-4461-ba3f-e52ad536c835",
+            "Item2": "component_hook_apply"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Receive",
+      "config": {
+        "out_local": "False",
+        "out_name": "STOMPER_ON"
+      },
+      "ext": {}
+    }
+  ]
+}

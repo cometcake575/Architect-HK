@@ -16,8 +16,10 @@ using Architect.Storage;
 using GlobalEnums;
 using HutongGames.PlayMaker.Actions;
 using MonoMod.RuntimeDetour;
+using Satchel.Futils.Serialiser;
 using UnityEngine;
 using UnityEngine.Video;
+using FsmEvent = HutongGames.PlayMaker.FsmEvent;
 using Object = UnityEngine.Object;
 
 namespace Architect.Objects.Groups;
@@ -1725,11 +1727,34 @@ public static class ConfigGroup
 
                 IEnumerator ToggleAnimator()
                 {
+                    if (!anim) yield break;
                     anim.enabled = false;
                     yield return new WaitForSeconds(value.GetValue());
+                    if (!anim) yield break;
                     anim.enabled = true;
                 }
             }).WithDefaultValue(0))
+    ]);
+
+    public static readonly List<ConfigType> ChargedLumaflies = GroupUtils.Merge(Generic, [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType("Offset", "lumaflies_offset", (o, value) =>
+            {
+                if (value.GetValue() == 0) return;
+                var fsm = o.LocateMyFSM("zap control");
+                var pause = fsm.GetState("Pause");
+                pause.DisableAction(0);
+                pause.AddAction(new Wait
+                {
+                    finishEvent = FsmEvent.Finished,
+                    time = value.GetValue()
+                });
+            }).WithDefaultValue(0).WithPriority(-1)),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType("Delay", "lumaflies_delay", (o, value) =>
+            {
+                o.LocateMyFSM("zap control").FsmVariables.FindFsmFloat("Wait Time").Value = value.GetValue();
+            }).WithDefaultValue(0.8f))
     ]);
 
     public static readonly ConfigType PngUrl = ConfigurationManager.RegisterConfigType(

@@ -1,0 +1,98 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "toll_gate",
+        "pid": "bc7225a5",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": -0.01
+        },
+        "flipped": true,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": 0.0,
+        "Item2": -40.0
+      },
+      "block_id": "90b16c02-54d0-4e4e-ac2b-a1408ade6a2f",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "bc7225a5",
+        "object_type": "toll_gate"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -236.5787,
+        "Item2": -77.12466
+      },
+      "block_id": "0808b28b-515c-434a-8083-bbfb96353a1a",
+      "events": {
+        "OnReceive": [
+          {
+            "Item1": "90b16c02-54d0-4e4e-ac2b-a1408ade6a2f",
+            "Item2": "toll_gate_open"
+          }
+        ]
+      },
+      "vars": {
+        "New Event": {
+          "Item1": "9cc750cc-8e69-4302-9964-25a031cd4415",
+          "Item2": "Value"
+        }
+      },
+      "type": "Receive",
+      "config": {
+        "out_local": "False",
+        "out_name": "Event"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -222.747955,
+        "Item2": 83.74886
+      },
+      "block_id": "d0285513-83d1-49b0-8d6a-03a771264023",
+      "events": {
+        "OnStart": [
+          {
+            "Item1": "0808b28b-515c-434a-8083-bbfb96353a1a",
+            "Item2": "SetEvent"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Start",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -35.30482,
+        "Item2": 122.329391
+      },
+      "block_id": "9cc750cc-8e69-4302-9964-25a031cd4415",
+      "events": {},
+      "vars": {},
+      "type": "Constant Text",
+      "config": {
+        "prefab_configurable": "True",
+        "constant_text": "1",
+        "prefab_configurable_name": "GateId"
+      },
+      "ext": {}
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "coloured_square",
+        "pid": "ab6f0a88",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "sprite_colour": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "coloured_shapes_has_physics": "False",
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":0.32,\"Item2\":0.7}",
+        "collider_type": "2"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": 0.0,
+        "Item2": -40.0
+      },
+      "block_id": "a29011de-ba6e-44d4-bea4-11a39fa0e520",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "ab6f0a88",
+        "object_type": "coloured_square"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -250.0,
+        "Item2": -45.5555573
+      },
+      "block_id": "520cdbe4-f086-465d-a698-bacca36adec6",
+      "events": {
+        "OnReceive": [
+          {
+            "Item1": "a29011de-ba6e-44d4-bea4-11a39fa0e520",
+            "Item2": "disable"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Receive",
+      "config": {
+        "out_local": "False",
+        "out_name": "OPEN_ZOTE"
+      },
+      "ext": {}
+    }
+  ]
+}

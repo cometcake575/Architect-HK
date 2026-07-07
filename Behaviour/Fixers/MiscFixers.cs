@@ -6,7 +6,6 @@ using Architect.Behaviour.Custom;
 using Architect.Content.Preloads;
 using Architect.Events.Blocks.Operators;
 using GlobalEnums;
-using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using UnityEngine;
 
@@ -458,7 +457,7 @@ public static class MiscFixers
     {
         foreach (Transform child in obj.transform)
         {
-            if (child.name == "Masks") obj.SetActive(false);
+            if (child.name == "Masks") Object.Destroy(child.gameObject);
         }
     }
 
@@ -913,5 +912,33 @@ public static class MiscFixers
     {
         obj.transform.SetRotation2D(rot);
         obj.LocateMyFSM("damages_enemy").FsmVariables.FindFsmFloat("direction").value = rot;
+    }
+
+    public static void FixGhost(GameObject obj)
+    {
+        KeepActive(obj);
+        obj.AddComponent<Ghost>();
+    }
+
+    private static readonly LayerMask DamagingCrystalsMask = LayerMask.GetMask("Player", "Terrain");
+    private static readonly ParticleSystem.MinMaxGradient DamagingCrystalsGradient = new(new Color(1, 0.4f, 0.5f));
+    
+    public static void FixDamagingCrystals(GameObject obj)
+    {
+        var ps = obj.GetComponent<ParticleSystem>();
+        var main = ps.main;
+        main.startColor = DamagingCrystalsGradient;
+        var collision = ps.collision;
+        collision.sendCollisionMessages = true;
+        collision.collidesWith = DamagingCrystalsMask;
+        obj.AddComponent<DamagingCrystals>();
+    }
+
+    private class DamagingCrystals : MonoBehaviour
+    {
+        private void OnParticleCollision(GameObject other)
+        {
+            if (other.layer == 9) HeroController.instance.TakeDamage(null, 0, 1, 1);
+        }
     }
 }

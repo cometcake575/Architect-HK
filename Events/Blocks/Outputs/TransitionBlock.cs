@@ -10,7 +10,7 @@ public class TransitionBlock : ScriptBlock
 {
     protected override IEnumerable<string> Inputs => ["Transition"];
     protected override IEnumerable<(string, string)> OutputVars => [("InScene", "Boolean")];
-
+    protected override IEnumerable<(string, string)> InputVars => [("Scene", "Text"), ("Door", "Text")];
     
     
     protected override string Name => "Scene Transition";
@@ -31,8 +31,8 @@ public class TransitionBlock : ScriptBlock
         
         GameManager.instance.BeginSceneTransition(new GameManager.SceneLoadInfo
         {
-            SceneName = Scene,
-            EntryGateName = Door,
+            SceneName = GetVariable<string>("Scene", Scene),
+            EntryGateName = GetVariable<string>("Door", Scene),
             EntryDelay = 0,
             Visualization = GameManager.SceneLoadVisualizations.Default,
             PreventCameraFadeOut = true,

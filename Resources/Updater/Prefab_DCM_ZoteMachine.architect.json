@@ -1,0 +1,214 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "metal_grate",
+        "pid": "803a2ecc",
+        "pos": {
+          "Item1": 100.1038,
+          "Item2": 100.0,
+          "Item3": -0.001
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 90.0,
+        "scale": 0.9083785,
+        "layer": 0
+      },
+      "config": {
+        "obj_layer": "0"
+      }
+    },
+    {
+      "placement": {
+        "id": "trigger_zone",
+        "pid": "022b93c5",
+        "pos": {
+          "Item1": 100.1,
+          "Item2": 100.5,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 0.245,
+        "layer": 0
+      },
+      "config": {
+        "trigger_type": "4",
+        "trigger_shape": "0",
+        "object_scale": "{\"Item1\":5.0,\"Item2\":1.0}"
+      }
+    },
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "e0688c87",
+        "pos": {
+          "Item1": 97.44468,
+          "Item2": 100.93528,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "False",
+        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":0.0,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "1",
+        "colourer_target": "803a2ecc"
+      }
+    },
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "3e4be0f4",
+        "pos": {
+          "Item1": 108.218567,
+          "Item2": 103.245682,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "False",
+        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "1",
+        "colourer_target": "803a2ecc"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": -234.666672,
+        "Item2": -124.888893
+      },
+      "block_id": "8541d568-30a3-4a0e-9c1c-0b9e2e7598c8",
+      "events": {
+        "ZoneEnter": [
+          {
+            "Item1": "d12ae0a6-993a-4258-9397-9f14d8a32e61",
+            "Item2": "In"
+          },
+          {
+            "Item1": "1d7667cf-4861-4333-8f11-45b6cd48d30e",
+            "Item2": "do_colour"
+          }
+        ],
+        "ZoneExit": [
+          {
+            "Item1": "d12ae0a6-993a-4258-9397-9f14d8a32e61",
+            "Item2": "Cancel"
+          },
+          {
+            "Item1": "89567da9-7cac-4451-a26a-ba014cfc594a",
+            "Item2": "do_colour"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "022b93c5",
+        "object_type": "trigger_zone"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 100.222221,
+        "Item2": -145.555557
+      },
+      "block_id": "d12ae0a6-993a-4258-9397-9f14d8a32e61",
+      "events": {
+        "Out": [
+          {
+            "Item1": "0f87452d-5e16-4675-83bd-56465ab52d20",
+            "Item2": "disable"
+          },
+          {
+            "Item1": "8541d568-30a3-4a0e-9c1c-0b9e2e7598c8",
+            "Item2": "disable_tz"
+          },
+          {
+            "Item1": "ef2d4575-53f2-4782-ac68-21f6247eb2cf",
+            "Item2": "Broadcast"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Delay",
+      "config": {
+        "delay_num": "1"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 190.888885,
+        "Item2": 41.3333359
+      },
+      "block_id": "0f87452d-5e16-4675-83bd-56465ab52d20",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "803a2ecc",
+        "object_type": "metal_grate"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 302.222229,
+        "Item2": -97.77778
+      },
+      "block_id": "1d7667cf-4861-4333-8f11-45b6cd48d30e",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "e0688c87",
+        "object_type": "object_colourer"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 0.0,
+        "Item2": -40.0
+      },
+      "block_id": "89567da9-7cac-4451-a26a-ba014cfc594a",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "3e4be0f4",
+        "object_type": "object_colourer"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 0.0,
+        "Item2": -40.0
+      },
+      "block_id": "ef2d4575-53f2-4782-ac68-21f6247eb2cf",
+      "events": {},
+      "vars": {},
+      "type": "Broadcast",
+      "config": {
+        "in_local": "False",
+        "in_name": "OPEN_ZOTE"
+      },
+      "ext": {}
+    }
+  ]
+}

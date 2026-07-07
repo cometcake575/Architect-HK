@@ -225,7 +225,7 @@ public static class SceneUtils
         
         USceneManager.SetActiveScene(scene);
         
-        CreateGradeMarker(Color.white, Color.white);
+        CreateGradeMarker(info.HeroLight, info.AmbientLight);
         CreateTileMap(info);
         
         sm.AddComponent<CustomTransitionPoint>();

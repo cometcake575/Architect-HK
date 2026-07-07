@@ -1,0 +1,26 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "sporg",
+        "pid": "29415879",
+        "pos": {
+          "Item1": 100,
+          "Item2": 100,
+          "Item3": 0.006
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "can_pogo_sporg_explosion": "False",
+        "enemy_hp": "9999"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": []
+}

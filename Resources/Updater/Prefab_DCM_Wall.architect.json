@@ -1,0 +1,44 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "breakable_wall_1",
+        "pid": "d0991546",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": -0.37
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      }
+    },
+    {
+      "placement": {
+        "id": "component_toggle",
+        "pid": "30a40cf6",
+        "pos": {
+          "Item1": 97.57209,
+          "Item2": 101.42836,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "component_hook_recursive": "True",
+        "component_hook_mode": "0",
+        "component_hook_target": "d0991546",
+        "component_hook_name": "PlayMakerFSM"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": []
+}

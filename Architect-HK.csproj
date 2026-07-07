@@ -4,7 +4,7 @@
     <TargetFramework>net472</TargetFramework>
     <AssemblyName>Architect_HK</AssemblyName>
     <Product>Architect</Product>
-    <Version>3.31.2.0</Version>
+    <Version>3.31.3.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>preview</LangVersion>
     <Nullable>disable</Nullable>
@@ -308,6 +308,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources/**/*.png" />
     <EmbeddedResource Include="Resources/**/*.wav" />
+    <EmbeddedResource Include="Resources/Updater/*.json" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">

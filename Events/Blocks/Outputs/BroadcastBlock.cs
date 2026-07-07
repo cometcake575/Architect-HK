@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Architect.Events.Blocks.Events;
-using Architect.Utils;
 using UnityEngine;
 
 namespace Architect.Events.Blocks.Outputs;
 
 public class BroadcastBlock : LocalBlock
 {
-    protected override IEnumerable<string> Inputs => ["Broadcast"];
+    protected override IEnumerable<string> Inputs => ["Broadcast", "SetEvent"];
+    protected override IEnumerable<(string, string)> InputVars => [("New Event", "Text")];
     
     protected override string Name => "Broadcast";
 
@@ -20,8 +20,12 @@ public class BroadcastBlock : LocalBlock
 
     protected override void Trigger(string id)
     {
-        DoBroadcast(EventName);
-        if (TargetPrefab) TargetPrefab.BroadcastEvent(ActualEventName);
+        if (id == "Broadcast")
+        {
+            DoBroadcast(EventName);
+            if (TargetPrefab) TargetPrefab.BroadcastEvent(ActualEventName);
+        }
+        else EventName = GetVariable<string>("New Event", "");
     }
 
     public static void DoBroadcast(string eventName)

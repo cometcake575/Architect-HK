@@ -1,0 +1,101 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "basic_lever",
+        "pid": "cc0e1daa",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.01
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "lever_stay": "0"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": -62.96633,
+        "Item2": 183.839859
+      },
+      "block_id": "469d12da-29e2-42d3-8d22-f7c9d2c22012",
+      "events": {
+        "OnPull": [
+          {
+            "Item1": "9b4cc232-3cf1-4848-acdb-cb545857264b",
+            "Item2": "Broadcast"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "cc0e1daa",
+        "object_type": "basic_lever"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 110.282074,
+        "Item2": 48.44404
+      },
+      "block_id": "9b4cc232-3cf1-4848-acdb-cb545857264b",
+      "events": {},
+      "vars": {
+        "New Event": {
+          "Item1": "431c4c67-7766-47e0-85e0-08395f906ec1",
+          "Item2": "Value"
+        }
+      },
+      "type": "Broadcast",
+      "config": {
+        "in_local": "False",
+        "in_name": "Event"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -208.18924,
+        "Item2": 30.609642
+      },
+      "block_id": "95013681-95a3-430f-8cd1-d4e44da2b3a2",
+      "events": {
+        "OnStart": [
+          {
+            "Item1": "9b4cc232-3cf1-4848-acdb-cb545857264b",
+            "Item2": "SetEvent"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Start",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 121.929024,
+        "Item2": 206.041855
+      },
+      "block_id": "431c4c67-7766-47e0-85e0-08395f906ec1",
+      "events": {},
+      "vars": {},
+      "type": "Constant Text",
+      "config": {
+        "prefab_configurable": "True",
+        "constant_text": "1",
+        "prefab_configurable_name": "GateId"
+      },
+      "ext": {}
+    }
+  ]
+}

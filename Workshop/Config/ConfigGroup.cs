@@ -64,6 +64,18 @@ public static class ConfigGroup
             {
                 item.Environment = value.GetValue();
             }).WithOptions("Dust", "Grass", "Bone", "Spa", "Metal", "None", "Wet").WithDefaultValue(0)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new ColourConfigType<CustomScene>("Hero Light", "scene_hero_light", (item, value) =>
+            {
+                item.HeroLight = value.GetValue();
+            }, false).WithDefaultValue(Color.white)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new ColourConfigType<CustomScene>("Ambient Light", "scene_ambient_light", (item, value) =>
+            {
+                item.AmbientLight = value.GetValue();
+            }, false).WithDefaultValue(Color.white)
         )
     ];
     

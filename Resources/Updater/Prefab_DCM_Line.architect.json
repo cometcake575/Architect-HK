@@ -1,0 +1,29 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "coloured_square",
+        "pid": "d763492d",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "sprite_colour": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "coloured_shapes_has_physics": "False",
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":3.0,\"Item2\":0.01}",
+        "collider_type": "2"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": []
+}

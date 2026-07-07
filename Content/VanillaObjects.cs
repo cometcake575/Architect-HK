@@ -94,6 +94,8 @@ public static class VanillaObjects
             ("Tutorial_01", "_Scenery/plat_float_08"));
         AddSolid("Crossroads Platform 4", "plat_generic_4",
             ("Tutorial_01", "_Scenery/plat_float_10"));
+        AddSolid("Crossroads Platform 5", "plat_generic_5",
+            ("Tutorial_01", "_Scenery/plat_float_14"));
         
         AddSolid("Lift Platform 1", "plat_lift_1",
             ("Crossroads_07", "_Scenery/plat_lift_06"));
@@ -300,7 +302,8 @@ public static class VanillaObjects
             .WithReceiverGroup(ReceiverGroup.JellyEgg));
         
         Categories.Hazards.Add(new PreloadObject("Charged Lumaflies", "charged_lumaflies",
-            ("Fungus3_26", "Zap Cloud")));
+            ("Fungus3_26", "Zap Cloud"))
+            .WithConfigGroup(ConfigGroup.ChargedLumaflies));
         
         AddEnemy("Ooma", "ooma", ("Fungus3_26", "Jellyfish"));
         AddEnemy("Uoma", "uoma", ("Fungus3_26", "Jellyfish Baby"));
@@ -604,6 +607,7 @@ public static class VanillaObjects
         
         Categories.Platforming.Add(new PreloadObject("Conveyor", "conveyor",
                 ("Mines_31", "conveyor_belt_0mid (3)/conveyor_belt_simple0004"),
+                preloadAction: MiscFixers.BreakableZ,
                 postSpawnAction: MiscFixers.FixConveyor)
             .WithConfigGroup(ConfigGroup.Conveyor)
             .WithFlipAction(MiscFixers.FlipConveyor)
@@ -825,7 +829,8 @@ public static class VanillaObjects
             .WithRotationGroup(RotationGroup.Four));
         Categories.Hazards.Add(new PreloadObject("White Trap Spikes", "wp_trap_spikes",
                 ("White_Palace_07", "wp_trap_spikes"))
-            .WithRotationGroup(RotationGroup.Four));
+            .WithRotationGroup(RotationGroup.Four)
+            .WithConfigGroup(ConfigGroup.Stomper));
         
         Categories.Enemies.Add(new PreloadObject("Wingsmould", "wingsmould", 
             ("White_Palace_18", "White Palace Fly"))
@@ -1046,6 +1051,7 @@ public static class VanillaObjects
         AddGhost("Grohac");
         AddGhost("Wayner");
         AddGhost("Thistlewind");
+        AddGhost("Vespa", "Hive_05", "Battle Scene/Vespa NPC");
 
         return;
 
@@ -1054,7 +1060,7 @@ public static class VanillaObjects
             path ??= $"Ghost {name.ToLower()}";
             Categories.Npcs.Add(new PreloadObject($"{name} Ghost NPC", $"{name.ToLower()}_ghost_npc",
                 (scene, path),
-                preloadAction: MiscFixers.AddComponent<MiscFixers.Ghost>)
+                preloadAction: MiscFixers.FixGhost)
                 .WithConfigGroup(ConfigGroup.GhostNpcs)
                 .WithBroadcasterGroup(BroadcasterGroup.Npcs)
                 .WithReceiverGroup(ReceiverGroup.Ghosts));

@@ -1,0 +1,177 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "reusable_lever",
+        "pid": "44ee358c",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.007
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      }
+    },
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "4f12f012",
+        "pos": {
+          "Item1": 102.287369,
+          "Item2": 100.9913,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "True",
+        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":0.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "0",
+        "colourer_target": "44ee358c"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": -209.371582,
+        "Item2": -61.1220779
+      },
+      "block_id": "6ff97691-3449-4d3e-b43d-bf5b31b84588",
+      "events": {
+        "OnActivate": [
+          {
+            "Item1": "d7e6a613-39e4-466b-a7c4-c22ad6998f7a",
+            "Item2": "Trigger"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "44ee358c",
+        "object_type": "reusable_lever"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 192.07019,
+        "Item2": 17.6116638
+      },
+      "block_id": "e553d56c-a262-4eb8-9778-2906c974e061",
+      "events": {},
+      "vars": {
+        "New Value": {
+          "Item1": "43cb25cc-6651-4c9d-ad6f-a6c79b2d1394",
+          "Item2": "Value"
+        }
+      },
+      "type": "Variable (Bool)",
+      "config": {
+        "var_persistence_bool": "0",
+        "var_default_bool": "True",
+        "var_local_bool": "False",
+        "var_id_bool": "StompersOn"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 280.8337,
+        "Item2": 118.9124
+      },
+      "block_id": "43cb25cc-6651-4c9d-ad6f-a6c79b2d1394",
+      "events": {},
+      "vars": {
+        "Value": {
+          "Item1": "e553d56c-a262-4eb8-9778-2906c974e061",
+          "Item2": "Value"
+        }
+      },
+      "type": "Not",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -70.70993,
+        "Item2": 18.61464
+      },
+      "block_id": "d7e6a613-39e4-466b-a7c4-c22ad6998f7a",
+      "events": {},
+      "vars": {},
+      "type": "Ordered Events",
+      "ext": {
+        "children": "[{\"pos\":{\"Item1\":52.65631,\"Item2\":-18.2447872},\"block_id\":\"1faf5858-209e-4f0d-bb30-59cbec601727\",\"events\":{\"OnTrigger\":[{\"Item1\":\"e553d56c-a262-4eb8-9778-2906c974e061\",\"Item2\":\"Set\"}]},\"vars\":{},\"type\":\"Order Trigger\",\"ext\":{}},{\"pos\":{\"Item1\":52.65631,\"Item2\":-18.2447872},\"block_id\":\"0a54a265-2946-45fe-92ea-58f5d7c842b3\",\"events\":{\"OnTrigger\":[{\"Item1\":\"ec4fa91a-c186-42c9-9bd7-a103eb7f7583\",\"Item2\":\"In\"}]},\"vars\":{},\"type\":\"Order Trigger\",\"ext\":{}}]"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 100.548492,
+        "Item2": -124.309685
+      },
+      "block_id": "ec4fa91a-c186-42c9-9bd7-a103eb7f7583",
+      "events": {
+        "True": [
+          {
+            "Item1": "d00575b3-d76b-49e1-a3b4-3f7348b3ce65",
+            "Item2": "Broadcast"
+          }
+        ],
+        "False": [
+          {
+            "Item1": "5203c696-d3cc-474b-be53-81750ea71d2b",
+            "Item2": "Broadcast"
+          }
+        ]
+      },
+      "vars": {
+        "Check": {
+          "Item1": "e553d56c-a262-4eb8-9778-2906c974e061",
+          "Item2": "Value"
+        }
+      },
+      "type": "If",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 243.723541,
+        "Item2": -206.303085
+      },
+      "block_id": "5203c696-d3cc-474b-be53-81750ea71d2b",
+      "events": {},
+      "vars": {},
+      "type": "Broadcast",
+      "config": {
+        "in_local": "False",
+        "in_name": "STOMPER_OFF"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 289.1083,
+        "Item2": -90.20843
+      },
+      "block_id": "d00575b3-d76b-49e1-a3b4-3f7348b3ce65",
+      "events": {},
+      "vars": {},
+      "type": "Broadcast",
+      "config": {
+        "in_local": "False",
+        "in_name": "STOMPER_ON"
+      },
+      "ext": {}
+    }
+  ]
+}
