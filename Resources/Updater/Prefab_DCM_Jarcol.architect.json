@@ -10,7 +10,7 @@
           "Item3": 0.0
         },
         "flipped": false,
-        "locked": false,
+        "locked": true,
         "rotation": 0.0,
         "scale": 1.0,
         "layer": 0
@@ -37,7 +37,7 @@
         "pid": "3318646b",
         "pos": {
           "Item1": 100.0,
-          "Item2": 101.0,
+          "Item2": 100.125,
           "Item3": 0.0
         },
         "flipped": false,
@@ -50,7 +50,9 @@
         "sprite_colour": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
         "coloured_shapes_has_physics": "False",
         "obj_layer": "0",
-        "object_scale": "{\"Item1\":3.4,\"Item2\":0.25}"
+        "object_scale": "{\"Item1\":3.4,\"Item2\":0.25}",
+        "collider_type": "2",
+        "is_visible": "False"
       }
     }
   ],
