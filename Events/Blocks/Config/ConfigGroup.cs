@@ -28,6 +28,24 @@ public static class ConfigGroup
         )
     ];
     
+    public static readonly List<ConfigType> Statue =
+    [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<StatueBlock>("Title", "statue_title", 
+                    (b, f) =>
+                    {
+                        
+                    })
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType<StatueBlock>("Desc", "statue_desc", 
+                    (b, f) =>
+                    {
+                        
+                    })
+        )
+    ];
+    
     public static readonly List<ConfigType> Shop =
     [
         ConfigurationManager.RegisterConfigType(

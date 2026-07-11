@@ -37,5 +37,7 @@ public static class ActionBlocks
         
         Category.Visual.RegisterBlock<ShopBlock>("Shop", ConfigGroup.Shop, ShopBlock.Init);
         Category.Visual.RegisterHiddenBlock<ShopBlock.ShopItemBlock>("Shop Item", ConfigGroup.ShopItem);
+        
+        // Category.Visual.RegisterBlock<StatueBlock>("Statue UI", ConfigGroup.Statue, StatueBlock.Init);
     }
 }

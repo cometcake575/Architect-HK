@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Architect.Events.Blocks.Events;
+using Architect.Prefabs;
 using UnityEngine;
 
 namespace Architect.Events.Blocks.Outputs;
@@ -23,7 +24,11 @@ public class BroadcastBlock : LocalBlock
         if (id == "Broadcast")
         {
             DoBroadcast(EventName);
-            if (TargetPrefab) TargetPrefab.BroadcastEvent(ActualEventName);
+            if (TargetPrefab)
+            {
+                if (ActualEventName == "Destroy") TargetPrefab.GetComponent<Prefab>().Destroy();
+                TargetPrefab.BroadcastEvent(ActualEventName);
+            }
         }
         else EventName = GetVariable<string>("New Event", "");
     }

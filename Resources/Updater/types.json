@@ -105,10 +105,14 @@
     "name": "prefab_DCM_RespawnPlat"
   },
   "IMG_recoverDash": {
-    "name": "dash_1"
+    "name": "dash_1",
+    "scale": 2.1,
+    "y_offset": 0.4
   },
   "IMG_recoverJump": {
-    "name": "wings_1"
+    "name": "wings_1",
+    "scale": 2.1,
+    "y_offset": 0.4
   },
   "IMG_fireball": {
     "name": "spirit_binding"
