@@ -377,6 +377,25 @@ public static class MiscFixers
         fsm.FsmVariables.FindFsmString("Player Data").value = "";
     }
 
+    public static void FixStationBell(GameObject obj)
+    {
+        var fsm = obj.LocateMyFSM("Stag Bell");
+        fsm.GetState("Init").AddAction(() =>
+        {
+            fsm.SendEvent("OPENED");
+        }, 5);
+        var bellFsm = obj.transform.GetChild(0).GetComponent<PlayMakerFSM>();
+        
+        var rr = bellFsm.GetState("Ring R");
+        var rl = bellFsm.GetState("Ring L");
+        
+        rr.DisableAction(1);
+        rl.DisableAction(1);
+        
+        rr.AddAction(() => obj.BroadcastEvent("OnActivate"), 0);
+        rl.AddAction(() => obj.BroadcastEvent("OnActivate"), 0);
+    }
+
     public static void FixChest(GameObject obj)
     {
         var fsm = obj.LocateMyFSM("Chest Control");
@@ -457,7 +476,7 @@ public static class MiscFixers
     {
         foreach (Transform child in obj.transform)
         {
-            if (child.name == "Masks") Object.Destroy(child.gameObject);
+            if (child.name is "Masks" or "Camera Locks") Object.Destroy(child.gameObject);
         }
     }
 
@@ -648,12 +667,30 @@ public static class MiscFixers
         obj.GetComponent<ColoWall>().rotation = rot;
     }
 
-    public static void FixConveyor(GameObject obj)
+    public static void FixConveyorPart(GameObject obj)
+    {
+        FixConveyor(obj, new Vector3(5.1f, 0.5f, 1), new Vector3(0, -0.0703f), new Vector2(0.9293f, 1.0295f), 8);
+    }
+
+    public static void FixConveyorS(GameObject obj)
+    {
+        FixConveyor(obj, new Vector3(6.66f, 2, 1), new Vector3(1.5521f, -2.3676f), new Vector2(1, 1), 5);
+    }
+
+    public static void FixConveyorL(GameObject obj)
+    {
+        FixConveyor(obj, new Vector3(10.76f, 2, 1), new Vector2(-0.2104f, -2.3576f), new Vector2(0.971f, 1), 5);
+    }
+
+    private static void FixConveyor(GameObject obj, Vector3 scale, Vector2 pos, Vector2 bc2dSize, int speed)
     {
         var block = Object.Instantiate(_conveyorBlock, obj.transform);
 
-        block.transform.localScale = new Vector3(5.1f, 0.5f, 1);
-        block.transform.localPosition = new Vector3(0, -0.0703f, 0);
+        block.GetComponent<BoxCollider2D>().size = bc2dSize;
+        block.GetComponent<ConveyorBelt>().speed = speed;
+
+        block.transform.localScale = scale;
+        block.transform.localPosition = pos;
 
         block.SetActive(true);
     }

@@ -12,7 +12,8 @@ namespace Architect.Updater;
 public class DcmObjectType(string aName, 
     float scaleMultiplier, 
     Dictionary<string, string> configMappings,
-    Vector3 offset)
+    Vector3 offset,
+    float rotOffset)
 {
     public PlaceableObject GetPlaceableObject()
     {
@@ -22,6 +23,8 @@ public class DcmObjectType(string aName,
     public float GetScaleMultiplier() => scaleMultiplier;
     
     public Vector3 GetOffset() => offset;
+    
+    public float GetRotOffset() => rotOffset;
     
     public ConfigValue[] TranslateConfigValues(Dictionary<string, string> oldValues)
     {
@@ -53,6 +56,7 @@ public class DcmObjectType(string aName,
         {
             var name = string.Empty;
             var scaleMultiplier = 1f;
+            var rotOffset = 0f;
             var xOffset = 0f;
             var yOffset = 0f;
             var zOffset = 0f;
@@ -71,6 +75,9 @@ public class DcmObjectType(string aName,
                     case "x_offset":
                         xOffset = (float)reader.ReadAsDouble()!;
                         break;
+                    case "rot_offset":
+                        rotOffset = (float)reader.ReadAsDouble()!;
+                        break;
                     case "y_offset":
                         yOffset = (float)reader.ReadAsDouble()!;
                         break;
@@ -84,7 +91,7 @@ public class DcmObjectType(string aName,
                 }
             }
 
-            return new DcmObjectType(name, scaleMultiplier, map, new Vector3(xOffset, yOffset, zOffset));
+            return new DcmObjectType(name, scaleMultiplier, map, new Vector3(xOffset, yOffset, zOffset), rotOffset);
         }
     }
 }

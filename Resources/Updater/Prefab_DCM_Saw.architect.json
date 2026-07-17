@@ -44,6 +44,28 @@
         "anchor_pause_time": "0",
         "anchor_moving": "True"
       }
+    },
+    {
+      "placement": {
+        "id": "object_layerer",
+        "pid": "cf0e1e88",
+        "pos": {
+          "Item1": 101.211411,
+          "Item2": 102.997925,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "layerer_start_applied": "True",
+        "layerer_recursive": "True",
+        "layerer_target": "ab521951",
+        "layerer_name": "Enemies"
+      }
     }
   ],
   "tilemap": [],

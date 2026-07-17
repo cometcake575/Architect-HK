@@ -96,7 +96,8 @@
     "name": "collapser_dive_1"
   },
   "lazer_bug": {
-    "name": "crystal_crawler"
+    "name": "crystal_crawler",
+    "rot_offset": 90
   },
   "edge": {
     "name": "prefab_DCM_Line"
@@ -113,6 +114,10 @@
     "name": "wings_1",
     "scale": 2.1,
     "y_offset": 0.4
+  },
+  "HK_Lconveyor": {
+    "name": "conveyor_l",
+    "y_offset": 2
   },
   "IMG_fireball": {
     "name": "spirit_binding"
@@ -160,7 +165,9 @@
     "name": "freecam"
   },
   "white_spike": {
-    "name": "prefab_DCM_Spikes"
+    "name": "prefab_DCM_Spikes",
+    "x_offset": -0.2,
+    "y_offset": 0.2
   },
   "jarcol_floor": {
     "name": "prefab_DCM_Jarcol"

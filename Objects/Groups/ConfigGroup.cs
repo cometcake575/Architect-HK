@@ -454,7 +454,10 @@ public static class ConfigGroup
                 }
 
                 o.GetComponentInChildren<ConveyorBelt>().speed *= val;
-                o.GetComponent<Animator>().speed *= Math.Abs(val);
+                foreach (var anim in o.GetComponentsInChildren<Animator>())
+                {
+                    anim.speed *= Math.Abs(val);
+                }
             }).WithDefaultValue(1))
     ]));
 

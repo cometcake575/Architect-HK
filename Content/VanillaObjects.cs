@@ -57,12 +57,12 @@ public static class VanillaObjects
             .WithConfigGroup(ConfigGroup.Levers)
             .WithBroadcasterGroup(BroadcasterGroup.Levers)
             .WithRotationGroup(RotationGroup.Eight);
-
-        Categories.Misc.Add(new PreloadObject("Grub Bottle", "grub_bottle",
-            ("Crossroads_31", "Grub Bottle"),
-            postSpawnAction: MiscFixers.FixGrubBottle)
-            .WithConfigGroup(ConfigGroup.GrubBottle)
-            .WithBroadcasterGroup(BroadcasterGroup.PersistentBreakable));
+        
+        Categories.Interactable.Add(new PreloadObject("Station Bell", "station_bell", 
+                ("Room_Town_Stag_Station", "Station Bell"),
+                preloadAction: o => o.GetComponent<tk2dSpriteAnimator>().defaultClipId = 0,
+                postSpawnAction: MiscFixers.FixStationBell))
+            .WithBroadcasterGroup(BroadcasterGroup.Activatable);
 
         Categories.Misc.Add(new PreloadObject("Infected Blob S", "i_blob_1",
             ("Crossroads_07", "Infected Parent/infected_large_blob_010000"),
@@ -179,8 +179,12 @@ public static class VanillaObjects
             .WithConfigGroup(ConfigGroup.PersistentBreakable)
             .WithRotationGroup(RotationGroup.Four));
 
-        Categories.Interactable.Add(new PreloadObject("Breakable Wall", "breakable_wall_1",
+        Categories.Interactable.Add(new PreloadObject("Breakable Wall 1", "breakable_wall_1",
             ("Mines_25", "Breakable Wall"), preloadAction: MiscFixers.FixBreakableWall)
+            .WithConfigGroup(ConfigGroup.PersistentBreakable));
+
+        Categories.Interactable.Add(new PreloadObject("Breakable Wall 2", "breakable_wall_2",
+            ("Mines_16", "Breakable Wall"), preloadAction: MiscFixers.FixBreakableWall)
             .WithConfigGroup(ConfigGroup.PersistentBreakable));
 
         Categories.Interactable.Add(new PreloadObject("One Way Wall", "one_way_wall_1",
@@ -237,6 +241,14 @@ public static class VanillaObjects
         /*AddEnemy("False Knight", "false_knight",
             ("GG_False_Knight", "Battle Scene/False Knight New"),
             postSpawnAction: EnemyFixers.FixFk).SpritePreview = true;*/
+        
+        Categories.Misc.Add(new PreloadObject("Grub Bottle", "grub_bottle",
+                ("Crossroads_31", "Grub Bottle"),
+                postSpawnAction: MiscFixers.FixGrubBottle)
+            .WithConfigGroup(ConfigGroup.GrubBottle)
+            .WithBroadcasterGroup(BroadcasterGroup.PersistentBreakable));
+        
+        AddEnemy("Grub Mimic", "grub_mimic", ("Mines_16", "Grub Mimic Top/Grub Mimic"));
     }
 
     private static void AddGreenObjects()
@@ -542,7 +554,8 @@ public static class VanillaObjects
             .WithRotateAction(EnemyFixers.RotateShardmite);
         
         AddEnemy("Glimback", "glimback", ("Mines_20", "Crystal Crawler"));
-        AddEnemy("Crystal Crawler", "crystal_crawler", ("Mines_20", "Crystallised Lazer Bug (3)"));
+        AddEnemy("Crystal Crawler", "crystal_crawler", ("Mines_20", "Crystallised Lazer Bug (3)"))
+            .WithRotationGroup(RotationGroup.Four);
         AddEnemy("Crystal Hunter", "crystal_hunter", ("Mines_25", "Crystal Flyer"));
         AddEnemy("Husk Miner", "husk_miner", ("Mines_20", "Zombie Miner 1"));
         
@@ -605,14 +618,35 @@ public static class VanillaObjects
             .WithConfigGroup(ConfigGroup.Chest)
             .WithBroadcasterGroup(BroadcasterGroup.Openable));
         
-        Categories.Platforming.Add(new PreloadObject("Conveyor", "conveyor",
+        Categories.Platforming.Add(new PreloadObject("Conveyor Belt", "conveyor",
                 ("Mines_31", "conveyor_belt_0mid (3)/conveyor_belt_simple0004"),
                 preloadAction: MiscFixers.BreakableZ,
-                postSpawnAction: MiscFixers.FixConveyor)
-            .WithConfigGroup(ConfigGroup.Conveyor)
+                postSpawnAction: MiscFixers.FixConveyorPart)
             .WithFlipAction(MiscFixers.FlipConveyor)
             .WithRotateAction(MiscFixers.RotateConveyor)
-            .WithRotationGroup(RotationGroup.Three));
+            .WithRotationGroup(RotationGroup.Three)
+            .WithConfigGroup(ConfigGroup.Conveyor));
+        
+        Categories.Platforming.Add(new PreloadObject("Conveyor S", "conveyor_s",
+                ("Mines_02", "conveyor_belt_short"),
+                uiSprite: ResourceUtils.LoadSpriteResource("conveyor_s"),
+                preloadAction: o => o.transform.SetScaleX(-o.transform.GetScaleX()),
+                postSpawnAction: MiscFixers.FixConveyorS)
+            .WithFlipAction(MiscFixers.FlipConveyor)
+            .WithRotateAction(MiscFixers.RotateConveyor)
+            .WithFlipAction(MiscFixers.FlipConveyor)
+            .WithRotateAction(MiscFixers.RotateConveyor)
+            .WithRotationGroup(RotationGroup.Three)
+            .WithConfigGroup(ConfigGroup.Conveyor));
+        
+        Categories.Platforming.Add(new PreloadObject("Conveyor L", "conveyor_l",
+                ("Mines_31", "conveyor_belt_0mid (1)"),
+                uiSprite: ResourceUtils.LoadSpriteResource("conveyor_l"),
+                postSpawnAction: MiscFixers.FixConveyorL)
+            .WithFlipAction(MiscFixers.FlipConveyor)
+            .WithRotateAction(MiscFixers.RotateConveyor)
+            .WithRotationGroup(RotationGroup.Three)
+            .WithConfigGroup(ConfigGroup.Conveyor));
     }
 
     private static void AddGardensObjects()

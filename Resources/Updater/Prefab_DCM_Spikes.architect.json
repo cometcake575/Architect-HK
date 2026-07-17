@@ -2,6 +2,44 @@
   "placements": [
     {
       "placement": {
+        "id": "white_spikes",
+        "pid": "66f10316",
+        "pos": {
+          "Item1": 100.151955,
+          "Item2": 100.13591,
+          "Item3": -0.04
+        },
+        "flipped": false,
+        "locked": true,
+        "rotation": 0.0,
+        "scale": 0.6643474,
+        "layer": 0
+      },
+      "config": {
+        "is_visible": "False"
+      }
+    },
+    {
+      "placement": {
+        "id": "white_spikes",
+        "pid": "62416fca",
+        "pos": {
+          "Item1": 100.151955,
+          "Item2": 99.83211,
+          "Item3": -0.04
+        },
+        "flipped": false,
+        "locked": true,
+        "rotation": 0.0,
+        "scale": 0.6643474,
+        "layer": 0
+      },
+      "config": {
+        "is_visible": "False"
+      }
+    },
+    {
+      "placement": {
         "id": "custom_png",
         "pid": "ad15ac61",
         "pos": {
@@ -10,13 +48,13 @@
           "Item3": 0.0
         },
         "flipped": false,
-        "locked": true,
+        "locked": false,
         "rotation": 0.0,
         "scale": 1.0,
         "layer": 0
       },
       "config": {
-        "png_glow": "False",
+        "png_glow": "True",
         "png_sprite_colour": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
         "obj_layer": "0",
         "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}",
@@ -29,44 +67,6 @@
         "png_loop": "True",
         "png_start_playing": "True",
         "png_url": "https://github.com/ygsbzr/HollowKnight.Decoration/blob/master/images/w_spike.png?raw=true"
-      }
-    },
-    {
-      "placement": {
-        "id": "cave_spikes",
-        "pid": "14b7845c",
-        "pos": {
-          "Item1": 100.211128,
-          "Item2": 100.065536,
-          "Item3": -0.01
-        },
-        "flipped": false,
-        "locked": false,
-        "rotation": 0.0,
-        "scale": 0.6146999,
-        "layer": 0
-      },
-      "config": {
-        "is_visible": "False"
-      }
-    },
-    {
-      "placement": {
-        "id": "cave_spikes",
-        "pid": "0c1e2a65",
-        "pos": {
-          "Item1": 100.211128,
-          "Item2": 99.75102,
-          "Item3": -0.01
-        },
-        "flipped": false,
-        "locked": false,
-        "rotation": 0.0,
-        "scale": 0.6146999,
-        "layer": 0
-      },
-      "config": {
-        "is_visible": "False"
       }
     }
   ],

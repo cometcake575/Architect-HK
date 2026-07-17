@@ -23,7 +23,7 @@ public class DcmObject(DcmObjectType dType, float rot, float scale, Dictionary<s
             new Vector3(Pos.x, Pos.y, type.ZPosition) + dType.GetOffset(),
             Guid.NewGuid().ToString()[..8],
             false,
-            rot,
+            rot + dType.GetRotOffset(),
             scale * dType.GetScaleMultiplier(),
             false,
             0,

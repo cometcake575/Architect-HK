@@ -232,6 +232,11 @@ public static class PlacementManager
 
     public static bool TryGetValue(string path, out GameObject obj)
     {
+        if (path == "Knight")
+        {
+            obj = HeroController.instance.gameObject;
+            return true;
+        }
         if (!Objects.TryGetValue(path, out obj)) return false;
         var oh = obj.GetComponent<ObjectHook>();
         if (oh)
