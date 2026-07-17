@@ -67,7 +67,7 @@ public static class DcmPorter
         ArchitectPlugin.Instance.Log("DecorationMasterData found in Architect folder");
         
         ArchitectPlugin.Instance.Log("Saving DcM object prefabs");
-        string[] prefabs = ["Line", "RespawnPlat", "Sporg", "Wall", "Conveyor", "Spikes", "Jarcol", "Lever", "Gate", "ZoteMachine", "ZoteGate", "Saw", "Stomper", "StomperLever", "Tp", "Twinkle"];
+        string[] prefabs = ["Line", "RespawnPlat", "Sporg", "Wall", "Conveyor", "Spikes", "Jarcol", "Lever", "Gate", "ZoteMachine", "ZoteGate", "Saw", "Stomper", "StomperLever", "Tp", "Twinkle", "Plat"];
         foreach (var s in prefabs)
         {
             File.WriteAllText(Path.Combine(StorageManager.DataPath, "Prefabs", $"Prefab_DCM_{s}.architect.json"),

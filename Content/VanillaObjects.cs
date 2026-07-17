@@ -359,8 +359,12 @@ public static class VanillaObjects
         AddEnemy("Fungoon", "fungoon", ("Fungus2_18", "_Scenery/Fungus Flyer"));
         AddEnemy("Shrumal Warrior", "shrumal_warrior", ("Fungus2_28", "Mushroom Roller"));
         AddEnemy("Ambloom", "ambloom", ("Fungus2_18", "Fung Crawler"));
-        AddEnemy("Sporg", "sporg", ("Fungus2_04", "Mushroom Turret"), 
-            preloadAction: MiscFixers.FixRotation)
+        AddEnemy("Sporg", "sporg", ("Fungus2_04", "Mushroom Turret"),
+            preloadAction: o =>
+            {
+                o.transform.SetRotation2D(0);
+                o.transform.Find("Hero Detect").GetComponent<BoxCollider2D>().offset = new Vector2(-1.9367f, 4.4328f);
+            })
             .WithRotationGroup(RotationGroup.Eight)
             .WithConfigGroup(ConfigGroup.Sporg);
 

@@ -711,7 +711,7 @@ public static class ConfigGroup
     private static readonly int Terrain = LayerMask.NameToLayer("Terrain");
     private static readonly int Default = LayerMask.NameToLayer("Default");
 
-    public static readonly List<ConfigType> Colliders = GroupUtils.Merge(Decorations, [
+    public static readonly List<ConfigType> Colliders = GroupUtils.Merge(Stretchable, GroupUtils.Merge(Decorations, [
         ConfigurationManager.RegisterConfigType(
             new ChoiceConfigType("Collision Type", "collider_type", (o, value) =>
                 {
@@ -760,7 +760,7 @@ public static class ConfigGroup
                         .AddComponent<Fallthrough>().fallthroughTime = value.GetValue();
                 }
             ))
-    ]);
+    ]));
 
     private static readonly ConfigType AlphaColour = ConfigurationManager.RegisterConfigType(
         new FloatConfigType("Colour A", "colour_alpha", (o, value) =>
@@ -1395,7 +1395,12 @@ public static class ConfigGroup
                     ((SpawnObjectFromGlobalPool)pObj.LocateMyFSM("Spore Bomb").GetState("Explode").actions[1])
                         .gameObject = MiscFixers.PogoableExplosionM;
                 }, 3);
-            }).WithDefaultValue(false))
+            }).WithDefaultValue(false)),
+        ConfigurationManager.RegisterConfigType(
+            new Vector2ConfigType("Alert Range", "sporg_alert_range", (o, value) =>
+            {
+                o.transform.Find("Hero Detect").GetComponent<BoxCollider2D>().size = value.GetValue();
+            }).WithDefaultValue(new Vector2(25, 10)))
     ]);
 
     public static readonly List<ConfigType> Teleplane = GroupUtils.Merge(Enemies, [

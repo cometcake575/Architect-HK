@@ -2,12 +2,12 @@
   "placements": [
     {
       "placement": {
-        "id": "sporg",
-        "pid": "29415879",
+        "id": "peak_plat_1",
+        "pid": "ca032e3a",
         "pos": {
           "Item1": 100.0,
           "Item2": 100.0,
-          "Item3": 0.006
+          "Item3": -0.01
         },
         "flipped": false,
         "locked": false,
@@ -16,9 +16,8 @@
         "layer": 0
       },
       "config": {
-        "can_pogo_sporg_explosion": "False",
-        "enemy_hp": "9999",
-        "sporg_alert_range": "{\"Item1\":23.2768,\"Item2\":9.9953}"
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":0.918189347,\"Item2\":0.9876543}"
       }
     }
   ],

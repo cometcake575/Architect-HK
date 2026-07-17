@@ -20,7 +20,7 @@ public class DcmObject(DcmObjectType dType, float rot, float scale, Dictionary<s
         
         return new ObjectPlacement(
             type,
-            new Vector3(Pos.x, Pos.y, type.ZPosition) + dType.GetOffset(),
+            new Vector3(Pos.x, Pos.y) + dType.GetOffset(),
             Guid.NewGuid().ToString()[..8],
             false,
             rot + dType.GetRotOffset(),

@@ -56,7 +56,8 @@
     "name": "laser_crystal"
   },
   "HK_bench": {
-    "name": "common_bench"
+    "name": "common_bench",
+    "z_offset": 0.02
   },
   "HK_shadow_gate": {
     "name": "shade_gate"
@@ -66,7 +67,8 @@
   },
   "HK_soul_totem": {
     "name": "horned_totem",
-    "scale": 1.37
+    "scale": 1.37,
+    "z_offset": 0.01
   },
   "HK_spike": {
     "name": "cave_spikes"
@@ -78,7 +80,7 @@
     "name": "flipping_platform"
   },
   "HK_platform_rect": {
-    "name": "peak_plat_1"
+    "name": "prefab_DCM_Plat"
   },
   "HK_platform_small": {
     "name": "plat_generic_5"
