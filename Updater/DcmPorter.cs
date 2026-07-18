@@ -170,9 +170,10 @@ public static class DcmPorter
             var current = "";
             Elements.Add(new InputField("DcM Map Path", s => current = s, () => "", "", int.MaxValue));
         
-            Elements.Add(new MenuButton("Load Map", "", _ =>
+            Elements.Add(new MenuButton("Load Map", "Will wipe your current map", _ =>
             {
                 Port(current, false);
+                StorageManager.WipeLevelData();
                 StorageManager.LateLoad();
             }));
             
