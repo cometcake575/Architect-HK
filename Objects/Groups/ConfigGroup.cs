@@ -1997,6 +1997,22 @@ public static class ConfigGroup
                 }).WithPriority(-1))
     ]);
 
+    public static readonly List<ConfigType> HitResponder = GroupUtils.Merge(Stretchable, [
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType("Shape", "hit_responder_shape",
+                    (o, value) =>
+                    {
+                        if (value.GetValue() == 0) return;
+                        o.GetComponent<PolygonCollider2D>().enabled = true;
+                        o.GetComponent<BoxCollider2D>().enabled = false;
+                    }, (o, value, _) =>
+                    {
+                        o.GetComponent<SpriteRenderer>().sprite =
+                            value.GetValue() == 0 ? Behaviour.Utility.HitResponder.SquareZone : Behaviour.Utility.HitResponder.CircleZone;
+                    })
+                .WithOptions("Square", "Circle").WithDefaultValue(0).WithPriority(-1))
+    ]);
+
     public static readonly List<ConfigType> EnemyDamager = GroupUtils.Merge(Stretchable, [
         ConfigurationManager.RegisterConfigType(
             new ChoiceConfigType("Shape", "enemy_damager_shape",
@@ -2126,6 +2142,12 @@ public static class ConfigGroup
         ConfigurationManager.RegisterConfigType(
             new BoolConfigType("Reversible", "binding_toggle",
                 (o, value) => { o.GetComponent<Binding>().reversible = value.GetValue(); }).WithDefaultValue(false)),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Contact Toggle", "binding_contact_toggle",
+                (o, value) =>
+                {
+                    if (!value.GetValue()) o.RemoveComponent<CircleCollider2D>();
+                }).WithDefaultValue(true)),
         ConfigurationManager.RegisterConfigType(
             new BoolConfigType("Appear in UI", "binding_ui",
                 (o, value) => { o.GetComponent<Binding>().uiVisible = value.GetValue(); }).WithDefaultValue(true))

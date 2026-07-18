@@ -1,0 +1,138 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "mini_totem",
+        "pid": "b42e0a71",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.01
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      }
+    },
+    {
+      "placement": {
+        "id": "component_toggle",
+        "pid": "62ab1256",
+        "pos": {
+          "Item1": 95.69253,
+          "Item2": 101.343063,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "component_hook_recursive": "True",
+        "component_hook_mode": "0",
+        "component_hook_target": "b42e0a71",
+        "component_hook_name": "BoxCollider2D"
+      }
+    },
+    {
+      "placement": {
+        "id": "pv_totem",
+        "pid": "19b9c862",
+        "pos": {
+          "Item1": 99.98768,
+          "Item2": 100.367744,
+          "Item3": 0.01
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 0.5638885,
+        "layer": 0
+      },
+      "config": {
+        "is_visible": "False"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": -25.7777786,
+        "Item2": -130.222229
+      },
+      "block_id": "4c728538-f7a0-4119-b000-e93e39a9d2d7",
+      "events": {
+        "Out": [
+          {
+            "Item1": "1d9f7d19-e98a-434d-b93e-58adb0c33ad8",
+            "Item2": "Max"
+          },
+          {
+            "Item1": "18be4dcd-c6c1-47b4-a387-4881fc1d0a19",
+            "Item2": "Max"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Delay",
+      "config": {
+        "delay_num": "1.5"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 247.111115,
+        "Item2": 56.8888931
+      },
+      "block_id": "1d9f7d19-e98a-434d-b93e-58adb0c33ad8",
+      "events": {},
+      "vars": {},
+      "type": "Health Control",
+      "config": {
+        "health_amount": "1"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 184.666672,
+        "Item2": -125.333336
+      },
+      "block_id": "18be4dcd-c6c1-47b4-a387-4881fc1d0a19",
+      "events": {},
+      "vars": {},
+      "type": "Soul Control",
+      "config": {
+        "silk_amount": "1"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -268.222229,
+        "Item2": -154.0
+      },
+      "block_id": "c3ce2f4f-189f-4fce-bed8-aac9c1c5eb50",
+      "events": {
+        "OnHit": [
+          {
+            "Item1": "4c728538-f7a0-4119-b000-e93e39a9d2d7",
+            "Item2": "In"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "19b9c862",
+        "object_type": "pv_totem"
+      }
+    }
+  ]
+}

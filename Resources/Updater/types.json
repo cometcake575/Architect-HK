@@ -121,35 +121,11 @@
     "name": "conveyor_l",
     "y_offset": 2
   },
-  "IMG_fireball": {
-    "name": "spirit_binding"
-  },
-  "IMG_MothwingCloak": {
-    "name": "dash_binding"
-  },
-  "IMG_MonarchWings": {
-    "name": "wings_binding"
-  },
-  "IMG_MantisClaw": {
-    "name": "claw_binding"
-  },
-  "IMG_quake": {
-    "name": "dive_binding"
-  },
-  "IMG_DownSlash": {
-    "name": "pogo_binding"
-  },
   "HK_stomper": {
     "name": "prefab_DCM_Stomper"
   },
   "stomper_switch": {
     "name": "prefab_DCM_StomperLever"
-  },
-  "IMG_scream": {
-    "name": "wraiths_binding"
-  },
-  "IMG_supserdash": {
-    "name": "cdash_binding"
   },
   "HK_unbreak_wall": {
     "name": "prefab_DCM_Wall"
@@ -170,6 +146,9 @@
     "name": "prefab_DCM_Spikes",
     "x_offset": -0.2,
     "y_offset": 0.2
+  },
+  "scattered_and_lost_soul_totem": {
+    "name": "prefab_SaL_Totem"
   },
   "jarcol_floor": {
     "name": "prefab_DCM_Jarcol"
@@ -234,5 +213,37 @@
       "span": "prefab_config_cf530044-cf09-4200-bf3d-e1b220bbfe2b",
       "offset": "prefab_config_519163eb-3be8-4dd7-9a2b-27fb5c4b183d"
     }
+  },
+  "mary_move_platform": {
+    "name": "prefab_DCM_MarioPlat",
+    "config": {
+      "speed": "prefab_config_6653ed1d-8b51-409a-8355-52cef4ddb77f-cc07500e",
+      "span": "prefab_config_cf530044-cf09-4200-bf3d-e1b220bbfe2b-cc07500e",
+      "offset": "prefab_config_519163eb-3be8-4dd7-9a2b-27fb5c4b183d-cc07500e"
+    }
+  },
+  "IMG_fireball": {
+    "name": "prefab_DCM_Spirit"
+  },
+  "IMG_MothwingCloak": {
+    "name": "prefab_DCM_Dash"
+  },
+  "IMG_MonarchWings": {
+    "name": "prefab_DCM_Wings"
+  },
+  "IMG_MantisClaw": {
+    "name": "prefab_DCM_Claw"
+  },
+  "IMG_quake": {
+    "name": "prefab_DCM_Dive"
+  },
+  "IMG_DownSlash": {
+    "name": "prefab_DCM_Pogo"
+  },
+  "IMG_scream": {
+    "name": "prefab_DCM_Wraiths"
+  },
+  "IMG_supserdash": {
+    "name": "prefab_DCM_Cdash"
   }
 }

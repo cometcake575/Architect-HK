@@ -1,0 +1,107 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "hit_detector",
+        "pid": "0de46135",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "object_scale": "{\"Item1\":0.3125,\"Item2\":0.3125}"
+      }
+    },
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "411ca330",
+        "pos": {
+          "Item1": 101.165092,
+          "Item2": 102.238625,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "True",
+        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":0.2,\"Item3\":0.2,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "0",
+        "colourer_target": "5be75f8e"
+      }
+    },
+    {
+      "placement": {
+        "id": "dash_binding",
+        "pid": "5be75f8e",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.005
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "binding_active": "True",
+        "binding_toggle": "False",
+        "binding_ui": "True",
+        "mutable_muted": "False",
+        "binding_contact_toggle": "False"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": 70.0,
+        "Item2": -16.2222214
+      },
+      "block_id": "7fa9977d-bea3-4420-b8c3-82cf153432bc",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "5be75f8e",
+        "object_type": "dash_binding"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -167.333328,
+        "Item2": -138.0
+      },
+      "block_id": "abdaa008-ac55-4b23-aa57-3c3a9024b8bd",
+      "events": {
+        "OnHit": [
+          {
+            "Item1": "7fa9977d-bea3-4420-b8c3-82cf153432bc",
+            "Item2": "disable"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "0de46135",
+        "object_type": "hit_detector"
+      }
+    }
+  ]
+}

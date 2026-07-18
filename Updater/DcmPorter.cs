@@ -7,13 +7,14 @@ using Architect.Objects.Categories;
 using Architect.Placements;
 using Architect.Storage;
 using Newtonsoft.Json;
+using Satchel.BetterMenus;
 using UnityEngine;
 
 namespace Architect.Updater;
 
 public static class DcmPorter
 {
-    // Register config types
+    // Register config types and setup menu
     public static void Init()
     {
         ConfigurationManager.RegisterConfigType(
@@ -58,20 +59,30 @@ public static class DcmPorter
                 }).WithPriority(-1));
 
     }
-    
+
     public static void Port()
     {
-        var dmdPath = Path.Combine(StorageManager.DataPath, "DecorationMasterData");
+        Port(Path.Combine(StorageManager.DataPath, "DecorationMasterData"), true);
+    }
+
+    private static void Port(string dmdPath, bool delete)
+    {
         if (!Directory.Exists(dmdPath)) return;
         
-        ArchitectPlugin.Instance.Log("DecorationMasterData found in Architect folder");
+        ArchitectPlugin.Instance.Log("DcM Data found");
         
         ArchitectPlugin.Instance.Log("Saving DcM object prefabs");
-        string[] prefabs = ["Line", "RespawnPlat", "Sporg", "Wall", "Conveyor", "Spikes", "Jarcol", "Lever", "Gate", "ZoteMachine", "ZoteGate", "Saw", "Stomper", "StomperLever", "Tp", "Twinkle", "Plat"];
+        string[] prefabs = ["Line", "RespawnPlat", "Sporg", "Wall", "Conveyor", "Spikes", "Jarcol", "Lever", "Gate", "ZoteMachine", "ZoteGate", "Saw", "Stomper", "StomperLever", "Tp", "Twinkle", "Plat", "MarioPlat", "Dash", "Spirit", "Dive", "Wraiths", "Pogo", "Claw", "Wings", "Cdash"];
         foreach (var s in prefabs)
         {
             File.WriteAllText(Path.Combine(StorageManager.DataPath, "Prefabs", $"Prefab_DCM_{s}.architect.json"),
                 ResourceUtils.LoadTextResource($"Updater.Prefab_DCM_{s}.architect.json"));
+        }
+        string[] salPrefabs = ["Totem"];
+        foreach (var s in salPrefabs)
+        {
+            File.WriteAllText(Path.Combine(StorageManager.DataPath, "Prefabs", $"Prefab_SaL_{s}.architect.json"),
+                ResourceUtils.LoadTextResource($"Updater.Prefab_SaL_{s}.architect.json"));
         }
         PrefabsCategory.Prefabs = StorageManager.LoadPrefabs(StorageManager.DataPath);
         
@@ -137,10 +148,40 @@ public static class DcmPorter
                 [], [], []);
             StorageManager.SaveScene(scene, ld);
         }
-        
-        ArchitectPlugin.Instance.Log("Deleting old data");
-        Directory.Delete(dmdPath, true);
-        
+
+        if (delete)
+        {
+            ArchitectPlugin.Instance.Log("Deleting old data");
+            Directory.Delete(dmdPath, true);
+        }
+
         ArchitectPlugin.Instance.Log("Porting complete");
+    }
+    
+    private static Menu _menuRef;
+    
+    private static readonly List<Element> Elements = [];
+    
+    public static MenuScreen GetMenuScreen(MenuScreen returnMenu)
+    {
+        if (_menuRef == null)
+        {
+            Elements.Clear();
+            var current = "";
+            Elements.Add(new InputField("DcM Map Path", s => current = s, () => "", "", int.MaxValue));
+        
+            Elements.Add(new MenuButton("Load Map", "", _ =>
+            {
+                Port(current, false);
+                StorageManager.LateLoad();
+            }));
+            
+            _menuRef = new Menu(
+                name: "DcM Updater",
+                elements: Elements.ToArray()
+            );
+        }
+
+        return _menuRef.GetMenuScreen(returnMenu);
     }
 }
