@@ -8,8 +8,6 @@ public class MathsBlock : ScriptBlock
     protected override IEnumerable<(string, string)> OutputVars => [("Value", "Number")];
     protected override IEnumerable<(string, string)> InputVars => [("1", "Number"), ("2", "Number")];
     
-    
-    
     protected override string Name => "Operation";
 
     public int Mode;
@@ -84,5 +82,20 @@ public class NormaliseBlock : ScriptBlock
 
         var normal = Quaternion.Euler(0, 0, Angle) * new Vector2(v1, v2).normalized;
         return id == "X" ? normal.x : normal.y;
+    }
+}
+
+public class JoinBlock : ScriptBlock
+{
+    protected override IEnumerable<(string, string)> OutputVars => [("Value", "Text")];
+    protected override IEnumerable<(string, string)> InputVars => [("1", "Text"), ("2", "Text")];
+    
+    protected override string Name => "Join Text";
+
+    public override object GetValue(string id)
+    {
+        var v1 = GetVariable<string>("1");
+        var v2 = GetVariable<string>("2");
+        return v1 + v2;
     }
 }

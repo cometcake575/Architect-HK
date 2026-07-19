@@ -1,0 +1,512 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "e44c35fb",
+        "pos": {
+          "Item1": 101.493111,
+          "Item2": 105.262245,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "False",
+        "colourer_colour_set": "{\"Item1\":0.4,\"Item2\":0.4,\"Item3\":1.0,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "1",
+        "colourer_target": "b98aca8e"
+      }
+    },
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "bc85612d",
+        "pos": {
+          "Item1": 104.1086,
+          "Item2": 105.510086,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "False",
+        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":0.4,\"Item3\":0.4,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "1",
+        "colourer_target": "b98aca8e"
+      }
+    },
+    {
+      "placement": {
+        "id": "trigger_zone",
+        "pid": "a8ce51eb",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 0.45,
+        "layer": 0
+      },
+      "config": {
+        "trigger_type": "0",
+        "trigger_shape": "1",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}"
+      }
+    },
+    {
+      "placement": {
+        "id": "coloured_circle",
+        "pid": "b98aca8e",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 0.45,
+        "layer": 0
+      },
+      "config": {
+        "sprite_colour": "{\"Item1\":0.4,\"Item2\":0.4,\"Item3\":1.0,\"Item4\":1.0}",
+        "coloured_shapes_has_physics": "False",
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": 19.68311,
+        "Item2": -127.32103
+      },
+      "block_id": "fc899181-159c-4fda-9188-1385ba0427ff",
+      "events": {},
+      "vars": {
+        "New Event": {
+          "Item1": "c6546663-883d-4d08-9f55-4bb4fe63d898",
+          "Item2": "Value"
+        }
+      },
+      "type": "Broadcast",
+      "config": {
+        "in_local": "False",
+        "in_name": "None"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -120.262756,
+        "Item2": 175.141327
+      },
+      "block_id": "337be267-cb54-4e7e-9fed-3679004917ab",
+      "events": {},
+      "vars": {},
+      "type": "Constant Text",
+      "config": {
+        "prefab_configurable": "False",
+        "constant_text": "SaLCollect_"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 162.7064,
+        "Item2": 164.785751
+      },
+      "block_id": "bb2427b9-5dd1-43d6-9346-40e050b8453f",
+      "events": {},
+      "vars": {},
+      "type": "Constant Text",
+      "config": {
+        "prefab_configurable": "True",
+        "prefab_configurable_name": "Gate",
+        "constant_text": "1"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -483.110352,
+        "Item2": -211.133133
+      },
+      "block_id": "54dc1910-033f-441f-bd09-cf96cd613353",
+      "events": {
+        "OnStart": [
+          {
+            "Item1": "b0c69f6b-a525-43f0-8e98-ba58c8955b2a",
+            "Item2": "Trigger"
+          },
+          {
+            "Item1": "fc899181-159c-4fda-9188-1385ba0427ff",
+            "Item2": "SetEvent"
+          },
+          {
+            "Item1": "90a2063b-5ba3-4996-ad04-2ecc5328b3e3",
+            "Item2": "SetEvent"
+          },
+          {
+            "Item1": "a79270c2-083a-4026-9326-f7b74101fa22",
+            "Item2": "In"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Start",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 304.825745,
+        "Item2": 146.75705
+      },
+      "block_id": "78582e7d-f3d9-4a9b-b00d-86545d0a9ce1",
+      "events": {},
+      "vars": {},
+      "type": "Constant Text",
+      "config": {
+        "prefab_configurable": "False",
+        "constant_text": "SaLLose_"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 1.24109435,
+        "Item2": -242.545044
+      },
+      "block_id": "90a2063b-5ba3-4996-ad04-2ecc5328b3e3",
+      "events": {},
+      "vars": {
+        "New Event": {
+          "Item1": "7765f275-d707-4462-9db5-3fd111f3e83d",
+          "Item2": "Value"
+        }
+      },
+      "type": "Broadcast",
+      "config": {
+        "in_local": "False",
+        "in_name": "None"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -336.650482,
+        "Item2": -29.6238022
+      },
+      "block_id": "e285a5d5-9d05-4ad3-ad05-c7fd14e30895",
+      "events": {
+        "ZoneEnter": [
+          {
+            "Item1": "d2065bec-d828-4e71-9c04-0645a7738d8e",
+            "Item2": "In"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "a8ce51eb",
+        "object_type": "trigger_zone"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 24.1585732,
+        "Item2": 24.02489
+      },
+      "block_id": "8dcf077f-4115-4b27-bc3e-6f1427269d24",
+      "events": {},
+      "vars": {
+        "Fade Time": {
+          "Item1": "f1cf6593-5975-4c81-bbce-3a130613b16f",
+          "Item2": "Value"
+        }
+      },
+      "type": "object",
+      "ext": {
+        "object": "e44c35fb",
+        "object_type": "object_colourer"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -165.323517,
+        "Item2": 57.18882
+      },
+      "block_id": "6149f9a7-b8fb-4a96-a62d-6584e310ba7a",
+      "events": {},
+      "vars": {
+        "New Value": {
+          "Item1": "05f4433c-a91f-49d6-8c65-081aa7328790",
+          "Item2": "Value"
+        }
+      },
+      "type": "Variable (Bool)",
+      "config": {
+        "var_persistence_bool": "0",
+        "var_default_bool": "False",
+        "var_local_bool": "True",
+        "var_id_bool": "collected"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 151.195465,
+        "Item2": -212.659714
+      },
+      "block_id": "fb6c6149f9a7-b8fb-4a96-a62d-6584e310ba7a",
+      "events": {},
+      "vars": {
+        "New Value": {
+          "Item1": "dd69f959-5f55-4577-aedb-7023445a8a1f",
+          "Item2": "Value"
+        }
+      },
+      "type": "Variable (Bool)",
+      "config": {
+        "var_persistence_bool": "0",
+        "var_default_bool": "False",
+        "var_local_bool": "True",
+        "var_id_bool": "collected"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 174.5537,
+        "Item2": -92.8551941
+      },
+      "block_id": "dd69f959-5f55-4577-aedb-7023445a8a1f",
+      "events": {},
+      "vars": {},
+      "type": "Constant Bool",
+      "config": {
+        "prefab_configurable": "False",
+        "constant_bool": "False"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -270.467773,
+        "Item2": 175.359665
+      },
+      "block_id": "05f4433c-a91f-49d6-8c65-081aa7328790",
+      "events": {},
+      "vars": {},
+      "type": "Constant Bool",
+      "config": {
+        "prefab_configurable": "False",
+        "constant_bool": "True"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -165.85495,
+        "Item2": -77.53963
+      },
+      "block_id": "d2065bec-d828-4e71-9c04-0645a7738d8e",
+      "events": {
+        "False": [
+          {
+            "Item1": "fc899181-159c-4fda-9188-1385ba0427ff",
+            "Item2": "Broadcast"
+          },
+          {
+            "Item1": "6149f9a7-b8fb-4a96-a62d-6584e310ba7a",
+            "Item2": "Set"
+          },
+          {
+            "Item1": "75babd16-d990-44fd-940c-507f0e96b029",
+            "Item2": "do_colour"
+          }
+        ]
+      },
+      "vars": {
+        "Check": {
+          "Item1": "6149f9a7-b8fb-4a96-a62d-6584e310ba7a",
+          "Item2": "Value"
+        }
+      },
+      "type": "If",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 72.1249161,
+        "Item2": -348.59726
+      },
+      "block_id": "6eb6b657-290a-49e6-ae16-6cb439c2e805",
+      "events": {
+        "True": [
+          {
+            "Item1": "fb6c6149f9a7-b8fb-4a96-a62d-6584e310ba7a",
+            "Item2": "Set"
+          },
+          {
+            "Item1": "90a2063b-5ba3-4996-ad04-2ecc5328b3e3",
+            "Item2": "Broadcast"
+          },
+          {
+            "Item1": "8dcf077f-4115-4b27-bc3e-6f1427269d24",
+            "Item2": "do_colour"
+          }
+        ]
+      },
+      "vars": {
+        "Check": {
+          "Item1": "fb6c6149f9a7-b8fb-4a96-a62d-6584e310ba7a",
+          "Item2": "Value"
+        }
+      },
+      "type": "If",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -310.320343,
+        "Item2": -485.705841
+      },
+      "block_id": "95937157-1ce4-47dd-ae87-8c7e00829d1e",
+      "events": {
+        "OnHazardRespawn": [
+          {
+            "Item1": "6eb6b657-290a-49e6-ae16-6cb439c2e805",
+            "Item2": "In"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Health Control",
+      "config": {
+        "health_amount": "1"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 336.973328,
+        "Item2": -276.1275
+      },
+      "block_id": "75babd16-d990-44fd-940c-507f0e96b029",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "bc85612d",
+        "object_type": "object_colourer"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 26.7413216,
+        "Item2": 15.594101
+      },
+      "block_id": "c6546663-883d-4d08-9f55-4bb4fe63d898",
+      "events": {},
+      "vars": {
+        "1": {
+          "Item1": "337be267-cb54-4e7e-9fed-3679004917ab",
+          "Item2": "Value"
+        },
+        "2": {
+          "Item1": "bb2427b9-5dd1-43d6-9346-40e050b8453f",
+          "Item2": "Value"
+        }
+      },
+      "type": "Join Text",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 237.547516,
+        "Item2": 11.4627171
+      },
+      "block_id": "7765f275-d707-4462-9db5-3fd111f3e83d",
+      "events": {},
+      "vars": {
+        "2": {
+          "Item1": "bb2427b9-5dd1-43d6-9346-40e050b8453f",
+          "Item2": "Value"
+        },
+        "1": {
+          "Item1": "78582e7d-f3d9-4a9b-b00d-86545d0a9ce1",
+          "Item2": "Value"
+        }
+      },
+      "type": "Join Text",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 286.64035,
+        "Item2": -86.65757
+      },
+      "block_id": "f1cf6593-5975-4c81-bbce-3a130613b16f",
+      "events": {},
+      "vars": {},
+      "type": "Constant Num",
+      "config": {
+        "prefab_configurable": "False",
+        "constant_num": "0.25"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -247.12381,
+        "Item2": -184.854263
+      },
+      "block_id": "b0c69f6b-a525-43f0-8e98-ba58c8955b2a",
+      "events": {},
+      "vars": {},
+      "type": "Ordered Events",
+      "ext": {
+        "children": "[{\"pos\":{\"Item1\":29.3144169,\"Item2\":-211.962234},\"block_id\":\"8c990d04-8f03-4a65-9008-ecca789553ec\",\"events\":{\"OnTrigger\":[]},\"vars\":{},\"type\":\"Order Trigger\",\"ext\":{}}]"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -448.763062,
+        "Item2": -346.075378
+      },
+      "block_id": "a79270c2-083a-4026-9326-f7b74101fa22",
+      "events": {
+        "Out": [
+          {
+            "Item1": "90a2063b-5ba3-4996-ad04-2ecc5328b3e3",
+            "Item2": "Broadcast"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Delay",
+      "config": {
+        "delay_num": "0.1"
+      },
+      "ext": {}
+    }
+  ]
+}

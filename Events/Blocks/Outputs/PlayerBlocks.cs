@@ -42,6 +42,7 @@ public class HpBlock : PlayerBlock
     }
 
     public int Amount;
+    public CollisionSide CollisionSide = CollisionSide.other;
 
     protected override void Trigger(string trigger)
     {
@@ -54,11 +55,11 @@ public class HpBlock : PlayerBlock
                 HeroController.instance.AddHealth(Amount);
                 break;
             case "Take":
-                HeroController.instance.TakeDamage(HeroController.instance.gameObject, CollisionSide.other, Amount, 1);
+                HeroController.instance.TakeDamage(HeroController.instance.gameObject, CollisionSide, Amount, 1);
                 break;
             case "TakeHazard":
                 HeroController.instance.TakeHealth(Amount - 1);
-                HeroController.instance.TakeDamage(HeroController.instance.gameObject, CollisionSide.other, 
+                HeroController.instance.TakeDamage(HeroController.instance.gameObject, CollisionSide, 
                     1, 2);
                 break;
         }

@@ -14,7 +14,7 @@ namespace Architect.Updater;
 
 public static class DcmPorter
 {
-    // Register config types and setup menu
+    // Register config types
     public static void Init()
     {
         ConfigurationManager.RegisterConfigType(
@@ -57,7 +57,19 @@ public static class DcmPorter
                         fol.enabled = false;
                     });
                 }).WithPriority(-1));
-
+        
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType("Scale X", "object_scale_x",
+                (o, value) =>
+                {
+                    o.transform.SetScaleX(o.transform.GetScaleX() * value.GetValue());
+                }));
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType("Scale Y", "object_scale_y",
+                (o, value) =>
+                {
+                    o.transform.SetScaleY(o.transform.GetScaleY() * value.GetValue());
+                }));
     }
 
     public static void Port()
@@ -78,7 +90,7 @@ public static class DcmPorter
             File.WriteAllText(Path.Combine(StorageManager.DataPath, "Prefabs", $"Prefab_DCM_{s}.architect.json"),
                 ResourceUtils.LoadTextResource($"Updater.Prefab_DCM_{s}.architect.json"));
         }
-        string[] salPrefabs = ["Totem"];
+        string[] salPrefabs = ["Totem", "Bumper", "Coin", "Gate"];
         foreach (var s in salPrefabs)
         {
             File.WriteAllText(Path.Combine(StorageManager.DataPath, "Prefabs", $"Prefab_SaL_{s}.architect.json"),

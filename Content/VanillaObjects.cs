@@ -935,11 +935,6 @@ public static class VanillaObjects
 
         AddSolid("Godhome Platform 1", "gg_plat_1", ("GG_Atrium_Roof", "gg_plat_float_small"));
         AddSolid("Godhome Platform 2", "gg_plat_2", ("GG_Workshop", "gg_plat_float_wide"));
-
-        AddAttack("Absolute Radiance Orb", "absrad_orb", ("GG_Radiance", "Boss Control/Absolute Radiance"),
-            "Attack Commands", "Spawn Fireball", 1);
-        AddAttack("Absolute Radiance Sword", "absrad_sword", ("GG_Radiance", "Boss Control/Absolute Radiance"),
-            "Attack Commands", "Comb Top", 0);
     }
 
     private static void AddAbyssObjects()

@@ -150,6 +150,25 @@
   "scattered_and_lost_soul_totem": {
     "name": "prefab_SaL_Totem"
   },
+  "scattered_and_lost_bumper": {
+    "name": "prefab_SaL_Bumper"
+  },
+  "scattered_and_lost_switch": {
+    "name": "prefab_SaL_Coin",
+    "config": {
+      "Gate": "prefab_config_bb2427b9-5dd1-43d6-9346-40e050b8453f"
+    }
+  },
+  "scattered_and_lost_switch_door": {
+    "name": "prefab_SaL_Gate",
+    "config": {
+      "Gate": "prefab_config_8e8b604d-1073-4885-976c-2da043a8cb62",
+      "XScale": "object_scale_x",
+      "YScale": "object_scale_y",
+      "XOpen": "prefab_config_ca88b005-1aaa-4a3c-824d-8fe20ccb3c43",
+      "YOpen": "prefab_config_c4ad94fa-947a-4519-9831-5959290c54a7"
+    }
+  },
   "jarcol_floor": {
     "name": "prefab_DCM_Jarcol"
   },

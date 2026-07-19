@@ -2162,6 +2162,26 @@ public static class ConfigGroup
                     o.GetComponent<KeyListener>().key = key;
                 }))
     ]);
+    
+    public static readonly List<ConfigType> Bumpers = GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType("Mode", "bumper_mode",
+                (o, value) =>
+                {
+                    o.GetComponent<Bumper>().SetEvil(value.GetValue() == 1);
+                },
+                (o, value, _) =>
+                {
+                    o.GetComponent<SpriteRenderer>().sprite =
+                        value.GetValue() == 0 ? Bumper.NormalIcon : Bumper.EvilIcon;
+                }).WithOptions("Regular", "Fire").WithDefaultValue(0)),
+        ConfigurationManager.RegisterConfigType(
+            new ChoiceConfigType("Activation", "bumper_activation",
+                (o, value) =>
+                {
+                    o.GetComponent<Bumper>().activation = value.GetValue();
+                }).WithOptions("Contact", "Hit").WithDefaultValue(0))
+    ]);
 
     public static readonly List<ConfigType> Remover = GroupUtils.Merge(Generic, [
         ConfigurationManager.RegisterConfigType(

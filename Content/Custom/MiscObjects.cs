@@ -55,6 +55,7 @@ public static class MiscObjects
             .WithOutputGroup(OutputGroup.Png));
         
         Categories.Platforming.Add(CreateWind());
+        Categories.Platforming.Add(CreateBumper());
         Categories.Platforming.Add(CreateDreamBlock());
 
         Categories.Hazards.Add(CreateCustomHazard("White Thorns", "white_thorns",
@@ -289,5 +290,44 @@ public static class MiscObjects
         Object.DontDestroyOnLoad(point);
 
         return point;
+    }
+    
+    private static PlaceableObject CreateBumper()
+    {
+        Bumper.Init();
+        
+        var bumper = new GameObject("Bumper")
+        {
+            layer = LayerMask.NameToLayer("Terrain")
+        };
+        
+        bumper.SetActive(false);
+        Object.DontDestroyOnLoad(bumper);
+        
+        bumper.transform.position = new Vector3(0, 0, 0.005f);
+        
+        bumper.AddComponent<Bumper>();
+        bumper.AddComponent<SpriteRenderer>().sprite = Bumper.NormalIcon;
+
+        var col = bumper.AddComponent<CircleCollider2D>();
+        col.isTrigger = true;
+        col.radius = 0.7f;
+
+        var damager = new GameObject("Damager")
+        {
+            transform = { parent = bumper.transform },
+            layer = LayerMask.NameToLayer("Attack")
+        };
+        
+        var damageCol = damager.AddComponent<CircleCollider2D>();
+        damageCol.isTrigger = true;
+        damageCol.radius = 0.7f;
+        
+        damager.AddComponent<DamageHero>().hazardType = 1;
+        damager.AddComponent<DamageEnemies>().damageDealt = 20;
+        
+        return new CustomObject("Bumper", "celeste_bumper", bumper)
+            .WithConfigGroup(ConfigGroup.Bumpers)
+            .WithReceiverGroup(ReceiverGroup.Bumpers);
     }
 }

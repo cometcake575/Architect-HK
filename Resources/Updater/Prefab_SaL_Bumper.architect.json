@@ -1,0 +1,166 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "wp_saw",
+        "pid": "6555b0f2",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.001
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 0.3651005,
+        "layer": 0
+      },
+      "config": {
+        "wp_saw_accurate": "False",
+        "is_visible": "False"
+      }
+    },
+    {
+      "placement": {
+        "id": "component_toggle",
+        "pid": "d79ec106",
+        "pos": {
+          "Item1": 97.35535,
+          "Item2": 101.953377,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "component_hook_recursive": "True",
+        "component_hook_mode": "3",
+        "component_hook_target": "6555b0f2",
+        "component_hook_field": "hazardType",
+        "component_hook_name": "DamageHero"
+      }
+    },
+    {
+      "placement": {
+        "id": "celeste_bumper",
+        "pid": "968674e9",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.005
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.614,
+        "layer": 0
+      },
+      "config": {
+        "bumper_mode": "0",
+        "bumper_activation": "1"
+      }
+    },
+    {
+      "placement": {
+        "id": "component_toggle",
+        "pid": "333772b4",
+        "pos": {
+          "Item1": 102.911263,
+          "Item2": 101.982689,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "component_hook_recursive": "True",
+        "component_hook_mode": "0",
+        "component_hook_target": "6555b0f2",
+        "component_hook_name": "PlayMakerFSM"
+      }
+    },
+    {
+      "placement": {
+        "id": "object_layerer",
+        "pid": "0323706b",
+        "pos": {
+          "Item1": 97.29674,
+          "Item2": 100.535149,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "layerer_start_applied": "True",
+        "layerer_recursive": "True",
+        "layerer_target": "6555b0f2",
+        "layerer_name": "Projectiles"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": 0.0,
+        "Item2": -40.0
+      },
+      "block_id": "ed791786-831d-411f-b217-18c1a2725c4f",
+      "events": {},
+      "vars": {
+        "New Value": {
+          "Item1": "95ff52a3-d0da-4ed4-a38e-64894583d900",
+          "Item2": "Value"
+        }
+      },
+      "type": "object",
+      "ext": {
+        "object": "d79ec106",
+        "object_type": "component_toggle"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -234.0,
+        "Item2": -41.3333359
+      },
+      "block_id": "e61db069-ed0e-4242-a183-590d74cab183",
+      "events": {
+        "OnStart": [
+          {
+            "Item1": "ed791786-831d-411f-b217-18c1a2725c4f",
+            "Item2": "component_hook_set"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Start",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -10.8888893,
+        "Item2": 78.0
+      },
+      "block_id": "95ff52a3-d0da-4ed4-a38e-64894583d900",
+      "events": {},
+      "vars": {},
+      "type": "Constant Num",
+      "config": {
+        "prefab_configurable": "False",
+        "constant_num": "1"
+      },
+      "ext": {}
+    }
+  ]
+}

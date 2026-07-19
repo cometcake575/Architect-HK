@@ -29,6 +29,17 @@ public static class ReceiverGroup
         }))
     ]);
     
+    public static readonly List<EventReceiverType> Bumpers = GroupUtils.Merge(Generic, [
+        EventManager.RegisterReceiverType(new EventReceiverType("bouncer_evil", "SetFire", o =>
+        {
+            o.GetComponent<Bumper>().SetEvil(true);
+        })),
+        EventManager.RegisterReceiverType(new EventReceiverType("bouncer_normal", "SetNormal", o =>
+        {
+            o.GetComponent<Bumper>().SetEvil(false);
+        }))
+    ]);
+    
     public static readonly List<EventReceiverType> Velocity = GroupUtils.Merge(Generic, [
         EventManager.RegisterReceiverType(new EventReceiverType("set_velocity", "SetVelocity", (o, b) =>
         {
