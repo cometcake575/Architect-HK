@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Architect.Config;
 using Architect.Config.Types;
 using Architect.Objects.Categories;
 using Architect.Placements;
@@ -9,6 +8,7 @@ using Architect.Storage;
 using Newtonsoft.Json;
 using Satchel.BetterMenus;
 using UnityEngine;
+using ConfigurationManager = Architect.Config.ConfigurationManager;
 
 namespace Architect.Updater;
 
@@ -84,19 +84,27 @@ public static class DcmPorter
         ArchitectPlugin.Instance.Log("DcM Data found");
         
         ArchitectPlugin.Instance.Log("Saving DcM object prefabs");
-        string[] prefabs = ["Line", "RespawnPlat", "Sporg", "Wall", "Conveyor", "Spikes", "Jarcol", "Lever", "Gate", "ZoteMachine", "ZoteGate", "Saw", "Stomper", "StomperLever", "Tp", "Twinkle", "Plat", "MarioPlat", "Dash", "Spirit", "Dive", "Wraiths", "Pogo", "Claw", "Wings", "Cdash"];
+        string[] prefabs = ["Line", "RespawnPlat", "Sporg", "Wall", "Conveyor", "Spikes", "Jarcol", "Lever", "Gate", "ZoteMachine", "ZoteGate", "Saw", "Stomper", "StomperLever", "Tp", "Twinkle", "Plat", "MarioPlat", "Dash", "Spirit", "Dive", "Wraiths", "Pogo", "Claw", "Wings", "Cdash", "Mana", "Piano", "ManaMachine", "ManaGate"];
         foreach (var s in prefabs)
         {
-            File.WriteAllText(Path.Combine(StorageManager.DataPath, "Prefabs", $"Prefab_DCM_{s}.architect.json"),
-                ResourceUtils.LoadTextResource($"Updater.Prefab_DCM_{s}.architect.json"));
+            var path = Path.Combine(StorageManager.DataPath, "Prefabs", $"Prefab_DCM_{s}.architect.json");
+            if (File.Exists(path)) File.Delete(path);
+            File.WriteAllText(path, ResourceUtils.LoadTextResource($"Updater.Prefab_DCM_{s}.architect.json"));
         }
         string[] salPrefabs = ["Totem", "Bumper", "Coin", "Gate"];
         foreach (var s in salPrefabs)
         {
-            File.WriteAllText(Path.Combine(StorageManager.DataPath, "Prefabs", $"Prefab_SaL_{s}.architect.json"),
-                ResourceUtils.LoadTextResource($"Updater.Prefab_SaL_{s}.architect.json"));
+            var path = Path.Combine(StorageManager.DataPath, "Prefabs", $"Prefab_SaL_{s}.architect.json");
+            if (File.Exists(path)) File.Delete(path);
+            File.WriteAllText(path, ResourceUtils.LoadTextResource($"Updater.Prefab_SaL_{s}.architect.json"));
         }
         PrefabsCategory.Prefabs = StorageManager.LoadPrefabs(StorageManager.DataPath);
+        
+        ArchitectPlugin.Instance.Log("Saving DcM mana item");
+
+        var wPath = Path.Combine(StorageManager.DataPath, "workshop.json");
+        if (File.Exists(wPath)) File.Delete(wPath);
+        File.WriteAllText(wPath, ResourceUtils.LoadTextResource("Updater.workshop.json"));
         
         ArchitectPlugin.Instance.Log("Attempting to port data");
 
@@ -170,31 +178,25 @@ public static class DcmPorter
         ArchitectPlugin.Instance.Log("Porting complete");
     }
     
-    private static Menu _menuRef;
-    
     private static readonly List<Element> Elements = [];
-    
+
     public static MenuScreen GetMenuScreen(MenuScreen returnMenu)
     {
-        if (_menuRef == null)
-        {
-            Elements.Clear();
-            var current = "";
-            Elements.Add(new InputField("DcM Map Path", s => current = s, () => "", "", int.MaxValue));
-        
-            Elements.Add(new MenuButton("Load Map", "Will wipe your current map", _ =>
-            {
-                Port(current, false);
-                StorageManager.WipeLevelData();
-                StorageManager.LateLoad();
-            }));
-            
-            _menuRef = new Menu(
-                name: "DcM Updater",
-                elements: Elements.ToArray()
-            );
-        }
+        Elements.Clear();
+        var current = "";
+        Elements.Add(new InputField("DcM Map Path", s => current = s, () => "", "", int.MaxValue));
 
-        return _menuRef.GetMenuScreen(returnMenu);
+        Elements.Add(new MenuButton("Load Map", "Will wipe your current map", _ =>
+        {
+            StorageManager.WipeLevelData();
+            Port(current, false);
+            StorageManager.LateLoad();
+            StorageManager.LoadWorkshopData();
+        }));
+        
+        return new Menu(
+            name: "DcM Updater",
+            elements: Elements.ToArray()
+        ).GetMenuScreen(returnMenu);
     }
 }

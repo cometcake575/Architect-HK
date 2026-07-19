@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "type": "Item",
+      "name": "mana",
+      "config": {
+        "png_antialias": "True",
+        "png_ppu": "50",
+        "item_name": "Mana",
+        "item_desc": "Used to activate mana machines",
+        "item_count": "True",
+        "png_url": "https://github.com/ygsbzr/HollowKnight.Decoration/blob/master/images/magic/mana_active_w.png?raw=true"
+      }
+    }
+  ]
+}

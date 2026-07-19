@@ -1,0 +1,112 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "trigger_zone",
+        "pid": "b6985287",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": true,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "trigger_type": "0",
+        "trigger_shape": "0",
+        "object_scale": "{\"Item1\":0.3125,\"Item2\":0.3125}"
+      }
+    },
+    {
+      "placement": {
+        "id": "custom_png",
+        "pid": "ea29f93d",
+        "pos": {
+          "Item1": 100.0,
+          "Item2": 100.0,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "png_glow": "True",
+        "png_sprite_colour": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "obj_layer": "0",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}",
+        "png_antialias": "True",
+        "png_ppu": "50",
+        "png_allframecount": "{\"Item1\":1,\"Item2\":1}",
+        "png_eframecount": "0",
+        "png_sframe": "0",
+        "png_frametime": "10",
+        "png_loop": "True",
+        "png_start_playing": "True",
+        "png_url": "https://github.com/ygsbzr/HollowKnight.Decoration/blob/master/images/magic/mana_active_w.png?raw=true"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": -170.666672,
+        "Item2": -37.5555573
+      },
+      "block_id": "86b38710-a13b-45ca-87e3-50b0d0c1a208",
+      "events": {
+        "ZoneEnter": [
+          {
+            "Item1": "c4d2bf0b-1a01-4907-8103-bfa6f695348f",
+            "Item2": "disable"
+          },
+          {
+            "Item1": "76bccdff-8108-48a4-94bd-6f93fc2000ad",
+            "Item2": "Give"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "b6985287",
+        "object_type": "trigger_zone"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 153.777786,
+        "Item2": -41.77778
+      },
+      "block_id": "c4d2bf0b-1a01-4907-8103-bfa6f695348f",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "ea29f93d",
+        "object_type": "custom_png"
+      }
+    },
+    {
+      "pos": {
+        "Item1": -29.33332,
+        "Item2": -245.777771
+      },
+      "block_id": "76bccdff-8108-48a4-94bd-6f93fc2000ad",
+      "events": {},
+      "vars": {},
+      "type": "Item Control",
+      "config": {
+        "item_id": "mana"
+      },
+      "ext": {}
+    }
+  ]
+}

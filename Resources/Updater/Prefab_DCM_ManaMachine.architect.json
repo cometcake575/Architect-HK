@@ -1,0 +1,420 @@
+{
+  "placements": [
+    {
+      "placement": {
+        "id": "component_toggle",
+        "pid": "caa5336a",
+        "pos": {
+          "Item1": 95.1528,
+          "Item2": 100.991295,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "component_hook_recursive": "True",
+        "component_hook_mode": "0",
+        "component_hook_name": "BoxCollider2D",
+        "component_hook_target": "4dca729b"
+      }
+    },
+    {
+      "placement": {
+        "id": "strange_tablet",
+        "pid": "4dca729b",
+        "pos": {
+          "Item1": 99.80416,
+          "Item2": 101.36702,
+          "Item3": 0.98
+        },
+        "flipped": false,
+        "locked": true,
+        "rotation": 0.0,
+        "scale": 0.4575359,
+        "layer": 0
+      },
+      "config": {
+        "npc_dialogue": "Sample Text"
+      }
+    },
+    {
+      "placement": {
+        "id": "object_colourer",
+        "pid": "8249730d",
+        "pos": {
+          "Item1": 97.38432,
+          "Item2": 98.55298,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "colourer_active": "False",
+        "colourer_colour_set": "{\"Item1\":1.0,\"Item2\":1.0,\"Item3\":1.0,\"Item4\":1.0}",
+        "colourer_particles": "0",
+        "colourer_mode": "0",
+        "colourer_alpha": "0.1",
+        "colourer_target": "4dca729b"
+      }
+    },
+    {
+      "placement": {
+        "id": "interaction",
+        "pid": "9cf9cec4",
+        "pos": {
+          "Item1": 99.96785,
+          "Item2": 100.183838,
+          "Item3": 0.0
+        },
+        "flipped": false,
+        "locked": false,
+        "rotation": 0.0,
+        "scale": 1.0,
+        "layer": 0
+      },
+      "config": {
+        "interaction_label": "1",
+        "interaction_hide": "True",
+        "interaction_offset": "{\"Item1\":0.0,\"Item2\":0.0}",
+        "object_scale": "{\"Item1\":1.0,\"Item2\":1.0}"
+      }
+    }
+  ],
+  "tilemap": [],
+  "script": [
+    {
+      "pos": {
+        "Item1": -327.2459,
+        "Item2": -31.9554768
+      },
+      "block_id": "52e34dbb-47ac-4c69-a631-eab649f28b95",
+      "events": {
+        "OnInteract": [
+          {
+            "Item1": "7f50b15d-a538-4721-88bd-c19801c77975",
+            "Item2": "Trigger"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "9cf9cec4",
+        "object_type": "interaction"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 41.30266,
+        "Item2": -188.091965
+      },
+      "block_id": "4be9f4b1-d35e-44f1-a50f-bfd5987a3d0e",
+      "events": {
+        "OnClose": [
+          {
+            "Item1": "32d950f2-b433-4f04-b4c7-fa88e8928609",
+            "Item2": "In"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Text Display",
+      "config": {
+        "display_text": "[[RequiredMana]] Mana Required",
+        "display_style": "1"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": -145.118759,
+        "Item2": -55.92334
+      },
+      "block_id": "7f50b15d-a538-4721-88bd-c19801c77975",
+      "events": {},
+      "vars": {},
+      "type": "Ordered Events",
+      "ext": {
+        "children": "[{\"pos\":{\"Item1\":-58.8888855,\"Item2\":-34.8888855},\"block_id\":\"bfc3f2bf-dc23-4252-9367-cd2e57fb7040\",\"events\":{\"OnTrigger\":[{\"Item1\":\"c6db3fcb-7b4b-4f91-87a3-26887eb64e74\",\"Item2\":\"Set\"}]},\"vars\":{},\"type\":\"Order Trigger\",\"ext\":{}},{\"pos\":{\"Item1\":-58.8888855,\"Item2\":-34.8888855},\"block_id\":\"f4db6d5f-c6da-41db-a891-afd3c9ad3b5b\",\"events\":{\"OnTrigger\":[{\"Item1\":\"4be9f4b1-d35e-44f1-a50f-bfd5987a3d0e\",\"Item2\":\"Display\"}]},\"vars\":{},\"type\":\"Order Trigger\",\"ext\":{}}]"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 62.2222137,
+        "Item2": -29.2736721
+      },
+      "block_id": "c6db3fcb-7b4b-4f91-87a3-26887eb64e74",
+      "events": {},
+      "vars": {
+        "New Value": {
+          "Item1": "3c084cc0-e316-4788-a732-a468dc739654",
+          "Item2": "ToText"
+        }
+      },
+      "type": "Variable (Text)",
+      "config": {
+        "var_persistence_str": "2",
+        "var_local_str": "False",
+        "var_id_str": "RequiredMana"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 9.111101,
+        "Item2": 164.0
+      },
+      "block_id": "8b03717c-4cb6-4d02-8b9c-709138e2455e",
+      "events": {},
+      "vars": {},
+      "type": "Constant Text",
+      "config": {
+        "prefab_configurable": "True",
+        "constant_text": "C",
+        "prefab_configurable_name": "Mana"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 157.04985,
+        "Item2": -334.03064
+      },
+      "block_id": "32d950f2-b433-4f04-b4c7-fa88e8928609",
+      "events": {
+        "True": [
+          {
+            "Item1": "52e34dbb-47ac-4c69-a631-eab649f28b95",
+            "Item2": "disable"
+          },
+          {
+            "Item1": "0d848d3e-f7c6-4b7a-b5f7-b7819e705464",
+            "Item2": "do_colour"
+          },
+          {
+            "Item1": "071aa30f-a6c4-453b-9914-b1b0309a920d",
+            "Item2": "In"
+          },
+          {
+            "Item1": "1d598cbf-bc06-44ee-9385-1041c946b4dc",
+            "Item2": "Broadcast"
+          }
+        ]
+      },
+      "vars": {
+        "Check": {
+          "Item1": "30598ea1-729e-487f-8a4c-cbb4e9e4cef3",
+          "Item2": "Value"
+        }
+      },
+      "type": "If",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 500.842743,
+        "Item2": -245.540192
+      },
+      "block_id": "0eb0c9c2-5e86-4477-a633-46ce873d9a09",
+      "events": {},
+      "vars": {},
+      "type": "Item Control",
+      "config": {
+        "item_id": "mana"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 272.0407,
+        "Item2": -237.915268
+      },
+      "block_id": "30598ea1-729e-487f-8a4c-cbb4e9e4cef3",
+      "events": {},
+      "vars": {
+        "2": {
+          "Item1": "e4ee97b1-cd0b-493b-a865-f6fe819c6b8d",
+          "Item2": "Length"
+        },
+        "1": {
+          "Item1": "0eb0c9c2-5e86-4477-a633-46ce873d9a09",
+          "Item2": "Amount"
+        }
+      },
+      "type": "Compare",
+      "config": {
+        "compare_mode": "3"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 590.786133,
+        "Item2": -127.825645
+      },
+      "block_id": "1d598cbf-bc06-44ee-9385-1041c946b4dc",
+      "events": {},
+      "vars": {
+        "New Event": {
+          "Item1": "d1fbfc2c-4232-41a0-b53f-538e7f1e1336",
+          "Item2": "Value"
+        }
+      },
+      "type": "Broadcast",
+      "config": {
+        "in_local": "False",
+        "in_name": "None"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 465.498352,
+        "Item2": 171.313141
+      },
+      "block_id": "8352b08d-eace-4b08-b61a-4cc489aa5b98",
+      "events": {},
+      "vars": {},
+      "type": "Constant Text",
+      "config": {
+        "prefab_configurable": "True",
+        "constant_text": "1",
+        "prefab_configurable_name": "Number"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 418.980835,
+        "Item2": 38.70782
+      },
+      "block_id": "d1fbfc2c-4232-41a0-b53f-538e7f1e1336",
+      "events": {},
+      "vars": {
+        "1": {
+          "Item1": "0b2b2270-e85d-41c7-b676-5e6d818bde37",
+          "Item2": "Value"
+        },
+        "2": {
+          "Item1": "8352b08d-eace-4b08-b61a-4cc489aa5b98",
+          "Item2": "Value"
+        }
+      },
+      "type": "Join Text",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 230.833069,
+        "Item2": 144.307831
+      },
+      "block_id": "0b2b2270-e85d-41c7-b676-5e6d818bde37",
+      "events": {},
+      "vars": {},
+      "type": "Constant Text",
+      "config": {
+        "prefab_configurable": "False",
+        "constant_text": "OpenMana_"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 319.688,
+        "Item2": -108.129051
+      },
+      "block_id": "ec159877-5505-44ca-ad79-4ebf3b80bef6",
+      "events": {
+        "OnStart": [
+          {
+            "Item1": "1d598cbf-bc06-44ee-9385-1041c946b4dc",
+            "Item2": "SetEvent"
+          }
+        ]
+      },
+      "vars": {},
+      "type": "Start",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 362.599823,
+        "Item2": -486.979584
+      },
+      "block_id": "0d848d3e-f7c6-4b7a-b5f7-b7819e705464",
+      "events": {},
+      "vars": {},
+      "type": "object",
+      "ext": {
+        "object": "8249730d",
+        "object_type": "object_colourer"
+      }
+    },
+    {
+      "pos": {
+        "Item1": 553.864136,
+        "Item2": -423.8378
+      },
+      "block_id": "071aa30f-a6c4-453b-9914-b1b0309a920d",
+      "events": {
+        "Out": [
+          {
+            "Item1": "0eb0c9c2-5e86-4477-a633-46ce873d9a09",
+            "Item2": "Take"
+          }
+        ]
+      },
+      "vars": {
+        "Times": {
+          "Item1": "e4ee97b1-cd0b-493b-a865-f6fe819c6b8d",
+          "Item2": "Length"
+        }
+      },
+      "type": "Loop",
+      "config": {
+        "loop_delay_num": "0"
+      },
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 43.4953156,
+        "Item2": 93.8116
+      },
+      "block_id": "e4ee97b1-cd0b-493b-a865-f6fe819c6b8d",
+      "events": {},
+      "vars": {
+        "Value": {
+          "Item1": "8b03717c-4cb6-4d02-8b9c-709138e2455e",
+          "Item2": "Value"
+        }
+      },
+      "type": "Text Length",
+      "ext": {}
+    },
+    {
+      "pos": {
+        "Item1": 181.843735,
+        "Item2": 52.9987869
+      },
+      "block_id": "3c084cc0-e316-4788-a732-a468dc739654",
+      "events": {},
+      "vars": {
+        "Value": {
+          "Item1": "e4ee97b1-cd0b-493b-a865-f6fe819c6b8d",
+          "Item2": "Length"
+        }
+      },
+      "type": "Convert",
+      "ext": {}
+    }
+  ]
+}

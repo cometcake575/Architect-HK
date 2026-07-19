@@ -99,3 +99,17 @@ public class JoinBlock : ScriptBlock
         return v1 + v2;
     }
 }
+
+public class LengthBlock : ScriptBlock
+{
+    protected override IEnumerable<(string, string)> InputVars => [("Value", "Text")];
+    protected override IEnumerable<(string, string)> OutputVars => [("Length", "Number")];
+    
+    protected override string Name => "Text Length";
+
+    public override object GetValue(string id)
+    {
+        var v1 = GetVariable<string>("Value");
+        return v1.Length;
+    }
+}

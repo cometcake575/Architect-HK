@@ -12,7 +12,7 @@ public static class ProjectManager
 
     public static MenuScreen GetMenuScreen(MenuScreen returnMenu)
     {
-        _menuRef ??= new Menu(
+        _menuRef = new Menu(
             name: "Architect Projects", 
             elements: Elements.ToArray()
         );

@@ -11,7 +11,8 @@ public class ItemBlock : ScriptBlock
 {
     protected override IEnumerable<string> Inputs => ["Give", "GiveSilent", "Take"];
     protected override IEnumerable<(string, string)> OutputVars => [
-        ("Obtained", "Boolean")
+        ("Obtained", "Boolean"),
+        ("Amount", "Number")
     ];
     
     protected override string Name => "Item Control";
@@ -26,7 +27,12 @@ public class ItemBlock : ScriptBlock
     public override object GetValue(string id)
     {
         var item = Finder.GetItem(ItemName);
-        return item != null && (item.Redundant() || item.IsObtained());
+
+        if (id == "Obtained") return item != null && (item.Redundant() || item.IsObtained());
+        return item is CustomItem.IcCustomItem i &&
+               ArchitectData.Instance.CustomItems.TryGetValue(i.Item.Id, out var value)
+            ? value
+            : 0;
     }
 
     protected override void Trigger(string trigger)

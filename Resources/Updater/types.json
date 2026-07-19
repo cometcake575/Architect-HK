@@ -241,6 +241,25 @@
       "offset": "prefab_config_519163eb-3be8-4dd7-9a2b-27fb5c4b183d-cc07500e"
     }
   },
+  "Mana_Source": {
+    "name": "prefab_DCM_Mana"
+  },
+  "Mana_Requirement": {
+    "name": "prefab_DCM_ManaMachine",
+    "config": {
+      "Requires": "prefab_config_8b03717c-4cb6-4d02-8b9c-709138e2455e",
+      "Number": "prefab_config_8352b08d-eace-4b08-b61a-4cc489aa5b98"
+    }
+  },
+  "Mana_Wall": {
+    "name": "prefab_DCM_ManaGate",
+    "config": {
+      "Number": "prefab_config_9cc750cc-8e69-4302-9964-25a031cd4415"
+    }
+  },
+  "note_platform": {
+    "name": "prefab_DCM_Piano"
+  },
   "IMG_fireball": {
     "name": "prefab_DCM_Spirit"
   },
