@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using Architect.Placements;
+using FsmMaster;
 using HutongGames.PlayMaker;
 using UnityEngine;
 
@@ -12,6 +14,8 @@ public class FsmHook : PreviewableBehaviour
     public string stateName;
     public int index;
     public bool inject;
+
+    public string fsmMasterData;
     
     private PlayMakerFSM _fsm;
     
@@ -91,12 +95,24 @@ public class FsmHook : PreviewableBehaviour
         _time = Time.time;
         _fsm = target.GetComponentsInChildren<PlayMakerFSM>().FirstOrDefault(o => o.FsmName == fsmName);
 
-        if (_fsm && inject)
+        if (_fsm)
         {
-            _stateTarget = _fsm.GetState(stateName);
-            if (_stateTarget == null) return;
-            _stateTarget.AddAction(OnTarget, 0);
-            _action = _stateTarget.Actions[0];
+            if (inject)
+            {
+                _stateTarget = _fsm.GetState(stateName);
+                if (_stateTarget == null) return;
+                _stateTarget.AddAction(OnTarget, 0);
+                _action = _stateTarget.actions[0];
+            }
+            
+            try
+            {
+                SetupFsmChanges();
+            }
+            catch
+            {
+                // Data likely formatted wrong
+            }
         }
     }
 
@@ -127,5 +143,38 @@ public class FsmHook : PreviewableBehaviour
                 if (_state == stateName && !inject) OnTarget();
             }
         }
+    }
+
+    public static FsmMasterDriver FsmMaster;
+    private static FsmEditManager _editManager;
+    
+    public static void Init()
+    {
+        typeof(FsmMasterDriver).Hook("Initialize",
+            (Action<FsmMasterDriver> orig, FsmMasterDriver self) =>
+            {
+                orig(self);
+                FsmMaster = self;
+                _editManager = self.EditManager;
+            });
+    }
+
+    public void SetupFsmChanges()
+    {
+        if (fsmMasterData.IsNullOrWhiteSpace()) return;
+        
+        var editSet = FsmSaveDataStore.FromWire(JsonUtility.FromJson<FsmSaveDataStore.FsmEditSetWire>(fsmMasterData));
+        var fsm = _fsm.fsm;
+        
+        foreach (var variableOverride in editSet.VariableOverrides)
+            _editManager.ApplyVariableOverride(editSet.FsmKey, fsm, variableOverride);
+        foreach (var actionFieldOverride in editSet.ActionFieldOverrides)
+            _editManager.ApplyActionFieldOverride(editSet.FsmKey, fsm, actionFieldOverride);
+        foreach (var disabledState in editSet.DisabledStates)
+            _editManager.DisableState(editSet.FsmKey, fsm, disabledState);
+        foreach (var transitionRetarget in editSet.TransitionRetargets)
+            _editManager.ApplyTransitionRetarget(editSet.FsmKey, fsm, transitionRetarget);
+        foreach (var sequencerOverride in editSet.SequencerOverrides)
+            _editManager.InstallSequencer(editSet.FsmKey, fsm, sequencerOverride);
     }
 }

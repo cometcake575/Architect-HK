@@ -1069,7 +1069,13 @@ public static class ConfigGroup
                 {
                     o.GetComponent<FsmHook>().inject = value.GetValue() == 1;
                 }
-            ).WithOptions("Observe", "Inject").WithDefaultValue(0))
+            ).WithOptions("Observe", "Inject").WithDefaultValue(0)),
+            ConfigurationManager.RegisterConfigType(new StringConfigType("FsmMaster Edits", "fsm_hook_json_edits", 
+                (o, value) =>
+                {
+                    o.GetComponent<FsmHook>().fsmMasterData = value.GetValue();
+                }
+            ))
     ]);
 
     public static readonly List<ConfigType> ComponentHook = GroupUtils.Merge(Generic, [

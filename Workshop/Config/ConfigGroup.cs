@@ -76,6 +76,12 @@ public static class ConfigGroup
             {
                 item.AmbientLight = value.GetValue();
             }, false).WithDefaultValue(Color.white)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType<CustomScene>("Saturation", "scene_saturation", (item, value) =>
+            {
+                item.Saturation = value.GetValue();
+            }).WithDefaultValue(1)
         )
     ];
     

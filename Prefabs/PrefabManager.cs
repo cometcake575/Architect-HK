@@ -85,7 +85,7 @@ public static class PrefabManager
         if (unload2 != null) while (!unload2.isDone) yield return null;
 
         var sm = SceneUtils.CreateSceneManager();
-        SceneUtils.CreateGradeMarker(Color.white, Color.white);
+        SceneUtils.CreateGradeMarker(Color.white, Color.white, 1);
         
         sm.transform.position = new Vector3(100, 100, 1);
         sm.transform.localScale = Vector3.one;

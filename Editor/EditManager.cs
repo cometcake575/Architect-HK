@@ -18,6 +18,7 @@ using Architect.Objects.Tools;
 using Architect.Placements;
 using Architect.Prefabs;
 using Architect.Storage;
+using FsmMaster;
 using Object = UnityEngine.Object;
 
 namespace Architect.Editor;
@@ -146,10 +147,17 @@ public static class EditManager
     {
         typeof(GameManager).Hook("EnterHero", OnSceneLoad);
         
-        ModHooks.CursorHook += () =>
-        {
-            Cursor.visible = ShouldShowCursor();
-        };
+        typeof(FsmActivationPatches).Hook(nameof(FsmActivationPatches.OnCursorHook),
+            (Action _) =>
+            {
+                if (ForceCursorVisiblePatch.ForceVisible)
+                {
+                    Cursor.visible = true;
+                    return;
+                }
+
+                Cursor.visible = (GameManager.instance && GameManager.instance.isPaused) || ShouldShowCursor();
+            });
         
         typeof(QuitToMenu).Hook("Start", (Func<QuitToMenu, IEnumerator> orig, QuitToMenu self) =>
             {

@@ -12,6 +12,7 @@ public class CustomScene : SpriteItem
 
     public Color HeroLight = Color.white;
     public Color AmbientLight = Color.white;
+    public float Saturation = 1;
     
     public Vector3 MapPos;
     

@@ -225,7 +225,7 @@ public static class SceneUtils
         
         USceneManager.SetActiveScene(scene);
         
-        CreateGradeMarker(info.HeroLight, info.AmbientLight);
+        CreateGradeMarker(info.HeroLight, info.AmbientLight, info.Saturation);
         CreateTileMap(info);
         
         sm.AddComponent<CustomTransitionPoint>();
@@ -283,17 +283,20 @@ public static class SceneUtils
         return m;
     }
     
-    public static GameObject CreateGradeMarker(Color heroLight, Color ambient)
+    public static void CreateGradeMarker(Color heroLight, Color ambient, float saturation)
     {
         var m = Object.Instantiate(_gradeMarker);
         var gm = m.GetComponent<GradeMarker>();
 
         gm.heroLightColor = heroLight;
         gm.ambientColor = ambient;
+        gm.saturation = saturation;
+
+        gm.maxIntensityRadius = 0;
+        gm.cutoffRadius = float.PositiveInfinity;
         
         m.name = "GradeMarker";
         m.SetActive(true);
-        return m;
     }
     
     public static void CreateTileMap(CustomScene scene)

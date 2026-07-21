@@ -262,14 +262,14 @@ public static class Settings
             "Options",
             "TestMode",
             false,
-            "Stops the game from storing persistent data in such as enemies being killed"
+            "Stops the game from storing persistent data"
         );
         
         UseMapiPreloads = Bind(
             "Options",
             "UseMapiPreloads",
             false,
-            "Whether to use standard modding API preloads instead of using UnitySceneRepacker directly"
+            "Whether to use standard modding API preloads (slower)"
         );
         
         HitboxesInEditor = Bind(

@@ -236,7 +236,7 @@ public static class PreviewUtils
             transform =
             {
                 localPosition = preview.transform.position,
-                rotation = Quaternion.Euler(0, 0, preview.transform.eulerAngles.z),
+                rotation = Quaternion.Euler(0, 0, preview.transform.eulerAngles.z + type.Tk2dRotation + type.ChildRotation),
                 localScale = type.IgnoreScale ? Vector3.one : preview.transform.localScale
             }
         };
