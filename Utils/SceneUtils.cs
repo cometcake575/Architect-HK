@@ -18,6 +18,7 @@ using MonoMod.Utils;
 using tk2dRuntime.TileMap;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Architect.Utils;
@@ -224,6 +225,7 @@ public static class SceneUtils
         USceneManager.MoveGameObjectToScene(CreateManager(), scene);
         
         USceneManager.SetActiveScene(scene);
+        FsmHook.FsmMaster.OnSceneLoaded(scene, LoadSceneMode.Single);
         
         CreateGradeMarker(info.HeroLight, info.AmbientLight, info.Saturation);
         CreateTileMap(info);

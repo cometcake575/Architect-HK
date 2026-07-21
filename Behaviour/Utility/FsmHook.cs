@@ -157,6 +157,7 @@ public class FsmHook : PreviewableBehaviour
                 FsmMaster = self;
                 _editManager = self.EditManager;
             });
+        FsmGraphOverlay.ShowEditIndicator = false;
     }
 
     public void SetupFsmChanges()

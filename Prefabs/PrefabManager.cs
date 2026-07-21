@@ -2,11 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Architect.Behaviour.Utility;
 using Architect.Editor;
 using Architect.Events.Blocks;
 using Architect.Placements;
 using tk2dRuntime.TileMap;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Architect.Prefabs;
@@ -80,6 +82,7 @@ public static class PrefabManager
         
         var scene = UnityEngine.SceneManagement.SceneManager.CreateScene(sceneName);
         UnityEngine.SceneManagement.SceneManager.SetActiveScene(scene);
+        FsmHook.FsmMaster.OnSceneLoaded(scene, LoadSceneMode.Single);
 
         var unload2 = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(current);
         if (unload2 != null) while (!unload2.isDone) yield return null;
