@@ -282,6 +282,19 @@ public static class ConfigGroup
             }).WithDefaultValue(false).WithPriority(-1))
     ]);
     
+    public static readonly List<ConfigType> Feather =  GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType("Flight Time", "feather_flight_time", (o, value) =>
+            {
+                o.GetComponent<Feather>().featherTime = value.GetValue();
+            }).WithDefaultValue(5)),
+        ConfigurationManager.RegisterConfigType(
+            new FloatConfigType("Respawn Time", "feather_respawn_time", (o, value) =>
+            {
+                o.GetComponent<Feather>().respawnTime = value.GetValue();
+            }).WithDefaultValue(6))
+    ]);
+    
     public static readonly List<ConfigType> Cocoon =  GroupUtils.Merge(Visible, [
         ConfigurationManager.RegisterConfigType(
             new IntConfigType("Lifeseed Count", "lifeseed_count", (o, value) =>
@@ -478,6 +491,48 @@ public static class ConfigGroup
                     o.LocateMyFSM("Worm Control").FsmVariables.FindFsmBool("Start Down").Value = true;
                 })
             .WithDefaultValue(false))
+    ]);
+    
+    public static readonly List<ConfigType> Garpede = GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(new FloatConfigType("Speed", "garpede_speed",
+                (o, value) =>
+                {
+                    o.GetComponent<BigCentipede>().moveSpeed = value.GetValue();
+                })
+            .WithDefaultValue(20)),
+        ConfigurationManager.RegisterConfigType(new FloatConfigType("Burrow Time", "garpede_burrow_time",
+                (o, value) =>
+                {
+                    o.GetComponent<BigCentipede>().burrowTime = value.GetValue();
+                })
+            .WithDefaultValue(1.7f)),
+        ConfigurationManager.RegisterConfigType(new FloatConfigType("Entry Offset", "garpede_entry_offset",
+                (o, value) =>
+                {
+                    o.transform.Find("Entry").SetLocalPositionX(value.GetValue());
+                })
+            .WithDefaultValue(-12)),
+        ConfigurationManager.RegisterConfigType(new FloatConfigType("Exit Offset", "garpede_exit_offset",
+                (o, value) =>
+                {
+                    o.transform.Find("Exit").SetLocalPositionX(value.GetValue());
+                })
+            .WithDefaultValue(6)),
+        ConfigurationManager.RegisterConfigType(new IntConfigType("Segments", "garpede_segments",
+                (o, value) =>
+                {
+                    var garpede = o.GetComponent<EnemyFixers.Garpede>();
+                    garpede.segments = Math.Max(0, value.GetValue());
+                    garpede.Setup();
+                },
+                (o, value, ctx) =>
+                {
+                    if (ctx == ConfigurationManager.PreviewContext.Placement) return;
+                    var garpede = o.GetComponent<EnemyFixers.Garpede>();
+                    garpede.segments = Math.Max(0, value.GetValue());
+                    garpede.Setup();
+                })
+            .WithDefaultValue(3))
     ]);
     
     public static readonly List<ConfigType> Interaction = GroupUtils.Merge(Stretchable, [

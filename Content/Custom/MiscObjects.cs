@@ -57,6 +57,7 @@ public static class MiscObjects
         Categories.Platforming.Add(CreateWind());
         Categories.Platforming.Add(CreateBumper());
         Categories.Platforming.Add(CreateDreamBlock());
+        Categories.Platforming.Add(CreateFeather());
 
         Categories.Hazards.Add(CreateCustomHazard("White Thorns", "white_thorns",
         [
@@ -146,6 +147,27 @@ public static class MiscObjects
 
         return new CustomObject("Dream Block", "dream_block", obj)
             .WithConfigGroup(ConfigGroup.DreamBlock);
+    }
+    
+    private static PlaceableObject CreateFeather()
+    {
+        Feather.Init();
+
+        var obj = new GameObject("Feather");
+        Object.DontDestroyOnLoad(obj);
+
+        var col = obj.AddComponent<CircleCollider2D>();
+        col.radius = 0.5f;
+        col.isTrigger = true;
+
+        obj.SetActive(false);
+        obj.AddComponent<Feather>().Setup();
+
+        obj.transform.position = new Vector3(0, 0, 0.004f);
+
+        return new CustomObject("Feather", "feather", obj)
+            .WithConfigGroup(ConfigGroup.Feather)
+            .WithBroadcasterGroup(BroadcasterGroup.Feather);
     }
 
     private static PlaceableObject CreateAsset<T>(string name, string id, bool addRenderer, 

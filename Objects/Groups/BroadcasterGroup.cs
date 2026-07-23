@@ -24,6 +24,8 @@ public static class BroadcasterGroup
     
     public static readonly List<string> Activatable = ["OnActivate"];
     
+    public static readonly List<string> Feather = ["OnActivate", "OnFinish"];
+    
     public static readonly List<string> Finishable = ["OnFinish"];
     
     public static readonly List<string> Png = ["OnFinish", "OnFrameChange"];

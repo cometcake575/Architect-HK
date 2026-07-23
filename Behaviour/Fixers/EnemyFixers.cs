@@ -1008,4 +1008,110 @@ public static class EnemyFixers
             rMax.value = heroPos.x + 13.5f;
         }, 0);
     }
+
+    public class Garpede : MonoBehaviour
+    {
+        public int segments = 4;
+        private bool _setup;
+
+        private void Start()
+        {
+            if (_setup) return;
+            Setup();
+        }
+
+        public void Setup()
+        {
+            _setup = true;
+            
+            GameObject prefab = null;
+            foreach (Transform child in transform)
+                if (child.name.StartsWith("Big Centipede Seg"))
+                {
+                    child.gameObject.SetActive(false);
+                    if (child.name == "Big Centipede Seg") prefab = child.gameObject;
+                }
+
+            if (!prefab) return;
+                    
+            var sections = new BigCentipedeSection[segments + 1];
+            for (var i = 0; i < segments; i++)
+            {
+                var spawn = Instantiate(prefab, transform);
+                spawn.transform.localPosition = new Vector3((i + 1) * -2.3f, 0, 0.001f * (i + 1));
+                spawn.SetActive(true);
+                sections[i] = spawn.GetComponent<BigCentipedeSection>();
+            }
+
+            var tail = transform.Find("Big Centipede Tail");
+            tail.localPosition = new Vector3((segments + 1) * -2.3f + 0.56f, 0.09f, 0.001f *
+                (segments + 1));
+            sections[segments] = tail.GetComponent<BigCentipedeSection>();
+
+            var bc = GetComponent<BigCentipede>();
+            if (bc) bc.sections = sections;
+        }
+    }
+
+    public class TieComponents : MonoBehaviour
+    {
+        private MeshRenderer _driver;
+        private BoxCollider2D _driven;
+
+        private void Start()
+        {
+            _driver = GetComponent<MeshRenderer>();
+            _driven = GetComponent<BoxCollider2D>();
+        }
+
+        private void Update()
+        {
+            if (_driven.enabled != _driver.enabled) _driven.enabled = _driver.enabled;
+        }
+    }
+
+    public static void FixGarpede(GameObject obj)
+    {
+        var bc2d = obj.GetComponent<BoxCollider2D>();
+        bc2d.offset = new Vector2(-0.35f, 0);
+        bc2d.size = new Vector2(1.8f, 1.6274f);
+        obj.AddComponent<TieComponents>();
+
+        var bct = obj.transform.Find("Big Centipede Tail").gameObject;
+        bct.AddComponent<DamageHero>();
+        var tailBc = bct.AddComponent<BoxCollider2D>();
+        tailBc.size = new Vector2(1.75f, 1.6274f);
+        tailBc.offset = new Vector2(0, -0.09f);
+        bct.AddComponent<TieComponents>();
+
+        var prefab = obj.transform.Find("Big Centipede Seg").gameObject;
+        prefab.AddComponent<DamageHero>();
+        prefab.AddComponent<BoxCollider2D>().size = new Vector2(2.3f, 1.6274f);
+        prefab.AddComponent<TieComponents>();
+     
+        obj.AddComponent<Garpede>();
+    }
+
+    public static void PostFixGarpede(GameObject obj)
+    {
+        var bc = obj.GetComponent<BigCentipede>();
+        var entry = new GameObject("Entry")
+        {
+            transform =
+            {
+                parent = obj.transform,
+                localPosition = Vector3.zero
+            }
+        };
+        bc.entry = entry.transform;
+        var exit = new GameObject("Exit")
+        {
+            transform =
+            {
+                parent = obj.transform,
+                localPosition = Vector3.zero
+            }
+        };
+        bc.exit = exit.transform;
+    }
 }

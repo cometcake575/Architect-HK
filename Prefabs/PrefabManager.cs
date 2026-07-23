@@ -5,6 +5,7 @@ using System.Linq;
 using Architect.Behaviour.Utility;
 using Architect.Editor;
 using Architect.Events.Blocks;
+using Architect.Objects.Categories;
 using Architect.Placements;
 using tk2dRuntime.TileMap;
 using UnityEngine;
@@ -41,9 +42,10 @@ public static class PrefabManager
     
     public static void Toggle(string prefabName)
     {
-        if (Prefabs.Keys.Contains(prefabName, StringComparer.InvariantCultureIgnoreCase))
+        var pNames = PrefabsCategory.Prefabs.Select(p => p.Name).ToArray();
+        if (pNames.Contains(prefabName, StringComparer.InvariantCultureIgnoreCase))
         {
-            prefabName = Prefabs.Keys.First(k => k.Equals(prefabName, StringComparison.InvariantCultureIgnoreCase));
+            prefabName = pNames.First(k => k.Equals(prefabName, StringComparison.InvariantCultureIgnoreCase));
         }
         Last = prefabName;
         if (GameManager.instance.isPaused)

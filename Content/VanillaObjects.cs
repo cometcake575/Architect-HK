@@ -438,6 +438,21 @@ public static class VanillaObjects
         AddEnemy("Stalking Devout", "stalking_devout", ("Deepnest_Spider_Town", "Slash Spider"),
             preloadAction: MiscFixers.KeepActive);
         AddEnemy("Bluggsac", "bluggsac", ("Deepnest_Spider_Town", "Egg Sac"));
+
+        Categories.Hazards.Add(new PreloadObject("Garpede", "garpede",
+            ("Deepnest_37", "Big Centipede (2)"),
+            preloadAction: EnemyFixers.FixGarpede,
+            postSpawnAction: EnemyFixers.PostFixGarpede)
+            .WithConfigGroup(ConfigGroup.Garpede)
+            .WithFlipAction((o, f) =>
+            {
+                if (f)
+                {
+                    o.transform.SetScaleY(-o.transform.GetScaleY());
+                    o.transform.SetRotation2D(o.transform.GetRotation2D() + 180);
+                }
+            })
+            .WithRotationGroup(RotationGroup.Eight));
     }
     
     private static void AddWaterwaysObjects()

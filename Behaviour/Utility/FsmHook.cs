@@ -150,7 +150,7 @@ public class FsmHook : PreviewableBehaviour
     
     public static void Init()
     {
-        typeof(FsmMasterDriver).Hook("Initialize",
+        typeof(FsmMasterDriver).Hook("Awake",
             (Action<FsmMasterDriver> orig, FsmMasterDriver self) =>
             {
                 orig(self);
