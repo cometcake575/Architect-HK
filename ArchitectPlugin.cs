@@ -81,6 +81,7 @@ public class ArchitectPlugin : Mod,
         MiscObjects.Init();
         ParticleObjects.Init();
         CameraObjects.Init();
+        LegacyObjects.Init();
         
         RespawnMarkerManager.Init();
         
@@ -282,6 +283,8 @@ public class ArchitectPlugin : Mod,
                 .Concat(Settings.MiscConfig)
                 .Prepend(Blueprints.NavigateToMenu("DcM Converter", "Converter from DecorationMaster to Architect",
                     () => DcmPorter.GetMenuScreen(_menuRef.GetCachedMenuScreen(modListMenu))))
+                .Prepend(Blueprints.NavigateToMenu("Layout", "Configure how Architect's editor UI is structured",
+                    () => LayoutManager.GetMenuScreen(_menuRef.GetCachedMenuScreen(modListMenu))))
                 .Prepend(Blueprints.NavigateToMenu("Projects", "Open the Architect project manager",
                     () => ProjectManager.GetMenuScreen(_menuRef.GetCachedMenuScreen(modListMenu))))
                 .ToArray()

@@ -54,6 +54,7 @@ public class TextDisplay : MonoBehaviour, IDisplayable
             self.InsertCustomAction("Yes", () =>
             {
                 if (!_prev) return;
+                _prev.gameObject.BroadcastEvent("Yes");
                 _prev.Block.Event("Yes");
                 _prev = null;
             }, 0);
@@ -61,6 +62,7 @@ public class TextDisplay : MonoBehaviour, IDisplayable
             self.InsertCustomAction("No", () =>
             {
                 if (!_prev) return;
+                _prev.gameObject.BroadcastEvent("No");
                 _prev.Block.Event("No");
                 _prev = null;
             }, 0);
@@ -90,6 +92,7 @@ public class TextDisplay : MonoBehaviour, IDisplayable
         }
         
         Block.Event("OnClose");
+        gameObject.BroadcastEvent("OnClose");
     }
 
     private IEnumerator DoDisplay()

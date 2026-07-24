@@ -26,6 +26,8 @@ public static class Categories
     public static readonly Category Enemies = RegisterCategory("Enemies", 1);
     /** Utility objects for things like trigger zones and object removers */
     public static readonly Category Utility = RegisterCategory("Utility", 11);
+    /** Legacy objects that must be enabled in the configuration */
+    public static readonly Category Legacy = new("Legacy", -1);
     /** Objects relating to giving or limiting abilities */
     public static readonly Category Abilities = RegisterCategory("Abilities", 9);
     /** Every object in a single category */
@@ -38,6 +40,7 @@ public static class Categories
         RegisterCategory(FavouritesCategory.Instance);
         
         RegisterCategory(BlankCategory.Instance);
+        RegisterCategory(Legacy);
     }
     
     public static Category RegisterCategory(string name, int priority = 0)

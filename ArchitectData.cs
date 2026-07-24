@@ -43,4 +43,7 @@ public class GlobalArchitectData
     
     [JsonConverter(typeof(PlayerActionSetConverter))]
     public Settings.ArchitectBinds Binds = new();
+
+    public static bool LegacyMode;
+    public static int UIMode;
 }

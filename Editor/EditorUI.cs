@@ -45,6 +45,12 @@ public static class EditorUI
     private static GameObject _scriptUI;
     private static GameObject _workshopUI;
     
+    private static GameObject _editorTypeButtons;
+    private static GameObject _configTypeButtons;
+    private static GameObject _modern;
+    private static GameObject _categories;
+    private static GameObject _universalOptions;
+    
     public static AbstractCategory CurrentCategory = Categories.All;
     public static int PageIndex;
     private static List<SelectableObject> _categoryContents;
@@ -64,17 +70,13 @@ public static class EditorUI
     private static (Button, UIUtils.Label) _broadcastersButton;
     private static (Button, UIUtils.Label) _receiversButton;
     
-    private static (Button, UIUtils.Label) _mapButton;
-    private static (Button, UIUtils.Label) _scriptButton;
-    private static (Button, UIUtils.Label) _workshopButton;
-    
     private static GameObject _shareLevelButton;
     private static GameObject _shareLevelLabel;
     private static GameObject _shareScriptButton;
     private static GameObject _shareScriptLabel;
     
     private static AttributeType _currentOption = AttributeType.Config;
-    private static EditorType _currentType = EditorType.Map;
+    public static EditorType CurrentType = EditorType.Map;
     
     public static void Setup()
     {
@@ -110,6 +112,23 @@ public static class EditorUI
         _mapTransform.anchorMin = Vector2.zero;
         _mapTransform.offsetMax = Vector2.zero;
         _mapTransform.offsetMin = Vector2.zero;
+        if (!LayoutManager.LegacyMode) _mapTransform.anchoredPosition = new Vector2(0, 20);
+        
+        _modern = new GameObject("Modern Elements")
+        {
+            transform = { parent = _mapTransform }
+        };
+        _modern.RemoveOffset();
+        _categories = new GameObject("Categories")
+        {
+            transform = { parent = _mapTransform }
+        };
+        _categories.RemoveOffset();
+        _universalOptions = new GameObject("Universal Options")
+        {
+            transform = { parent = _mapTransform }
+        };
+        _universalOptions.RemoveOffset();
         
         _scriptUI = new GameObject("Script Editor UI")
         {
@@ -139,29 +158,33 @@ public static class EditorUI
         
         WorkshopUI.Init(_workshopUI);
         
-        _mapButton = SetupModeButton(EditorType.Map, "Map Editor", new Vector3(-263.5f, 15));
-        _scriptButton = SetupModeButton(EditorType.Script, "Script Editor", new Vector3(0, 15));
-        _workshopButton = SetupModeButton(EditorType.Workshop, "Workshop", new Vector3(263.5f, 15));
+        _editorTypeButtons = new GameObject("Editor Type Buttons")
+        {
+            transform = { parent = _canvasObj.transform }
+        };
+        _editorTypeButtons.RemoveOffset();
+        
+        SetupModeButton(EditorType.Map, "Map Editor", new Vector3(-263.5f, 15));
+        SetupModeButton(EditorType.Script, "Script Editor", new Vector3(0, 15));
+        SetupModeButton(EditorType.Workshop, "Workshop", new Vector3(263.5f, 15));
     }
     
-    private static (Button, UIUtils.Label) SetupModeButton(EditorType type, string name, Vector3 pos)
+    private static void SetupModeButton(EditorType type, string name, Vector3 pos)
     {
         var size = new Vector2(765, 50);
-        var (btn, label) = UIUtils.MakeTextButton(name + " Button", name, _canvasObj, pos, 
+        var (btn, label) = UIUtils.MakeTextButton(name + " Button", name, _editorTypeButtons, pos, 
             new Vector2(0.5f, 0), new Vector2(0.5f, 0), size:size);
+        label.textComponent.raycastTarget = false;
         
         btn.onClick.AddListener(() =>
         {
-            _currentType = type;
-            UIManager.instance.uiState = type == EditorType.Map ? UIState.PAUSED : UIState.OPTIONS;
+            CurrentType = type;
             Deletable.DeleteButton.SetActive(false);
         });
         label.textComponent.fontSize = 10;
         
         DisableWhenPlaying.Add(btn.gameObject);
         DisableWhenPlaying.Add(label.gameObject);
-        
-        return (btn, label);
     }
 
     private static UIUtils.Label _inTestMode;
@@ -203,6 +226,9 @@ public static class EditorUI
         ObjectIdLabel.textComponent.alignment = TextAnchor.LowerCenter;
     }
 
+    private static (Button, UIUtils.Label) _legacyCategory;
+    private static (Button, UIUtils.Label) _prefabsCategory;
+
     public static void SetupCategories()
     {
         var anchor = new Vector2(1, 0);
@@ -211,14 +237,15 @@ public static class EditorUI
         {
             position.y += 12;
             if (category.GetName() == null) continue;
-            var (btn, _) = UIUtils.MakeTextButton(
+            var (btn, label) = UIUtils.MakeTextButton(
                 category.GetName(),
                 category.GetName(),
-                _mapUI,
+                _categories,
                 position,
                 anchor,
                 anchor
             );
+            if (category.GetName() == "Legacy") _legacyCategory = (btn, label);
             btn.onClick.AddListener(() =>
             {
                 PageIndex = 0;
@@ -226,6 +253,8 @@ public static class EditorUI
                 DoRefreshCurrentPage();
             });
         }
+        
+        SetupLegacy(LayoutManager.LegacyMode, LayoutManager.UIMode == 1, LayoutManager.UIMode == 0, true);
     }
 
     private static void SetupObjects()
@@ -313,13 +342,12 @@ public static class EditorUI
 
     private static void SetupPrefabButton()
     {
-        var (prefabBtn, prefabImg, _) = UIUtils.MakeButtonWithImage("Prefab Editor", _mapUI,
+        var (prefabBtn, prefabImg, _) = UIUtils.MakeButtonWithImage("Prefab Editor", _modern,
             new Vector3(-25, -45), new Vector2(1, 1), new Vector2(1, 1), 96, 48);
-
         
         var openPrefab = new GameObject("Open Prefab")
         {
-            transform = { parent = _mapUI.transform }
+            transform = { parent = _modern.transform }
         };
         var rt = openPrefab.AddComponent<RectTransform>();
         rt.anchorMax = Vector2.one;
@@ -370,7 +398,7 @@ public static class EditorUI
         });
         
         prefabImg.sprite = PrefabManager.PrefabIcon;
-        var (btn, _) = UIUtils.MakeTextButton(
+        var (btn, lbl) = UIUtils.MakeTextButton(
             "Prefabs",
             "Prefabs",
             _mapUI,
@@ -384,6 +412,8 @@ public static class EditorUI
             CurrentCategory = PrefabsCategory.Instance;
             DoRefreshCurrentPage();
         });
+
+        _prefabsCategory = (btn, lbl);
     }
 
     private static void MakeToolButton(ToolObject obj, int xShift, int yShift)
@@ -394,6 +424,8 @@ public static class EditorUI
         toolBtn.onClick.AddListener(() => SetItem(obj.Index));
         toolImg.sprite = obj.GetUISprite();
     }
+
+    private static (bool, bool, bool) _prevLegacy = (false, false, false);
 
     public static void RefreshVisibility(bool editing, bool paused)
     {
@@ -406,11 +438,16 @@ public static class EditorUI
             
             foreach (var obj in DisableWhenPlaying) obj.SetActive(paused);
             foreach (var obj in EnableWhenPlaying) obj.SetActive(!paused);
+            if (paused && UIManager.instance.uiState == UIState.PAUSED) UIManager.instance.uiState = UIState.OPTIONS;
 
             if (paused)
             {
-                SetupLegacy(false);
+                SetupLegacy(LayoutManager.LegacyMode, LayoutManager.UIMode == 1, LayoutManager.UIMode == 0, false);
                 ScriptEditorUI.UpdateColour();
+
+                _mapUI.SetActive(CurrentType == EditorType.Map);
+                _scriptUI.SetActive(CurrentType == EditorType.Script);
+                _workshopUI.SetActive(CurrentType == EditorType.Workshop);
             }
             else
             {
@@ -418,7 +455,7 @@ public static class EditorUI
                 _scriptUI.SetActive(false);
                 _workshopUI.SetActive(false);
                 Deletable.DeleteButton.SetActive(false);
-                _currentType = EditorType.Map;
+                CurrentType = EditorType.Map;
             }
 
             var share = paused && CoopManager.Instance.IsActive();
@@ -429,39 +466,54 @@ public static class EditorUI
         }
     }
 
-    private static void SetupLegacy(bool legacy)
+    private static void SetupLegacy(bool legacy, bool hideModern, bool rightCategories, bool force)
     {
-        _configButton.Item1.gameObject.SetActive(legacy);
-        _configButton.Item2.gameObject.SetActive(legacy);
-        _broadcastersButton.Item1.gameObject.SetActive(legacy);
-        _broadcastersButton.Item2.gameObject.SetActive(legacy);
-        _receiversButton.Item1.gameObject.SetActive(legacy);
-        _receiversButton.Item2.gameObject.SetActive(legacy);
+        if (_prevLegacy == (legacy, hideModern, rightCategories) && !force) return;
+        _prevLegacy = (legacy, hideModern, rightCategories);
+        
+        _legacyCategory.Item2.gameObject.SetActive(legacy);
+        _legacyCategory.Item1.gameObject.SetActive(legacy);
 
-        _mapButton.Item1.gameObject.SetActive(!legacy);
-        _mapButton.Item2.gameObject.SetActive(!legacy);
-        _scriptButton.Item1.gameObject.SetActive(!legacy);
-        _scriptButton.Item2.gameObject.SetActive(!legacy);
-        _workshopButton.Item1.gameObject.SetActive(!legacy);
-        _workshopButton.Item2.gameObject.SetActive(!legacy);
+        _configTypeButtons.SetActive(legacy);
+        _editorTypeButtons.SetActive(!legacy);
+
+        _modern.SetActive(!hideModern);
+        _prefabsCategory.Item1.gameObject.SetActive(!hideModern);
+        _prefabsCategory.Item2.gameObject.SetActive(!hideModern);
+
+        if (rightCategories)
+        {
+            _categories.RemoveOffset();
+            _universalOptions.RemoveOffset();
+        }
+        else
+        {
+            var ct = (RectTransform)_categories.transform;
+            var uo = (RectTransform)_universalOptions.transform;
+            ct.anchoredPosition = new Vector2(50, -350);
+            ct.anchorMax = ct.anchorMin = new Vector2(0, 1);
+            uo.anchoredPosition = new Vector2(175, -300);
+            uo.anchorMax = uo.anchorMin = new Vector2(0, 1);
+        }
 
         if (_configTransform) _configTransform.anchoredPosition = new Vector2(0, legacy ? 0 : -20);
         _mapTransform.anchoredPosition = new Vector2(0, legacy ? 0 : 20);
         
         if (legacy)
         {
-            _currentType = EditorType.Map;
-            UIManager.instance.uiState = UIState.PAUSED;
+            CurrentType = EditorType.Map;
             Deletable.DeleteButton.SetActive(false);
         }
         else
         {
             _currentOption = AttributeType.Config;
+            if (CurrentCategory == Categories.Legacy)
+            {
+                PageIndex = 0;
+                CurrentCategory = Categories.All;
+                DoRefreshCurrentPage();
+            }
         }
-
-        _mapUI.SetActive(_currentType == EditorType.Map);
-        _scriptUI.SetActive(_currentType == EditorType.Script);
-        _workshopUI.SetActive(_currentType == EditorType.Workshop);
     }
 
     public static void WipeTabs()
@@ -957,6 +1009,7 @@ public static class EditorUI
                     default:
                         continue;
                 }
+
                 if (placeable is PreloadObject { Loaded: false })
                 {
                     yield return placeable.EnsureLoaded();
@@ -1046,7 +1099,7 @@ public static class EditorUI
     private static void SetupPreciseSettings()
     {
         var anchor = new Vector2(1, 0);
-        RotationText = UIUtils.MakeTextbox("Rotation Box", _mapUI, new Vector3(-65, 190)
+        RotationText = UIUtils.MakeTextbox("Rotation Box", _universalOptions, new Vector3(-65, 190)
             , anchor, anchor, 70, 32).Item1;
 
         RotationText.characterValidation = InputField.CharacterValidation.Decimal;
@@ -1061,7 +1114,7 @@ public static class EditorUI
             CursorManager.NeedsRefresh = true;
         });
 
-        ScaleText = UIUtils.MakeTextbox("Scale Box", _mapUI, new Vector3(-65, 210)
+        ScaleText = UIUtils.MakeTextbox("Scale Box", _universalOptions, new Vector3(-65, 210)
             , anchor, anchor, 70, 32).Item1;
 
         ScaleText.characterValidation = InputField.CharacterValidation.Decimal;
@@ -1076,7 +1129,7 @@ public static class EditorUI
             CursorManager.NeedsRefresh = true;
         });
 
-        ZText = UIUtils.MakeTextbox("Offset Box", _mapUI, new Vector3(-65, 170)
+        ZText = UIUtils.MakeTextbox("Offset Box", _universalOptions, new Vector3(-65, 170)
             , anchor, anchor, 70, 32).Item1;
 
         ZText.characterValidation = InputField.CharacterValidation.Decimal;
@@ -1091,17 +1144,17 @@ public static class EditorUI
             CursorManager.NeedsRefresh = true;
         });
 
-        var zLabel = UIUtils.MakeLabel("Z Label", _mapUI, new Vector3(-75, 170), anchor, anchor);
+        var zLabel = UIUtils.MakeLabel("Z Label", _universalOptions, new Vector3(-75, 170), anchor, anchor);
         zLabel.textComponent.text = "Z Position: ";
         zLabel.textComponent.fontSize = 8;
         zLabel.textComponent.alignment = TextAnchor.MiddleLeft;
 
-        var rotLabel = UIUtils.MakeLabel("Rotation Label", _mapUI, new Vector3(-75, 190), anchor, anchor);
+        var rotLabel = UIUtils.MakeLabel("Rotation Label", _universalOptions, new Vector3(-75, 190), anchor, anchor);
         rotLabel.textComponent.text = "Rotation: ";
         rotLabel.textComponent.fontSize = 8;
         rotLabel.textComponent.alignment = TextAnchor.MiddleLeft;
 
-        var scaleLabel = UIUtils.MakeLabel("Scale Label", _mapUI, new Vector3(-75, 210), anchor, anchor);
+        var scaleLabel = UIUtils.MakeLabel("Scale Label", _universalOptions, new Vector3(-75, 210), anchor, anchor);
         scaleLabel.textComponent.text = "Scale: ";
         scaleLabel.textComponent.fontSize = 8;
         scaleLabel.textComponent.alignment = TextAnchor.MiddleLeft;
@@ -1113,6 +1166,12 @@ public static class EditorUI
 
     private static void SetupAttributeSettings()
     {
+        _configTypeButtons = new GameObject("Config Type Buttons")
+        {
+            transform = { parent = _mapUI.transform }
+        };
+        _configTypeButtons.RemoveOffset();
+        
         var pos = new Vector3(50, 13.25f);
         _configButton = SetupAttributeButton(AttributeType.Config, "Config", pos);
         pos.x += 92;
@@ -1124,7 +1183,7 @@ public static class EditorUI
     private static (Button, UIUtils.Label) SetupAttributeButton(AttributeType type, string name, Vector3 pos)
     {
         var size = new Vector2(260, 30);
-        var (btn, label) = UIUtils.MakeTextButton(name + " Button", name, _mapUI, pos, 
+        var (btn, label) = UIUtils.MakeTextButton(name + " Button", name, _configTypeButtons, pos, 
             Vector2.zero, Vector2.zero, size:size);
 
         btn.onClick.AddListener(() => _currentOption = type);
@@ -1153,12 +1212,12 @@ public static class EditorUI
 
     public static Text LayerName;
     public static Text LayerToggle;
-    
+
     private static void SetupLayers()
     {
         var layerParent = new GameObject("Layers")
         {
-            transform = { parent = _mapUI.transform }
+            transform = { parent = _modern.transform }
         };
         layerParent.RemoveOffset().anchoredPosition = new Vector2(0, -20);
         
@@ -1169,12 +1228,12 @@ public static class EditorUI
         LayerName.alignment = TextAnchor.MiddleCenter;
         
         var (bsa, sa) = UIUtils.MakeTextButton("Show All", "Show All", layerParent,
-            new Vector2(80, 55), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
+            new Vector2(75, 55), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
             size: new Vector2(120, 35));
         sa.textComponent.fontSize = 10;
         
         var (bha, ha) = UIUtils.MakeTextButton("Hide All", "Hide All", layerParent,
-            new Vector2(80, 35), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
+            new Vector2(75, 35), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
             size: new Vector2(120, 35));
         ha.textComponent.fontSize = 10;
         
@@ -1193,13 +1252,13 @@ public static class EditorUI
         });
 
         var vl = UIUtils.MakeLabel("Visible Label", layerParent,
-            new Vector2(-80, 52.5f), new Vector2(0.5f, 0), new Vector2(0.5f, 0)).textComponent;
+            new Vector2(-75, 52.5f), new Vector2(0.5f, 0), new Vector2(0.5f, 0)).textComponent;
         vl.fontSize = 10;
         vl.text = "Always Show";
         vl.alignment = TextAnchor.MiddleCenter;
         
         var (vBtn, vt) = UIUtils.MakeTextButton("Visible", "X", layerParent,
-            new Vector2(-80, 35), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
+            new Vector2(-75, 35), new Vector2(0.5f, 0), new Vector2(0.5f, 0),
             size: new Vector2(35, 35));
         vBtn.onClick.AddListener(() =>
         {
@@ -1232,7 +1291,7 @@ public static class EditorUI
         Listeners
     }
 
-    private enum EditorType
+    public enum EditorType
     {
         Map,
         Script,
