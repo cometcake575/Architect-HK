@@ -1,7 +1,10 @@
+using System;
+using System.Globalization;
 using System.Linq;
 using Architect.Config;
 using Architect.Objects.Placeable;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Architect.Editor;
 
@@ -24,6 +27,41 @@ public static class CursorManager
             if (_cursorObject) _cursorObject.SetActive(false);
             NeedsRefresh = true;
             return;
+        }
+
+        if (EditManager.EditingObject != null)
+        {
+            if (_cursorObject) _cursorObject.SetActive(false);
+            if (NeedsRefresh)
+            {
+                NeedsRefresh = false;
+
+                var obj = EditManager.EditingObject;
+                var place = obj.GetPlacementType().PreparePlacement(Vector3.zero, obj, out var erase);
+                
+                var pos = place.GetPos();
+                pos.z = EditManager.CurrentZ;
+
+                try
+                {
+                    pos.x = Convert.ToSingle(EditorUI.PosXText.text, CultureInfo.InvariantCulture);
+                }
+                catch (FormatException) {}
+                
+                try
+                {
+                    pos.y = Convert.ToSingle(EditorUI.PosYText.text, CultureInfo.InvariantCulture);
+                } catch (FormatException) {}
+                
+                place.SetPosition(pos);
+                
+                ActionManager.SceneActionManager.PerformAction(
+                    new MultiEdit([erase, new PlaceObjects([place])])
+                );
+
+                EditManager.EditingObject = place;
+                place.SetHoverColour();
+            }
         }
         
         if (!_cursorObject || NeedsRefresh)

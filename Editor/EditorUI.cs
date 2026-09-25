@@ -50,6 +50,7 @@ public static class EditorUI
     private static GameObject _modern;
     private static GameObject _categories;
     private static GameObject _universalOptions;
+    public static GameObject PositionOptions;
     
     public static AbstractCategory CurrentCategory = Categories.All;
     public static int PageIndex;
@@ -63,6 +64,8 @@ public static class EditorUI
     public static InputField RotationText;
     public static InputField ScaleText;
     public static InputField ZText;
+    public static InputField PosXText;
+    public static InputField PosYText;
 
     private static string _currentSearch = "";
 
@@ -498,13 +501,6 @@ public static class EditorUI
         }
     }
 
-    public static void WipeTabs()
-    {
-        Object.Destroy(_configTab);
-        Object.Destroy(_receiverTab);
-        Object.Destroy(_broadcasterTab);
-    }
-
     public static void SetItem(int i)
     {
         var index = PageIndex * ITEMS_PER_PAGE + i;
@@ -580,13 +576,16 @@ public static class EditorUI
             EditManager.CurrentObject = obj;
         }
         
-        WipeTabs();
         RefreshAttributeControls(!isPrefab);
         RefreshItem();
     }
 
     public static void RefreshAttributeControls(bool useDefaultConfig)
     {
+        Object.Destroy(_configTab);
+        Object.Destroy(_receiverTab);
+        Object.Destroy(_broadcasterTab);
+
         var configBtn = false;
         var receiverBtn = false;
         var broadcasterBtn = false;
@@ -949,6 +948,8 @@ public static class EditorUI
 
     public static void RefreshItem(int index)
     {
+        if (index == EditManager.ACTIVE_OBJECT_INDEX) return;
+        
         var icon = HotbarIcons[index];
         icon.sprite = EditManager.HotbarCurrentObject[index].GetUISprite();
         var cfg = EditManager.HotbarConfig[index].Values.FirstOrDefault(c => c.GetTypeId() == "png_url");
@@ -1125,6 +1126,13 @@ public static class EditorUI
 
     private static void SetupPreciseSettings()
     {
+        PositionOptions = new GameObject("Position")
+        {
+            transform = { parent = _universalOptions.transform }
+        };
+        PositionOptions.SetActive(false);
+        PositionOptions.RemoveOffset();
+
         var anchor = new Vector2(1, 0);
         (RotationText, var rl) = UIUtils.MakeTextbox("Rotation Box", _universalOptions, new Vector3(-65, 190)
             , anchor, anchor, 70, 32);
@@ -1174,6 +1182,20 @@ public static class EditorUI
             CursorManager.NeedsRefresh = true;
         });
 
+        (PosXText, var pxl) = UIUtils.MakeTextbox("X Box", PositionOptions, new Vector3(-65, 137.5f)
+            , anchor, anchor, 70, 32);
+        pxl.textComponent.raycastTarget = false;
+
+        PosXText.characterValidation = InputField.CharacterValidation.Decimal;
+        PosXText.onValueChanged.AddListener(_ => CursorManager.NeedsRefresh = true);
+
+        (PosYText, var pyl) = UIUtils.MakeTextbox("Y Box", PositionOptions, new Vector3(-65, 122.5f)
+            , anchor, anchor, 70, 32);
+        pyl.textComponent.raycastTarget = false;
+
+        PosYText.characterValidation = InputField.CharacterValidation.Decimal;
+        PosYText.onValueChanged.AddListener(_ => CursorManager.NeedsRefresh = true);
+
         var zLabel = UIUtils.MakeLabel("Z Label", _universalOptions, new Vector3(-75, 170), anchor, anchor);
         zLabel.textComponent.text = "Z Position: ";
         zLabel.textComponent.fontSize = 8;
@@ -1191,6 +1213,12 @@ public static class EditorUI
         scaleLabel.textComponent.fontSize = 8;
         scaleLabel.textComponent.alignment = TextAnchor.MiddleLeft;
         scaleLabel.textComponent.raycastTarget = false;
+
+        var posLabel = UIUtils.MakeLabel("Pos Label", PositionOptions, new Vector3(-75, 130), anchor, anchor);
+        posLabel.textComponent.text = "Position: ";
+        posLabel.textComponent.fontSize = 8;
+        posLabel.textComponent.alignment = TextAnchor.MiddleLeft;
+        posLabel.textComponent.raycastTarget = false;
 
         EditManager.SetRotation(0);
         EditManager.SetScale(1);
