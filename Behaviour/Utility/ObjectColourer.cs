@@ -21,6 +21,8 @@ public class ObjectColourer : MonoBehaviour
     public float b;
     public float a;
 
+    public bool recursive = true;
+
     public Color Colour
     {
         set
@@ -123,6 +125,7 @@ public class ObjectColourer : MonoBehaviour
             if (!forceAlpha && !useAlphaByDefault) color.a = 1;
             foreach (var rend in target.GetComponentsInChildren<Renderer>(true))
             {
+                if (!recursive && rend.gameObject != target) continue;
                 _current++;
                 rend.material.shader = FlashShader;
                 var sf = rend.gameObject.GetOrAddComponent<SpriteFlash>();
@@ -135,12 +138,14 @@ public class ObjectColourer : MonoBehaviour
             {
                 foreach (var sr in target.GetComponentsInChildren<SpriteRenderer>(true))
                 {
+                    if (!recursive && sr.gameObject != target) continue;
                     _current++;
                     StartCoroutine(FadeRoutine(fadeTime, sr, color, useAlphaByDefault || forceAlpha));
                 }
 
                 foreach (var sr in target.GetComponentsInChildren<tk2dSprite>(true))
                 {
+                    if (!recursive && sr.gameObject != target) continue;
                     _current++;
                     StartCoroutine(FadeRoutine(fadeTime, sr, color, useAlphaByDefault || forceAlpha));
                 }
@@ -149,6 +154,7 @@ public class ObjectColourer : MonoBehaviour
             if (particles != 1)
                 foreach (var renderer in target.GetComponentsInChildren<ParticleSystem>(true))
                 {
+                    if (!recursive && renderer.gameObject != target) continue;
                     _current++;
                     StartCoroutine(FadeRoutine(fadeTime, renderer, color, useAlphaByDefault || forceAlpha));
                 }

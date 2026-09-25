@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Architect.Utils;
+using Architect.Editor;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +19,7 @@ public abstract class CollectionBlock<T> : LinkedBlock
 
     protected abstract string ChildName { get; }
     protected virtual int MaxChildren => -1;
+    protected virtual float AddOffset => 0;
     protected abstract bool NeedsGap { get; }
     
     protected override Dictionary<string, string> SerializeExtraData()
@@ -73,6 +74,7 @@ public abstract class CollectionBlock<T> : LinkedBlock
         Children.Height = height;
         Children.Parent = this;
         Children.NeedsGap = NeedsGap;
+        Children.AddOffset = AddOffset;
     }
 
     public override void Setup(bool visual, bool newBlock = false, bool noReference = false)
@@ -97,10 +99,10 @@ public abstract class CollectionBlock<T> : LinkedBlock
         else foreach (var child in Children.Blocks) child.SetupReference();
     }
 
-    public override void Delete()
+    public override MultiEdit Delete()
     {
-        foreach (var child in Children.Blocks.ToArray()) child.Delete();
-        base.Delete();
+        foreach (var child in Children.Blocks.ToArray()) child.DeleteKeepGroup();
+        return base.Delete();
     }
 
     public override void LateSetup()
@@ -127,7 +129,7 @@ public abstract class CollectionBlock<T> : LinkedBlock
 
         protected override void SetupBlock(bool newBlock, int width, int height)
         {
-            if (ConfigCount >= 3) height += 25;
+            if (ConfigCount >= 3) height += 25; 
             base.SetupBlock(newBlock, width, height);
             BlockInstance.overrideDrag = Group.Parent.BlockInstance;
             BlockHeight = height;
@@ -147,10 +149,16 @@ public abstract class CollectionBlock<T> : LinkedBlock
             }
         }
 
-        public override void Delete()
+        public void DeleteKeepGroup()
+        {
+            base.Delete()?.Execute();
+        }
+
+        public override MultiEdit Delete()
         {
             Group.Remove(this);
-            base.Delete();
+            base.Delete()?.Execute();
+            return null;
         }
 
         public override void AddExtraIds(List<string> ids)
@@ -163,6 +171,7 @@ public abstract class CollectionBlock<T> : LinkedBlock
     public class ChildrenGroup
     {
         public ScriptBlock Parent;
+        public float AddOffset;
         public List<ChildBlock> Blocks = [];
         public bool NeedsGap;
         public IEnumerable<T> Children => Blocks.Where(o => o is T).Cast<T>();
@@ -196,7 +205,7 @@ public abstract class CollectionBlock<T> : LinkedBlock
                 else y -= o.BlockHeight;
                 i++;
             }
-            AddBlock.SetLocalPositionY(y + (ng ? 84 : NeedsGap ? 122.5f : 197.5f));
+            AddBlock.SetLocalPositionY(y + (ng ? 84 : NeedsGap ? 122.5f : 197.5f) + AddOffset);
             AddBlock.SetAsLastSibling();
             
             if (MaxChildren > 0) AddBlock.gameObject.SetActive(Blocks.Count < MaxChildren);

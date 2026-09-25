@@ -1,20 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Architect.Events.Blocks;
 using Architect.Multiplayer;
 using Architect.Placements;
 using Architect.Storage;
-using Architect.Utils;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Architect.Editor;
 
-public static class ActionManager
+public class ActionManager
 {
-    private static readonly List<IEdit> Before = [];
-    private static readonly List<IEdit> After = [];
+    private static readonly List<ActionManager> Managers = [];
+    
+    public static readonly ActionManager SceneActionManager = new(true);
+    public static readonly ActionManager ScriptActionManager = new(false);
+    
+    private readonly List<IEdit> _before = [];
+    private readonly List<IEdit> _after = [];
 
     private static string _lastScene;
+    private readonly bool _mpShare;
+
+    private ActionManager(bool mpShare)
+    {
+        Managers.Add(this);
+        _mpShare = mpShare;
+    }
 
     public static void Init()
     {
@@ -27,52 +40,82 @@ public static class ActionManager
                 if (_lastScene != GameManager.instance.sceneName)
                 {
                     _lastScene = GameManager.instance.sceneName;
-                    Before.Clear();
-                    After.Clear();
+                    foreach (var manager in Managers)
+                    {
+                        manager._before.Clear();
+                        manager._after.Clear();
+                    }
                 }
             });
     }
 
     public static void UndoLast()
     {
-        if (Before.Count == 0) return;
-
-        var result = Before[^1].Undo();
-        if (result != null)
+        switch (EditorUI.CurrentType)
         {
-            result.Execute();
-            MultiplayerShare(result);
-            After.Add(result);
-            Before.RemoveAt(Before.Count - 1);
+            case EditorUI.EditorType.Map:
+                SceneActionManager.Undo();
+                break;
+            case EditorUI.EditorType.Script:
+                ScriptActionManager.Undo();
+                break;
         }
-        else Before.Clear();
     }
 
     public static void RedoLast()
     {
-        if (After.Count == 0) return;
+        switch (EditorUI.CurrentType)
+        {
+            case EditorUI.EditorType.Map:
+                SceneActionManager.Redo();
+                break;
+            case EditorUI.EditorType.Script:
+                ScriptActionManager.Redo();
+                break;
+        }
+    }
 
-        var result = After[^1].Undo();
+    private void Undo()
+    {
+        if (_before.Count == 0) return;
+
+        var result = _before[^1].Undo();
         if (result != null)
         {
             result.Execute();
             MultiplayerShare(result);
-            Before.Add(result);
+            _after.Add(result);
+            _before.RemoveAt(_before.Count - 1);
         }
-        else After.Clear();
-
-        After.RemoveAt(After.Count - 1);
+        else _before.Clear();
     }
 
-    public static void PerformAction(IEdit edit)
+    private void Redo()
     {
+        if (_after.Count == 0) return;
+
+        var result = _after[^1].Undo();
+        if (result != null)
+        {
+            result.Execute();
+            MultiplayerShare(result);
+            _before.Add(result);
+        }
+        else _after.Clear();
+
+        _after.RemoveAt(_after.Count - 1);
+    }
+
+    public void PerformAction(IEdit edit)
+    {
+        if (edit == null) return;
         _lastScene = GameManager.instance.sceneName;
         
         edit.Execute();
         MultiplayerShare(edit);
         
-        After.Clear();
-        Before.Add(edit);
+        _after.Clear();
+        _before.Add(edit);
     }
 
     public static void ReceiveAction(IEdit edit)
@@ -80,9 +123,9 @@ public static class ActionManager
         edit.Execute();
     }
 
-    public static void MultiplayerShare(IEdit edit)
+    private void MultiplayerShare(IEdit edit)
     {
-        if (!CoopManager.Instance.IsActive()) return;
+        if (!_mpShare || !CoopManager.Instance.IsActive()) return;
         edit.MultiplayerShare();
     }
 }
@@ -149,7 +192,7 @@ public class ToggleLock(ObjectPlacement placement) : IEdit
         CoopManager.Instance.ToggleLock(GameManager.instance.sceneName, placement.GetId());
     }
 
-    public class ScheduledToggleLock(string id) : IScheduledEdit
+    private class ScheduledToggleLock(string id) : IScheduledEdit
     {
         public void ExecuteScheduled(LevelData levelData)
         {
@@ -181,7 +224,7 @@ public class EraseObject(List<ObjectPlacement> placements) : IEdit
             placements.Select(o => o.GetId()).ToList());
     }
 
-    public class ScheduledErase(List<string> ids) : IScheduledEdit
+    private class ScheduledErase(List<string> ids) : IScheduledEdit
     {
         public void ExecuteScheduled(LevelData levelData)
         {
@@ -262,7 +305,7 @@ public class MoveObjects(List<(ObjectPlacement, Vector3, Vector3)> data) : IEdit
             .Select(o => (o.Item1.GetId(), o.Item2)).ToList());
     }
 
-    public class ScheduledMove(List<(string, Vector3)> data) : IScheduledEdit
+    private class ScheduledMove(List<(string, Vector3)> data) : IScheduledEdit
     {
         public void ExecuteScheduled(LevelData levelData)
         {
@@ -317,4 +360,101 @@ public class ResetRoom : IEdit
     {
         CoopManager.Instance.ResetRoom(GameManager.instance.sceneName);
     }
+}
+
+public class MultiEdit(IEnumerable<IEdit> edits) : IEdit
+{
+    public void Execute()
+    {
+        foreach (var edit in edits) edit?.Execute();
+    }
+
+    public IEdit Undo()
+    {
+        return new MultiEdit(edits.Select(e => e.Undo()).Reverse());
+    }
+
+    public void MultiplayerShare()
+    {
+        foreach (var edit in edits) edit.MultiplayerShare();
+    }
+}
+
+public class PlaceScriptBlock(ScriptBlock block, bool local, bool needsSetup = false) : IEdit
+{
+    public void Execute()
+    {
+        ScriptManager.IsLocal = local;
+        (local ? PlacementManager.GetLevelData() : PlacementManager.GetGlobalData()).ScriptBlocks.Add(block);
+        if (needsSetup) block.Setup(true);
+    }
+
+    public IEdit Undo()
+    {
+        return new RemoveScriptBlock(block, local);
+    }
+    
+    public void MultiplayerShare() { }
+}
+
+public class RemoveScriptBlock(ScriptBlock block, bool local) : IEdit
+{
+    public void Execute()
+    {
+        ScriptManager.IsLocal = local;
+        ScriptManager.Blocks.Remove(block.BlockId);
+        (local ? PlacementManager.GetLevelData() : PlacementManager.GetGlobalData()).ScriptBlocks.Remove(block);
+        if (block.BlockObject) Object.Destroy(block.BlockObject);
+    }
+
+    public IEdit Undo()
+    {
+        return new PlaceScriptBlock(block, local, true);
+    }
+    
+    public void MultiplayerShare() { }
+}
+
+public class ConnectScriptBlock(ScriptBlock from, string fromPoint, ScriptBlock to, string toPoint, ScriptManager.Connection.LinkType linkType, bool local) : IEdit
+{
+    public void Execute()
+    {
+        ScriptManager.IsLocal = local;
+        if (linkType == ScriptManager.Connection.LinkType.Var)
+        {
+            var vMap = from.VarMap;
+            if (!vMap.ContainsKey(fromPoint)) vMap[fromPoint] = (to.BlockId, toPoint);
+        }
+        else
+        {
+            var eMap = from.EventMap;
+            if (!eMap.ContainsKey(fromPoint)) eMap[fromPoint] = [];
+            if (!eMap[fromPoint].Contains((to.BlockId, toPoint))) eMap[fromPoint].Add((to.BlockId, toPoint));
+        }
+        
+        ScriptManager.MakeLink(from, fromPoint, to, toPoint, linkType);
+    }
+    
+    public IEdit Undo()
+    {
+        return new DisconnectScriptBlock(from, fromPoint, to, toPoint, linkType, local);
+    }
+
+    public void MultiplayerShare() { }
+}
+
+public class DisconnectScriptBlock(ScriptBlock from, string fromPoint, ScriptBlock to, string toPoint, ScriptManager.Connection.LinkType linkType, bool local) : IEdit
+{
+    public void Execute()
+    {
+        ScriptManager.IsLocal = local;
+        ScriptManager.DestroyLink(from.BlockId, fromPoint, to.BlockId, toPoint, linkType);
+    }
+
+    public IEdit Undo()
+    {
+        return new ConnectScriptBlock(from, fromPoint, to, toPoint, linkType, local);
+    }
+    
+    public void MultiplayerShare() { }
 }

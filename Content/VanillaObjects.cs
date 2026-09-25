@@ -515,6 +515,9 @@ public static class VanillaObjects
                 },
                 postSpawnAction: EnemyFixers.FixNosk)
             .WithConfigGroup(ConfigGroup.Wakeable);
+
+        /*AddEnemy("Winged Nosk", "winged_nosk", ("GG_Nosk_Hornet", "Battle Scene/Hornet Nosk"),
+                postSpawnAction: EnemyFixers.FixWingedNosk);*/
     }
 
     private static void AddWaterwaysObjects()

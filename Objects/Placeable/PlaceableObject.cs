@@ -196,9 +196,12 @@ public abstract class PlaceableObject : SelectableObject
         if (Settings.StartLocked.IsPressed) obj.ToggleLocked();
         
         EditManager.RegisterLastPos(pos);
-        ActionManager.PerformAction(new PlaceObjects([obj]));
-        
-        if (Settings.StartScripted.IsPressed) ScriptManager.AddToScript(obj);
+
+        var place = new PlaceObjects([obj]);
+        if (Settings.StartScripted.IsPressed)
+        {
+            ActionManager.SceneActionManager.PerformAction(new MultiEdit([place, ScriptManager.AddToScript(obj)]));
+        } else ActionManager.SceneActionManager.PerformAction(place);
     }
 
     public ObjectPlacement PreparePlacement(Vector3 pos)
@@ -209,7 +212,7 @@ public abstract class PlaceableObject : SelectableObject
         {
             pos = hover.GetPos().Where(z: pos.z);
             id = hover.GetId();
-            ActionManager.PerformAction(new EraseObject([hover]));
+            ActionManager.SceneActionManager.PerformAction(new EraseObject([hover]));
             EditManager.HoveredObject = null;
         }
         else id = Guid.NewGuid().ToString()[..8];

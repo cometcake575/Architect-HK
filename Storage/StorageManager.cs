@@ -226,7 +226,7 @@ public static class StorageManager
         }
         catch
         {
-            return null;
+            return new LevelData([], [], [], []);
         }
     }
 

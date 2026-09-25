@@ -1706,6 +1706,13 @@ public static class EnemyFixers
         }
     }
 
+    public static void FixWingedNosk(GameObject obj)
+    {
+        BlockMusicOn(obj);
+        
+        
+    }
+
     private class Nosk : Wakeable
     {
         public PlayMakerFSM fsm;

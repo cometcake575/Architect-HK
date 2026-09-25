@@ -1039,7 +1039,12 @@ public static class ConfigGroup
             new ChoiceConfigType("Tint Mode", "colourer_mode", (o, value) =>
             {
                 o.GetComponent<ObjectColourer>().mode = value.GetValue();
-            }).WithOptions("Multiply", "Set", "Brighten").WithDefaultValue(0))
+            }).WithOptions("Multiply", "Set", "Brighten").WithDefaultValue(0)),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Recursive", "colourer_recursive", (o, value) =>
+            {
+                o.GetComponent<ObjectColourer>().recursive = value.GetValue();
+            }).WithDefaultValue(true))
     ]);
 
     public static readonly List<ConfigType> Gravity = GroupUtils.Merge(Visible, [

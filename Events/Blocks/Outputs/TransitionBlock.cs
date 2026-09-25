@@ -32,7 +32,7 @@ public class TransitionBlock : ScriptBlock
         GameManager.instance.BeginSceneTransition(new GameManager.SceneLoadInfo
         {
             SceneName = GetVariable<string>("Scene", Scene),
-            EntryGateName = GetVariable<string>("Door", Scene),
+            EntryGateName = GetVariable<string>("Door", Door),
             EntryDelay = 0,
             Visualization = GameManager.SceneLoadVisualizations.Default,
             PreventCameraFadeOut = true,
