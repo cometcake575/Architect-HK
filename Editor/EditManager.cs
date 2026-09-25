@@ -19,6 +19,7 @@ using Architect.Placements;
 using Architect.Prefabs;
 using Architect.Storage;
 using FsmMaster;
+using UnityEngine.EventSystems;
 using Object = UnityEngine.Object;
 
 namespace Architect.Editor;
@@ -437,12 +438,17 @@ public static class EditManager
             if (c1) CurrentObject.RightClick(Input.mousePosition);
         } else if (b1) ClearEditingObject();
 
-        if (EditingObject == null)
-        {
-            // Undo/Redo code
-            if (Settings.Undo.WasPressed) ActionManager.UndoLast();
-            if (Settings.Redo.WasPressed) ActionManager.RedoLast();
-        }
+        if (EditingObject != null) return;
+
+        // Undo/Redo code
+        var undo = Settings.Undo.WasPressed;
+        var redo = Settings.Redo.WasPressed;
+        if (!undo && !redo) return;
+
+        if (UIUtils.BlockActions) return;
+     
+        if (undo) ActionManager.UndoLast();
+        if (redo) ActionManager.RedoLast();
     }
 
     // Placement is copied object, Vector3 is offset from cursor when copied
