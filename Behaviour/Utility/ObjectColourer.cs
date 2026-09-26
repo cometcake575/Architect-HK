@@ -183,6 +183,7 @@ public class ObjectColourer : MonoBehaviour
 
         var old = sr.gameObject.GetOrAddComponent<SpriteFlashOld>();
         var start = old.old;
+        if (sr.block == null) yield break;
 
         while (time < fadeTime)
         {
@@ -196,6 +197,9 @@ public class ObjectColourer : MonoBehaviour
             yield return null;
         }
         
+        if (!sr) yield break;
+        ArchitectPlugin.Instance.Log(sr);
+        ArchitectPlugin.Instance.Log(sr.block);
         sr.block.SetFloat(FlashAmount, color.a);
         sr.block.SetColor(FlashColor, color);
         sr.rend.SetPropertyBlock(sr.block);

@@ -55,6 +55,7 @@ public class CursorObject() : ToolObject("cursor", Storage.Settings.Cursor, -1)
                 obj.LoadToSlot();
 
                 EditorUI.ObjectIdLabel.textComponent.text = info;
+                _lastNum++;
 
                 CursorManager.NeedsRefresh = false;
             } else EditorUI.DisplayHotbarText(info);
@@ -65,7 +66,7 @@ public class CursorObject() : ToolObject("cursor", Storage.Settings.Cursor, -1)
     {
         var obj = PlacementManager.FindObject(mousePosition);
         if (obj == null) return;
-        ScriptManager.AddToScript(obj);
+        ActionManager.ScriptActionManager.PerformAction(ScriptManager.AddToScript(obj));
     }
 
     public static IEnumerator ClearCursorInfoLabel()
