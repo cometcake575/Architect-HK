@@ -62,7 +62,29 @@ public class CustomGradeMarker : MonoBehaviour
         On.GradeMarker.Activate += (orig, self) =>
         {
             var cgm = self.gameObject.GetOrAddComponent<CustomGradeMarker>();
-            if (IsStrongestGradeMarker(cgm)) orig(self);
+            if (IsStrongestGradeMarker(cgm))
+            {
+                if (self.hero) orig(self);
+                else
+                {
+                    self.heading = Vector2.zero;
+                    self.sqrNear = self.maxIntensityRadius * self.maxIntensityRadius;
+                    self.sqrFar = self.cutoffRadius * self.cutoffRadius;
+                    self.sqrEffectRange = self.sqrFar - self.sqrNear;
+                    self.u = (self.heading.sqrMagnitude - self.sqrNear) / self.sqrEffectRange;
+                    self.t = Mathf.Clamp01(1f - self.u);
+                    self.scm.SaturationB = SceneManager.AdjustSaturationForPlatform(self.saturation);
+                    self.scm.RedB = self.redChannel;
+                    self.scm.GreenB = self.greenChannel;
+                    self.scm.BlueB = self.blueChannel;
+                    self.scm.AmbientColorB = self.ambientColor;
+                    self.scm.AmbientIntensityB = self.ambientIntensity;
+                    if (GameManager.instance.IsGameplayScene())
+                        self.scm.HeroLightColorB = self.heroLightColor;
+                    self.enableGrade = true;
+                    self.scm.SetMarkerActive(true);
+                }
+            }
             else cgm.shutDown = true;
         };
 

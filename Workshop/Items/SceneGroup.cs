@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Architect.Storage;
 using HutongGames.PlayMaker;
-using TMPro;
+using TMProOld;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;

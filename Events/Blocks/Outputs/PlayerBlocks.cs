@@ -109,7 +109,7 @@ public class InvulBlock : ScriptBlock
                 PlayerData.instance.isInvincible = false;
                 break;
             case "SetInvulTime":
-                HeroController.instance.StartCoroutine(HeroController.instance.Invulnerable(Duration));
+                HeroController.instance.StartInvulnerable(Duration);
                 break;
         }
     }

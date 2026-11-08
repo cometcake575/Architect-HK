@@ -2473,9 +2473,9 @@ public static class EnemyFixers
                 Random.Range(minInclusive2, maxInclusive2));
             if (Random.Range(0, 1) == 0)
                 accel[index2] = -accel[index2];
-            var velocity = self.body.velocity;
+            var velocity = self.body.linearVelocity;
             velocity[index1] *= num;
-            self.body.velocity = velocity;
+            self.body.linearVelocity = velocity;
             accel *= 0.5f;
             var maxSpeed = accel * 10f;
             maxSpeed.x = Mathf.Abs(maxSpeed.x);
@@ -2483,7 +2483,7 @@ public static class EnemyFixers
             float timer;
             for (timer = 0.2f; timer > 0.0; timer -= Time.deltaTime)
             {
-                self.FaceDirection(self.body.velocity.x > 0.0 ? 1 : -1, false);
+                self.FaceDirection(self.body.linearVelocity.x > 0.0 ? 1 : -1, false);
                 self.Accelerate(accel, new Vector2(15f, 10f));
                 yield return null;
             }
@@ -2492,7 +2492,7 @@ public static class EnemyFixers
                  timer > 0.0;
                  timer -= Time.deltaTime)
             {
-                self.FaceDirection(self.body.velocity.x > 0.0 ? 1 : -1, false);
+                self.FaceDirection(self.body.linearVelocity.x > 0.0 ? 1 : -1, false);
                 self.Accelerate(accel, maxSpeed);
             }
         }

@@ -226,7 +226,7 @@ public static class SceneUtils
         USceneManager.MoveGameObjectToScene(CreateManager(), scene);
         
         USceneManager.SetActiveScene(scene);
-        FsmHook.FsmMaster.OnSceneLoaded(scene, LoadSceneMode.Single);
+        FsmHook.FsmMaster?.OnSceneLoaded(scene, LoadSceneMode.Single);
         
         // Get colour data for grade marker
         var references = Resources.Load<References>("ReferencesData");

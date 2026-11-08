@@ -745,7 +745,7 @@ public static class MiscFixers
         gt.AddAction(() =>
         {
             var enemy = Object
-                .FindObjectsOfType<Collider2D>()
+                .FindObjectsByType<Collider2D>(FindObjectsSortMode.None)
                 .Where(h => h.gameObject != obj && h.gameObject.layer == EnemyLayer)
                 .OrderBy(h => (h.transform.position - obj.transform.position).sqrMagnitude)
                 .FirstOrDefault();
@@ -915,7 +915,7 @@ public static class MiscFixers
             vel = new Vector2(45, 0);
             if (obj.transform.GetScaleX() < 0) vel.x *= -1;
             vel = obj.transform.rotation * vel;
-            rb2d.velocity = vel;
+            rb2d.linearVelocity = vel;
         }, 0);
         
         var idle = fsm.GetState("Idle");
@@ -924,9 +924,9 @@ public static class MiscFixers
         
         idle.AddAction(new FsmUtils.EveryFrameAction(() =>
         {
-            if (rb2d.velocity.magnitude < 0.1f) fsm.SendEvent("WALL");
+            if (rb2d.linearVelocity.magnitude < 0.1f) fsm.SendEvent("WALL");
         }), 6);
-        idle.AddAction(() => rb2d.velocity = vel, 4);
+        idle.AddAction(() => rb2d.linearVelocity = vel, 4);
     }
 
     public static void FixSs(GameObject obj)
@@ -945,7 +945,7 @@ public static class MiscFixers
             var vel = new Vector2(45, 0);
             if (obj.transform.GetScaleX() < 0) vel.x *= -1;
             vel = obj.transform.rotation * vel;
-            rb2d.velocity = vel;
+            rb2d.linearVelocity = vel;
         }, 0);
         
         var idle = fsm.GetState("Idle");
@@ -953,7 +953,7 @@ public static class MiscFixers
         
         idle.AddAction(new FsmUtils.EveryFrameAction(() =>
         {
-            if (rb2d.velocity.magnitude < 0.1f) fsm.SendEvent("WALL");
+            if (rb2d.linearVelocity.magnitude < 0.1f) fsm.SendEvent("WALL");
         }));
     }
 

@@ -92,7 +92,7 @@ public class Wind : MonoBehaviour
             {
                 if (_windPlayer)
                 {
-                    rb2d.velocity = Vector2.zero;
+                    rb2d.linearVelocity = Vector2.zero;
                     _windPlayer = false;
                 }
                 return;
@@ -130,7 +130,7 @@ public class Wind : MonoBehaviour
             if (HeroController.instance.cState.jumping
                 || HeroController.instance.cState.doubleJumping
                 || HeroController.instance.cState.wallJumping) ActuallyJumping = true;
-            else if (HeroController.instance.rb2d.velocity.y <= 0) ActuallyJumping = false;
+            else if (HeroController.instance.rb2d.linearVelocity.y <= 0) ActuallyJumping = false;
         };
 
         typeof(HeroController).Hook("BackOnGround",

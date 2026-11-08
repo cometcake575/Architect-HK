@@ -62,7 +62,7 @@ public static class PlacementManager
 
     public static tk2dTileMap GetTilemap()
     {
-        if (!_tileMap) _tileMap = Object.FindObjectOfType<tk2dTileMap>();
+        if (!_tileMap) _tileMap = Object.FindAnyObjectByType<tk2dTileMap>();
         if (_tileMap)
         {
             _tileMap.transform.position = Vector3.zero;

@@ -277,7 +277,7 @@ public class Feather : PreviewableBehaviour
         _show = true;
 
         _comet.transform.position = transform.position;
-        _cometBody.velocity = rb2d.velocity / 3;
+        _cometBody.linearVelocity = rb2d.linearVelocity / 3;
         _cometValid = true;
 
         hero.renderer.enabled = false;
@@ -311,11 +311,11 @@ public class Feather : PreviewableBehaviour
             
             _comet.transform.rotation = Quaternion.Lerp(_comet.transform.rotation, Quaternion.Euler(0, 0, target), Mathf.Clamp01(Time.deltaTime * 3.25f));
 
-            rb2d.velocity = Vector2.zero;
+            rb2d.linearVelocity = Vector2.zero;
             hero.transform.position = _comet.transform.position + new Vector3(0, 1);
 
             if (pushing) _timeSincePush = 0;
-            _cometBody.velocity = _comet.transform.right * Mathf.Max(8, 15 - _timeSincePush * 15);
+            _cometBody.linearVelocity = _comet.transform.right * Mathf.Max(8, 15 - _timeSincePush * 15);
 
             if (!GameManager.instance.isPaused && InputHandler.Instance.inputActions.dash.WasPressed)
             {
@@ -443,7 +443,7 @@ public class Feather : PreviewableBehaviour
         _show = true;
 
         _comet.transform.position = transform.position;
-        _cometBody.velocity = rb2d.velocity / 3;
+        _cometBody.linearVelocity = rb2d.linearVelocity / 3;
         _cometValid = true;
 
         hero.GetComponent<MeshRenderer>().enabled = false;
@@ -488,9 +488,9 @@ public class Feather : PreviewableBehaviour
                 }
             }
 
-            rb2d.velocity = Vector2.zero;
+            rb2d.linearVelocity = Vector2.zero;
             hero.transform.position = _comet.transform.position + new Vector3(0, 1);
-            _cometBody.velocity = Vector2.Lerp(_cometBody.velocity, target, Time.deltaTime * 1.5f);
+            _cometBody.linearVelocity = Vector2.Lerp(_cometBody.linearVelocity, target, Time.deltaTime * 1.5f);
 
             if (InputHandler.Instance.inputActions.dash.WasPressed)
             {

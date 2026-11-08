@@ -297,7 +297,7 @@ public class ObjectAnchor : PreviewableBehaviour
 
         if (!moving && !isAPreview) return;
 
-        if (_rb2d) _rb2d.velocity = Vector2.zero;
+        if (_rb2d) _rb2d.linearVelocity = Vector2.zero;
         
         if (_pauseRemaining > 0)
         {

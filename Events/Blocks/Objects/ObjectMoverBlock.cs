@@ -78,10 +78,10 @@ public class ObjectMoverBlock : ScriptBlock
                 if (prefab) rb2ds = prefab.spawns.SelectMany(o => o.GetComponentsInChildren<Rigidbody2D>());
                 foreach (var rb2d in rb2ds)
                 {
-                    var vel = rb2d.velocity;
+                    var vel = rb2d.linearVelocity;
                     vel.x += x;
                     vel.y += y;
-                    rb2d.velocity = vel;
+                    rb2d.linearVelocity = vel;
                 }
 
                 break;
@@ -89,13 +89,13 @@ public class ObjectMoverBlock : ScriptBlock
                 if (prefab) rb2ds = prefab.spawns.SelectMany(o => o.GetComponentsInChildren<Rigidbody2D>());
                 foreach (var rb2d in rb2ds)
                 {
-                    var vx = GetVariable<float>("X", rb2d.velocity.x);
-                    var vy = GetVariable<float>("Y", rb2d.velocity.y);
+                    var vx = GetVariable<float>("X", rb2d.linearVelocity.x);
+                    var vy = GetVariable<float>("Y", rb2d.linearVelocity.y);
 
-                    var vel = rb2d.velocity;
+                    var vel = rb2d.linearVelocity;
                     vel.x = vx;
                     vel.y = vy;
-                    rb2d.velocity = vel;
+                    rb2d.linearVelocity = vel;
                 }
 
                 break;
@@ -137,11 +137,11 @@ public class ObjectMoverBlock : ScriptBlock
             case "Force X":
                 var xrb2d = obj.GetComponent<Rigidbody2D>();
                 if (!xrb2d) return 0;
-                return xrb2d.velocity.x;
+                return xrb2d.linearVelocity.x;
             case "Force Y":
                 var yrb2d = obj.GetComponent<Rigidbody2D>();
                 if (!yrb2d) return 0;
-                return yrb2d.velocity.y;
+                return yrb2d.linearVelocity.y;
         }
         
         return id switch

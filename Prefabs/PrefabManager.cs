@@ -84,7 +84,7 @@ public static class PrefabManager
         
         var scene = UnityEngine.SceneManagement.SceneManager.CreateScene(sceneName);
         UnityEngine.SceneManagement.SceneManager.SetActiveScene(scene);
-        FsmHook.FsmMaster.OnSceneLoaded(scene, LoadSceneMode.Single);
+        FsmHook.FsmMaster?.OnSceneLoaded(scene, LoadSceneMode.Single);
 
         var unload2 = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(current);
         if (unload2 != null) while (!unload2.isDone) yield return null;

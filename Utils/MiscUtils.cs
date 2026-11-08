@@ -65,21 +65,16 @@ public static class MiscUtils
 
     public static void SetVelocityX(this Rigidbody2D rb2d, float x)
     {
-        var vel = rb2d.velocity;
+        var vel = rb2d.linearVelocity;
         vel.x = x;
-        rb2d.velocity = vel;
+        rb2d.linearVelocity = vel;
     }
 
     public static void SetVelocityY(this Rigidbody2D rb2d, float y)
     {
-        var vel = rb2d.velocity;
+        var vel = rb2d.linearVelocity;
         vel.y = y;
-        rb2d.velocity = vel;
-    }
-
-    public static T2 GetValueOrDefault<T1, T2>(this Dictionary<T1, T2> d, T1 key, T2 val = default)
-    {
-        return d.TryGetValue(key, out var v) ? v : val;
+        rb2d.linearVelocity = vel;
     }
     
     public static bool IsNullOrWhiteSpace(this string self)

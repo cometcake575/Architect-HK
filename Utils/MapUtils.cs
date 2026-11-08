@@ -7,7 +7,7 @@ using HutongGames.PlayMaker.Actions;
 using JetBrains.Annotations;
 using MonoMod.RuntimeDetour;
 using Satchel;
-using TMPro;
+using TMProOld;
 using UnityEngine;
 
 namespace Architect.Utils;

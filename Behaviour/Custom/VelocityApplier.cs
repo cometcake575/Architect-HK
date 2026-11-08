@@ -14,6 +14,6 @@ public class VelocityApplier : MonoBehaviour
         if (_started) return;
         _started = true;
         var rb2d = GetComponent<Rigidbody2D>();
-        rb2d.velocity = new Vector2(x, y);
+        rb2d.linearVelocity = new Vector2(x, y);
     }
 }

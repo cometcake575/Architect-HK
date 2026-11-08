@@ -98,7 +98,7 @@ public class ObjectMover : MonoBehaviour
         if (!_target) return;
         if (!_source) return;
 
-        if (clearVelocity) _rb2d.velocity = Vector2.zero;
+        if (clearVelocity) _rb2d.linearVelocity = Vector2.zero;
 
         var sourceRot = _source.eulerAngles;
         sourceRot.z += rotation + eRot;

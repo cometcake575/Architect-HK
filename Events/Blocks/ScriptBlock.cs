@@ -501,6 +501,7 @@ public abstract class ScriptBlock
 
         private string _setText;
         private bool _selected;
+        private Color _color;
 
         private void Update()
         {
@@ -512,9 +513,10 @@ public abstract class ScriptBlock
             }
             
             var selected = ScriptManager.IsSelected(Block.BlockId);
-            if (_selected != selected)
+            if (_selected != selected || _color != Block.Color)
             {
                 _selected = selected;
+                _color = Block.Color;
                 img.color = _selected
                     ? Color.Lerp(Block.Color, Settings.ScriptEditorBlockSelectedLerpColor.Value, 0.35f)
                     : Block.Color;
@@ -555,13 +557,13 @@ public abstract class ScriptBlock
             if (ScriptManager.IsSelected(Block.BlockId) && ScriptManager.SelectedBlockIds.Count > 1)
             {
                 _isGroupDragging = true;
-                _groupOffsets = new List<(ScriptBlockInstance, Vector2)>();
+                _groupOffsets = [];
                 _groupStartMouse = eventData.position;
 
                 foreach (var id in ScriptManager.SelectedBlockIds)
                 {
                     if (!ScriptManager.Blocks.TryGetValue(id, out var b)) continue;
-                    if (b?.BlockInstance == null) continue;
+                    if (!b?.BlockInstance) continue;
                     var inst = b.BlockInstance;
                     var offset = (Vector2)inst.transform.position - _groupStartMouse;
                     _groupOffsets.Add((inst, offset));

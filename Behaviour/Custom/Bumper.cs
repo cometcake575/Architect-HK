@@ -35,7 +35,7 @@ public class Bumper : SoundMaker, IHitResponder
         On.HeroController.Move += (orig, self, direction) =>
         {
             orig(self, direction);
-            foreach (var dv in DecayingVelocities) self.rb2d.velocity += dv.Velocity;
+            foreach (var dv in DecayingVelocities) self.rb2d.linearVelocity += dv.Velocity;
         };
 
         ModHooks.TakeHealthHook += damage =>

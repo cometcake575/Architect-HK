@@ -73,14 +73,18 @@ public static class CustomAssetManager
             player.transform.SetScaleY(sc * player.height / 100);
         }
     }
-
-
+    
     public static void DoLoadSprite(string url, bool point, float ppu, int hcount, int vcount, Action<Sprite[]> callback)
     {
-        ArchitectPlugin.Instance.StartCoroutine(LoadSprite(url, point, ppu, Mathf.Max(1, hcount), Mathf.Max(1, vcount), callback));
+        DoLoadSprite(url, point, ppu, hcount, vcount, new Vector2(0.5f, 0.5f), callback);
+    }
+    
+    public static void DoLoadSprite(string url, bool point, float ppu, int hcount, int vcount, Vector2 pivot, Action<Sprite[]> callback)
+    {
+        ArchitectPlugin.Instance.StartCoroutine(LoadSprite(url, point, ppu, Mathf.Max(1, hcount), Mathf.Max(1, vcount), pivot, callback));
     }
 
-    private static IEnumerator LoadSprite(string url, bool point, float ppu, int hcount, int vcount, Action<Sprite[]> callback)
+    private static IEnumerator LoadSprite(string url, bool point, float ppu, int hcount, int vcount, Vector2 pivot, Action<Sprite[]> callback)
     {
         var id = $"{url}_{point}_{ppu}_{hcount}_{vcount}";
         if (LoadingSprites.Contains(id))
@@ -93,13 +97,13 @@ public static class CustomAssetManager
         {
             LoadingSprites.Add(id);
             var path = GetPath($"{url}.png");
-            var tmp = ResourceUtils.LoadSprites(path, point, ppu, hcount, vcount)!;
+            var tmp = ResourceUtils.LoadSprites(path, point, ppu, hcount, vcount, pivot)!;
             yield return tmp;
             if (tmp == null)
             {
                 var save = SaveFile(url, path);
                 while (!save.IsCompleted) yield return null;
-                tmp = ResourceUtils.LoadSprites(path, point, ppu, hcount, vcount)!;
+                tmp = ResourceUtils.LoadSprites(path, point, ppu, hcount, vcount, pivot)!;
                 yield return tmp;
             }
 

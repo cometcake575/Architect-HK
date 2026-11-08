@@ -614,6 +614,7 @@ public static class EditManager
             LoadPos = false;
             NoclipPos = _posToLoad;
             GameCameras.instance.cameraController.SetMode(CameraController.CameraMode.FOLLOWING);
+            GameManager.instance.gameState = GameState.PLAYING;
 
             if (CoopManager.Instance.IsActive()) CoopManager.Instance.RefreshRoom();
         }
