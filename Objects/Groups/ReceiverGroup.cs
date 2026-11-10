@@ -62,7 +62,7 @@ public static class ReceiverGroup
         EventManager.RegisterReceiverType(new EventReceiverType("set_velocity", "SetVelocity", (o, b) =>
         {
             if (b == null) return;
-            o.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(
+            o.GetComponent<Rigidbody2D>().velocity = new Vector2(
                 b.GetVariable<float>("New X"),
                 b.GetVariable<float>("New Y")
             );
@@ -443,6 +443,14 @@ public static class ReceiverGroup
         EventManager.RegisterReceiverType(new EventReceiverType("do_tp", "Teleport", o =>
         {
             HeroController.instance.transform.position = o.transform.position;
+        }))
+    ]);
+    
+    public static readonly List<EventReceiverType> Txt = GroupUtils.Merge(Generic, [
+        EventManager.RegisterReceiverType(new EventReceiverType("txt_set_text", "SetText", (o, b) =>
+        {
+            if (b == null) return;
+            o.GetComponent<CustomText>().SetText(b.GetVariable<string>("New Value"));
         }))
     ]);
     
