@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using Architect.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -63,7 +62,6 @@ public class Vector2ConfigValue(Vector2ConfigType type, Vector2 value) : ConfigV
 
 public class Vector2ConfigElement : ConfigElement
 {
-    private readonly RectTransform _parent;
     private readonly InputField _inputX;
     private readonly InputField _inputY;
 
@@ -77,8 +75,7 @@ public class Vector2ConfigElement : ConfigElement
                 localScale = Vector3.one
             }
         };
-        _parent = o.RemoveOffset();
-        _parent.anchoredPosition = pos;
+        o.RemoveOffset().anchoredPosition = pos;
         
         (_inputX, _) = UIUtils.MakeTextbox("X", o, new Vector2(-17.5f, 0), Vector2.zero, Vector2.zero, 
             80, 25);
@@ -109,11 +106,6 @@ public class Vector2ConfigElement : ConfigElement
             lastY = s;
             apply.interactable = true;
         });
-    }
-
-    public override RectTransform GetElement()
-    {
-        return _parent;
     }
 
     public override string GetValue()

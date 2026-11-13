@@ -4,7 +4,6 @@ using System.IO;
 using System.Reflection;
 using Architect.Placements;
 using Architect.Storage;
-using Architect.Utils;
 using Encoding = System.Text.Encoding;
 
 namespace Architect.Api;

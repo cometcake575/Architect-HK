@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using Architect.Utils;
 using Architect.Workshop.Items;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -56,12 +55,11 @@ public class BoolConfigValue<T>(BoolConfigType<T> type, bool value)
 
 public class BoolConfigElement : ConfigElement
 {
-    private readonly Button _input;
     private bool _active = true;
 
     public BoolConfigElement(GameObject parent, Button apply, Vector3 pos, [CanBeNull] string currentVal)
     {
-        (_input, var txt) = UIUtils.MakeTextButton("Config Input", "Default", parent, pos, 
+        var (input, txt) = UIUtils.MakeTextButton("Config Input", "Default", parent, pos, 
             new Vector2(0, 0.5f), new Vector2(0, 0.5f), size:new Vector2(120, 25));
 
         if (currentVal != null)
@@ -70,17 +68,12 @@ public class BoolConfigElement : ConfigElement
             _active = Convert.ToBoolean(currentVal, CultureInfo.InvariantCulture);
         }
         
-        _input.onClick.AddListener(() =>
+        input.onClick.AddListener(() =>
         {
             _active = !_active;
             txt.textComponent.text = _active.ToString(CultureInfo.InvariantCulture);
             apply.interactable = true;
         });
-    }
-
-    public override RectTransform GetElement()
-    {
-        return _input.transform as RectTransform;
     }
 
     public override string GetValue()

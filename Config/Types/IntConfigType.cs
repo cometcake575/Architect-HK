@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using Architect.Utils;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
@@ -71,11 +70,6 @@ public class IntConfigElement : ConfigElement
             last = s;
             apply.interactable = true;
         });
-    }
-
-    public override RectTransform GetElement()
-    {
-        return _input.transform as RectTransform;
     }
 
     public override string GetValue()

@@ -29,11 +29,12 @@ public class StatueBlock : ScriptBlock
 
     private BossStatue _statue;
 
-    public override void SetupReference()
+    public override GameObject SetupReference()
     {
         var s = Object.Instantiate(_statuePrefab);
         s.SetActive(false);
         _statue = s.GetComponent<BossStatue>();
+        return s;
     }
 
     protected override void Trigger(string trigger)

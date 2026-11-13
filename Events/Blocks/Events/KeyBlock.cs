@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Architect.Utils;
-using Architect.Workshop.Items;
 using InControl;
 using UnityEngine;
 
@@ -16,10 +14,12 @@ public class KeyBlock : ToggleableBlock
     public KeyCode Key = KeyCode.None;
     public PlayerAction PlayerAction = null;
 
-    public override void SetupReference()
+    public override GameObject SetupReference()
     {
-        var te = new GameObject("[Architect] Key Listener Block").AddComponent<KeyEvent>();
+        var obj = new GameObject("[Architect] Key Listener Block");
+        var te = obj.AddComponent<KeyEvent>();
         te.Block = this;
+        return obj;
     }
     
     public override object GetValue(string id)

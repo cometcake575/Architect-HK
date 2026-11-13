@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Architect.Utils;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
 
