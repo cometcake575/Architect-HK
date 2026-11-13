@@ -62,7 +62,7 @@ public static class ReceiverGroup
         EventManager.RegisterReceiverType(new EventReceiverType("set_velocity", "SetVelocity", (o, b) =>
         {
             if (b == null) return;
-            o.GetComponent<Rigidbody2D>().velocity = new Vector2(
+            o.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(
                 b.GetVariable<float>("New X"),
                 b.GetVariable<float>("New Y")
             );
