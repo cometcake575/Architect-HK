@@ -49,7 +49,7 @@
     "config": {
       "size_x": "size_x",
       "size_y": "size_y",
-      "Order": "obj_layer",
+      "Order": "obj_dcm_layer",
       "R": "colour_red",
       "G": "colour_green",
       "B": "colour_blue"

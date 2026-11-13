@@ -19,6 +19,14 @@ public static class DcmPorter
     {
         DcmSawMovement.Init();
         
+        var unlit = new Material(Shader.Find("Unlit/Texture"));
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType("DcM Layer", "obj_dcm_layer", (o, value) =>
+            {
+                var sr = o.GetComponent<SpriteRenderer>();
+                sr.material = unlit;
+                sr.sortingOrder = value.GetValue();
+            }));
         ConfigurationManager.RegisterConfigType(
             new FloatConfigType("Colour R", "colour_red", (o, value) =>
             {
