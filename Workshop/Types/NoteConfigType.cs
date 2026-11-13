@@ -40,18 +40,10 @@ public class NoteConfigValue(NoteConfigType type, string value) :
 
 public class NoteConfigElement : ConfigElement
 {
-    private readonly Button _input;
-
     public NoteConfigElement(Button apply)
     {
-        _input = apply;
         apply.gameObject.SetActive(false);
         apply.GetComponent<UIUtils.LabelledButton>().label.gameObject.SetActive(false);
-    }
-
-    public override RectTransform GetElement()
-    {
-        return _input.transform as RectTransform;
     }
 
     public override string GetValue()

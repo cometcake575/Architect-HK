@@ -93,6 +93,6 @@ public class CustomText : PreviewableBehaviour
 
     public void SetText(string text)
     {
-        _tmp.text = defaultText = text.Replace("<br>", "\n");;
+        _tmp.text = defaultText = text.Replace("<br>", "\n");
     }
 }

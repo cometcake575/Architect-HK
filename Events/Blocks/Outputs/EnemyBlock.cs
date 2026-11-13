@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Architect.Utils;
 
 namespace Architect.Events.Blocks.Outputs;
 

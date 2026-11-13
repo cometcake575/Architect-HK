@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using Architect.Utils;
 using Architect.Workshop.Items;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -82,7 +81,6 @@ public class ChoiceConfigValue<T>(ChoiceConfigType<T> type, int value)
 
 public class ChoiceConfigElement : ConfigElement
 {
-    private readonly Button _input;
     private readonly string[] _options;
     private readonly Button _apply;
     private readonly UIUtils.Label _txt;
@@ -90,12 +88,12 @@ public class ChoiceConfigElement : ConfigElement
 
     public ChoiceConfigElement(GameObject parent, Button apply, Vector3 pos, [CanBeNull] string currentVal, string[] options)
     {
-        (_input, _txt) = UIUtils.MakeTextButton("Config Input", "Default", parent, pos, 
+        (var input, _txt) = UIUtils.MakeTextButton("Config Input", "Default", parent, pos, 
             new Vector2(0, 0.5f), new Vector2(0, 0.5f), size:new Vector2(120, 25));
         _options = options;
         _apply = apply;
         
-        var choice = _input.gameObject.AddComponent<ChoiceButton>();
+        var choice = input.gameObject.AddComponent<ChoiceButton>();
         choice.Cce = this;
 
         if (currentVal != null)
@@ -103,11 +101,6 @@ public class ChoiceConfigElement : ConfigElement
             _active = Convert.ToInt32(currentVal, CultureInfo.InvariantCulture);
             _txt.textComponent.text = options[_active];
         }
-    }
-
-    public override RectTransform GetElement()
-    {
-        return _input.transform as RectTransform;
     }
 
     public override string GetValue()

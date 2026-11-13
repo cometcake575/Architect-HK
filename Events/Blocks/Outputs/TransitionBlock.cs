@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Architect.Behaviour.Utility;
-using Architect.Utils;
 using UnityEngine;
 
 namespace Architect.Events.Blocks.Outputs;
@@ -11,7 +10,6 @@ public class TransitionBlock : ScriptBlock
     protected override IEnumerable<string> Inputs => ["Transition"];
     protected override IEnumerable<(string, string)> OutputVars => [("InScene", "Boolean")];
     protected override IEnumerable<(string, string)> InputVars => [("Scene", "Text"), ("Door", "Text")];
-    
     
     protected override string Name => "Scene Transition";
 

@@ -49,14 +49,16 @@ public class TextBlock : ScriptBlock
     public bool Dream;
     public bool TakeControl = true;
 
-    public override void SetupReference()
+    public override GameObject SetupReference()
     {
-        _display = new GameObject("[Architect] Text Display").AddComponent<TextDisplay>();
+        var obj = new GameObject("[Architect] Text Display");
+        _display = obj.AddComponent<TextDisplay>();
         _display.Block = this;
 
         _display.text = Text;
         _display.mode = Dream ? 0 : 1;
         _display.takeControl = TakeControl;
+        return obj;
     }
 
     protected override void Trigger(string trigger)
@@ -79,15 +81,17 @@ public class ChoiceBlock : ScriptBlock
 
     private TextDisplay _display;
 
-    public override void SetupReference()
+    public override GameObject SetupReference()
     {
-        _display = new GameObject("[Architect] Text Display").AddComponent<TextDisplay>();
+        var obj = new GameObject("[Architect] Text Display");
+        _display = obj.AddComponent<TextDisplay>();
         _display.Block = this;
 
         _display.mode = 2;
         _display.text = Text;
         _display.cost = Cost;
         _display.takeControl = TakeControl;
+        return obj;
     }
 
     protected override void Trigger(string trigger)

@@ -138,10 +138,11 @@ public class SilkBlock : ScriptBlock
         Amount = 0;
     }
 
-    public override void SetupReference()
+    public override GameObject SetupReference()
     {
-        var scr = new GameObject("[Architect] Silk Control Ref");
+        var scr = new GameObject("[Architect] Soul Control Ref");
         scr.AddComponent<SilkControl>().Block = this;
+        return scr;
     }
 
     private static Action _onSilkGain;

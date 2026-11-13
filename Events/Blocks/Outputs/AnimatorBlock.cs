@@ -24,15 +24,36 @@ public class AnimatorBlock : ScriptBlock
 
     private IAnimPlayer _player;
 
-    public override void SetupReference()
+    private bool _setup;
+
+    public override void Reset()
     {
+        _setup = false;
+    }
+
+    private void DoSetup()
+    {
+        if (_setup) return;
+        _setup = true;
         var target = GetVariable<GameObject>("Target");
         if (target && target != HeroController.instance.gameObject)
         {
             var player = target.AddComponent<AnimPlayer>();
             player.animator = target.GetComponent<tk2dSpriteAnimator>();
-            if (!player.animator) return;
-            player.clip = player.animator.GetClipByName(ClipName);
+            if (!player.animator)
+            {
+                _setup = false;
+                return;
+            }
+            try
+            {
+                player.clip = player.animator.GetClipByName(ClipName);
+            }
+            catch
+            {
+                //
+            }
+            
             player.overrideAnimTime = OverrideAnimTime;
             player.animTime = AnimTime;
             _player = player;
@@ -55,11 +76,14 @@ public class AnimatorBlock : ScriptBlock
 
     public override object GetValue(string id)
     {
-        return _player.GetClip();
+        DoSetup();
+        return _setup ? _player.GetClip() : null;
     }
 
     protected override void Trigger(string id)
     {
+        DoSetup();
+        if (!_setup) return;
         if (id == "Start") _player.Play();
         else _player.Stop();
     }

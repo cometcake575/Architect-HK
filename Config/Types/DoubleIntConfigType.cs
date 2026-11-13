@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using Architect.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -63,7 +62,6 @@ public class DoubleIntConfigValue(DoubleIntConfigType type, (int, int) value) : 
 
 public class DoubleIntConfigElement : ConfigElement
 {
-    private readonly RectTransform _parent;
     private readonly InputField _inputX;
     private readonly InputField _inputY;
 
@@ -77,8 +75,7 @@ public class DoubleIntConfigElement : ConfigElement
                 localScale = Vector3.one
             }
         };
-        _parent = o.RemoveOffset();
-        _parent.anchoredPosition = pos;
+        o.RemoveOffset().anchoredPosition = pos;
         
         (_inputX, _) = UIUtils.MakeTextbox("X", o, new Vector3(-17.5f, 0), Vector2.zero, Vector2.zero, 
             80, 25);
@@ -109,11 +106,6 @@ public class DoubleIntConfigElement : ConfigElement
             lastY = s;
             apply.interactable = true;
         });
-    }
-
-    public override RectTransform GetElement()
-    {
-        return _parent;
     }
 
     public override string GetValue()

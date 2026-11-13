@@ -79,7 +79,5 @@ public abstract class ConfigValue<TType>(TType type) : ConfigValue
 
 public abstract class ConfigElement
 {
-    public abstract RectTransform GetElement();
-
     public abstract string GetValue();
 }

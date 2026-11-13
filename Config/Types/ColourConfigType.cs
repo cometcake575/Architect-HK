@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using Architect.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -64,8 +63,6 @@ public class ColourConfigValue(ColourConfigType type, Color value) : ConfigValue
 
 public class ColourConfigElement : ConfigElement
 {
-    private readonly RectTransform _parent;
-    
     private readonly InputField _inputR;
     private readonly InputField _inputG;
     private readonly InputField _inputB;
@@ -81,8 +78,7 @@ public class ColourConfigElement : ConfigElement
                 localScale = Vector3.one
             }
         };
-        _parent = o.RemoveOffset();
-        _parent.anchoredPosition = pos;
+        o.RemoveOffset().anchoredPosition = pos;
 
         var take = alpha ? 17.5f : 0;
         _inputR = UIUtils.MakeTextbox("R", o, new Vector3(-35 - take, 0), Vector2.zero, Vector2.zero, 
@@ -140,11 +136,6 @@ public class ColourConfigElement : ConfigElement
                 apply.interactable = true;
             });
         }
-    }
-
-    public override RectTransform GetElement()
-    {
-        return _parent;
     }
 
     public override string GetValue()

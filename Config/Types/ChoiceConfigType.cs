@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using Architect.Utils;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -100,11 +99,6 @@ public class ChoiceConfigElement : ConfigElement
             _active = Convert.ToInt32(currentVal, CultureInfo.InvariantCulture);
             _txt.textComponent.text = options[_active];
         }
-    }
-
-    public override RectTransform GetElement()
-    {
-        return _input.transform as RectTransform;
     }
 
     public override string GetValue()

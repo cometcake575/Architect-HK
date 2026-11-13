@@ -34,7 +34,7 @@ public class ShopBlock : CollectionBlock<ShopBlock.ShopItemBlock>
     private ShopMenuStock _sms;
     private PlayMakerFSM _sFsm;
 
-    public override void SetupReference()
+    public override GameObject SetupReference()
     {
         _shop = Object.Instantiate(_shopPrefab);
         _sms = _shop.GetComponent<ShopMenuStock>();
@@ -52,6 +52,7 @@ public class ShopBlock : CollectionBlock<ShopBlock.ShopItemBlock>
             si.Block.Give();
             Refresh();
         }, 0);
+        return _shop;
     }
     
     protected override void Trigger(string trigger)
@@ -102,12 +103,12 @@ public class ShopBlock : CollectionBlock<ShopBlock.ShopItemBlock>
 
         private AbstractItem _item;
 
-        public override void SetupReference()
+        public override GameObject SetupReference()
         {
             ItemPrefab = null;
 
             var item = Finder.GetItem(ItemId);
-            if (item == null) return;
+            if (item == null) return null;
 
             _item = item;
             
@@ -138,6 +139,7 @@ public class ShopBlock : CollectionBlock<ShopBlock.ShopItemBlock>
             var sr = stats.itemSprite.GetComponent<SpriteRenderer>();
             var ud = item.GetResolvedUIDef();
             sr.sprite = ud != null ? ud.GetSprite() : item.GetPreviewSprite();
+            return null;
         }
 
         public void Give()

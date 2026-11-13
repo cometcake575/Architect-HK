@@ -5,18 +5,22 @@ namespace Architect.Events.Blocks.Events;
 
 public class StartBlock : ScriptBlock
 {
-    protected override IEnumerable<string> Outputs => ["OnStart"];
+    protected override IEnumerable<string> Outputs => ["PreStart", "OnStart"];
     protected override string Name => "On Room Load";
 
-    public override void SetupReference()
+    public override GameObject SetupReference()
     {
-        new GameObject("[Architect] Start Block").AddComponent<StartEvent>().Block = this;
+        var obj = new GameObject("[Architect] Start Block");
+        obj.AddComponent<StartEvent>().Block = this;
+        return obj;
     }
 
     public class StartEvent : MonoBehaviour
     {
         public StartBlock Block;
         private bool _done;
+
+        private void Start() => Block.Event("PreStart");
         
         private void Update()
         {
