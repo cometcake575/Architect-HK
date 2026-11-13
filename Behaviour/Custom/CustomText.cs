@@ -47,7 +47,7 @@ public class CustomText : PreviewableBehaviour
         _textObj.RemoveComponent<DialogueBox>();
 
         _tmp = _textObj.GetComponent<TextMeshPro>();
-        _tmp.text = defaultText;
+        _tmp.text = defaultText.Replace("<br>", "\n");
         _tmp.color = textColour;
         _tmp.maxVisibleCharacters = 99999;
         
@@ -93,6 +93,6 @@ public class CustomText : PreviewableBehaviour
 
     public void SetText(string text)
     {
-        _tmp.text = defaultText = text;
+        _tmp.text = defaultText = text.Replace("<br>", "\n");;
     }
 }
