@@ -74,6 +74,7 @@ public static class UtilityObjects
             .WithReceiverGroup(ReceiverGroup.Generic));
         
         Categories.Utility.Add(CreateTransitionPoint());
+        Categories.Utility.Add(CreateInstantTransitionPoint());
         Categories.Utility.Add(CreateObjectRemover("door_remover", "Disable Transition", 
                 FindObjectsToDisable<TransitionPoint>, "Removes the nearest door to another room.")
             .WithConfigGroup(ConfigGroup.Generic)
@@ -371,6 +372,30 @@ public static class UtilityObjects
                 sprite:ResourceUtils.LoadSpriteResource("door", ppu:33))
             .WithConfigGroup(ConfigGroup.Transitions)
             .WithBroadcasterGroup(BroadcasterGroup.Transitions)
+            .DoHitboxPreview();
+    }
+
+    private static PlaceableObject CreateInstantTransitionPoint()
+    {
+        var customDoor = new GameObject("Instant Transition Point");
+        customDoor.transform.SetPositionZ(0.006f);
+
+        Object.DontDestroyOnLoad(customDoor);
+        customDoor.SetActive(false);
+
+        InstantTransitionPoint.Init();
+
+        customDoor.AddComponent<InstantTransitionPoint>();
+
+        var col = customDoor.AddComponent<CircleCollider2D>();
+        col.radius = 0.48f;
+        col.isTrigger = true;
+
+        customDoor.AddComponent<SpriteRenderer>().sprite = InstantTransitionPoint.OnSprite;
+        
+        return new CustomObject("Instant Transition Point", "warp_point", customDoor)
+            .WithConfigGroup(ConfigGroup.WarpPoint)
+            .WithReceiverGroup(ReceiverGroup.WarpGate)
             .DoHitboxPreview();
     }
 
@@ -809,7 +834,7 @@ public static class UtilityObjects
                 if (ed)
                 {
                     ed.last = obj.GetComponent<HealthManager>();
-                    obj.BroadcastEvent("OnDamage");
+                    self.gameObject.BroadcastEvent("OnDamage");
                 }
             });
 

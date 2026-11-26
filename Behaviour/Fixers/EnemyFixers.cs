@@ -614,6 +614,7 @@ public static class EnemyFixers
     {
         var fsm = obj.LocateMyFSM("Control");
         fsm.GetState("Dormant").AddAction(() => fsm.SendEvent("GO"));
+        fsm.GetState("Death").transitions = [];
         obj.GetComponent<HealthManager>().hasSpecialDeath = false;
 
         fsm.GetState("Pos").DisableAction(3);
@@ -837,6 +838,7 @@ public static class EnemyFixers
         public int dive;
         public int wraiths;
         public int hp = -1;
+        public int maxCasts = -1;
         public bool countDead;
 
         private void Start()
@@ -877,6 +879,7 @@ public static class EnemyFixers
 
             init.AddAction(() =>
             {
+                if (maxCasts != -1) fsm.FsmVariables.FindFsmInt("SP").value = maxCasts;
                 if (spirit != 0) fsm.FsmVariables.FindFsmInt("Fireball Level").value = spirit - 1;
                 if (dive != 0) fsm.FsmVariables.FindFsmInt("Quake Level").value = dive - 1;
                 if (wraiths != 0) fsm.FsmVariables.FindFsmInt("Scream Level").value = wraiths - 1;
@@ -2516,6 +2519,8 @@ public static class EnemyFixers
         var o = fsm.GetState("Out");
         o.DisableActions(2, 4);
         o.AddAction(() => obj.SetActive(false), 0);
+        
+        fsm.GetState("Rise").GetAction<FloatCompare>(5).float2.Value = obj.transform.GetPositionY() + 1000;
 
         var main = obj.transform.Find("Pt Break").GetComponent<ParticleSystem>().main;
         main.playOnAwake = false;
@@ -2590,5 +2595,10 @@ public static class EnemyFixers
             dstabXMax.Value = right - 3.3f;
             wallR.Value = right - 1.24f;
         }
+    }
+
+    public static void RotateGulka(GameObject obj, float rot)
+    {
+        
     }
 }

@@ -54,6 +54,7 @@ public static class Settings
     public static ConfigEntry<bool> ShowRespawnPoint;
     public static ConfigEntry<bool> BlockInventoryInEditMode;
     public static ConfigEntry<bool> CoopMode;
+    public static ConfigEntry<bool> UltrawideMode;
     
     public static ConfigEntry<int> SaveSlot; 
     
@@ -348,6 +349,13 @@ public static class Settings
             "CoopMode",
             true,
             "Hook into HKMP if present for co-op editing (requires a restart to toggle)"
+        );
+        
+        UltrawideMode = Bind(
+            "Options",
+            "UltrawideMode",
+            false,
+            "Ensures everything fits on the editor, can make some things end up very small, requires a restart"
         );
         
         SaveSlot = Bind(

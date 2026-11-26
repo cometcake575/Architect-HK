@@ -617,6 +617,7 @@ public static class EditManager
             GameManager.instance.gameState = GameState.PLAYING;
 
             if (CoopManager.Instance.IsActive()) CoopManager.Instance.RefreshRoom();
+            GameCameras.instance.sceneParticles.BeginScene();
         }
 
         if (HoveredObject != null)

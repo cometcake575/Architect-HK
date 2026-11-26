@@ -103,7 +103,7 @@ public static class EditorUI
         ObjectIdLabel.textComponent.text = text;
         ArchitectPlugin.Instance.StartCoroutine(CursorObject.ClearCursorInfoLabel());
     }
-
+    
     private static void SetupCanvas()
     {
         _canvasObj = new GameObject("[Architect] Editor Canvas");
@@ -111,7 +111,10 @@ public static class EditorUI
         Object.DontDestroyOnLoad(_canvasObj);
 
         _canvasObj.AddComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
-        _canvasObj.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        var scaler = _canvasObj.AddComponent<CanvasScaler>();
+        scaler.screenMatchMode = Settings.UltrawideMode.Value ? 
+            CanvasScaler.ScreenMatchMode.Expand : CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         _canvasObj.AddComponent<GraphicRaycaster>();
 
         _mapUI = new GameObject("Map Editor UI")

@@ -1610,6 +1610,16 @@ public static class ConfigGroup
                 }).WithDefaultValue(new Vector2(0, 5)))
     ]);
 
+    public static readonly List<ConfigType> HeadOfZote = GroupUtils.Merge(Enemies, [
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Fly Away", "head_of_zote_fly",
+                (o, value) =>
+                {
+                    if (value.GetValue()) return;
+                    o.LocateMyFSM("Control").GetState("Slam").transitions = [];
+                }).WithDefaultValue(false))
+    ]);
+
     public static readonly List<ConfigType> FalseKnight = GroupUtils.Merge(Enemies, [
         ConfigurationManager.RegisterConfigType(
             new IntConfigType("Stun Count", "false_knight_stun_count",
@@ -1719,6 +1729,12 @@ public static class ConfigGroup
                 (o, value) =>
                 {
                     o.GetComponent<EnemyFixers.Shade>().hp = value.GetValue();
+                })),
+        ConfigurationManager.RegisterConfigType(
+            new IntConfigType("Max Casts Override", "player_shade_soul",
+                (o, value) =>
+                {
+                    o.GetComponent<EnemyFixers.Shade>().maxCasts = value.GetValue();
                 })),
         ConfigurationManager.RegisterConfigType(
             new ChoiceConfigType("Fireball Level", "player_shade_fireball",
@@ -2375,9 +2391,6 @@ public static class ConfigGroup
         AlphaColour
     ]);
 
-    private static readonly int ActiveRegion = LayerMask.NameToLayer("ActiveRegion");
-    private static readonly int SoftTerrain = LayerMask.NameToLayer("Soft Terrain");
-    
     public static readonly List<ConfigType> Txt = GroupUtils.Merge(Generic, [
         ConfigurationManager.RegisterConfigType(
             new StringConfigType("Text", "txt_text",
@@ -2411,6 +2424,8 @@ public static class ConfigGroup
                 .WithDefaultValue(Color.white))
     ]);
 
+    private static readonly int ActiveRegion = LayerMask.NameToLayer("ActiveRegion");
+    
     public static readonly List<ConfigType> TriggerZones = GroupUtils.Merge(Stretchable, [
         ConfigurationManager.RegisterConfigType(
             new ChoiceConfigType("Trigger Type", "trigger_type",
@@ -2419,12 +2434,25 @@ public static class ConfigGroup
                         var val = value.GetValue();
                         o.GetComponent<TriggerZone>().mode = val;
 
-                        if (val == 3)
+                        switch (val)
                         {
-                            o.layer = ActiveRegion;
-                            o.AddComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+                            case 0:
+                                o.layer = (int)PhysLayers.HERO_DETECTOR;
+                                break;
+                            case 1:
+                                o.layer = (int)PhysLayers.PROJECTILES;
+                                break;
+                            case 2:
+                                o.layer = (int)PhysLayers.ENEMY_DETECTOR;
+                                break;
+                            case 3:
+                                o.layer = ActiveRegion;
+                                o.AddComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+                                break;
+                            case 4:
+                                o.layer = ActiveRegion;
+                                break;
                         }
-                        else o.layer = SoftTerrain;
                     })
                 .WithOptions("Player", "Nail Swing", "Enemy", "Other Zone", "Activator").WithDefaultValue(0).WithPriority(-1)),
         ConfigurationManager.RegisterConfigType(
@@ -2507,6 +2535,14 @@ public static class ConfigGroup
                 {
                     o.GetComponent<DamageEnemies>().damageDealt = value.GetValue();
                 }).WithDefaultValue(10)
+        ),
+        ConfigurationManager.RegisterConfigType(
+            new BoolConfigType("Ignore IFrames", "enemy_damager_ignore_invul", 
+                (o, value) =>
+                {
+                    if (value.GetValue()) return;
+                    o.GetComponent<DamageEnemies>().ignoreInvuln = false;
+                }).WithDefaultValue(false)
         )
     ]);
     
@@ -2598,6 +2634,26 @@ public static class ConfigGroup
                 {
                     o.GetComponent<CustomTransitionPoint>().applyInEditMode = value.GetValue();
                 }).WithDefaultValue(true).WithPriority(-1))
+    ]);
+
+    public static readonly List<ConfigType> WarpPoint = GroupUtils.Merge(Visible, [
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType("Point ID", "warp_point_id", (o, value) =>
+            {
+                o.GetComponent<InstantTransitionPoint>().id = value.GetValue();
+            }).WithPriority(-1)),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType("Target Point ID", "warp_point_other_id",
+                (o, value) =>
+                {
+                    o.GetComponent<InstantTransitionPoint>().targetId = value.GetValue();
+                }).WithPriority(-1)),
+        ConfigurationManager.RegisterConfigType(
+            new StringConfigType("Target Scene", "warp_point_other_scene",
+                (o, value) =>
+                {
+                    o.GetComponent<InstantTransitionPoint>().targetScene = value.GetValue();
+                }).WithPriority(-1))
     ]);
 
     public static readonly List<ConfigType> Bindings = GroupUtils.Merge(Mutable, [

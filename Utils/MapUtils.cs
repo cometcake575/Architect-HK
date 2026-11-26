@@ -136,7 +136,7 @@ public static class MapUtils
             self.currentScenePos =
                 new Vector3(self.currentScene.transform.localPosition.x + sceneGroup.transform.localPosition.x,
                     self.currentScene.transform.localPosition.y + sceneGroup.transform.localPosition.y, 0.0f);
-
+            
             if (posShade)
             {
                 if (!self.inRoom)
@@ -189,6 +189,8 @@ public static class MapUtils
                     self.displayingCompass = false;
                 }
             }
+            
+            if (!self.posGate) self.PositionDreamGateMarker();
         };
 
         On.PlayerData.HasMapForScene += (orig, self, name) =>

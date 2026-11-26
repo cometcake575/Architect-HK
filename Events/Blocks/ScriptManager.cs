@@ -145,10 +145,9 @@ public static class ScriptManager
 
                 if (InSwapMode)
                 {
+                    List<IEdit> edits = [];
                     foreach (var connection in CurrentStart.Block.EventMap[CurrentStart.id].ToArray())
                     {
-                        List<IEdit> edits = [];
-                        
                         if (!Input.GetKey(KeyCode.LeftAlt))
                         {
                             edits.Add(new DisconnectScriptBlock(CurrentStart.Block, CurrentStart.id, Blocks[connection.Item1], connection.Item2,
@@ -157,9 +156,9 @@ public static class ScriptManager
 
                         edits.Add(new ConnectScriptBlock(Block, id, Blocks[connection.Item1], connection.Item2,
                             Connection.LinkType.Event, IsLocal));
-                        
-                        ActionManager.ScriptActionManager.PerformAction(new MultiEdit(edits));
                     }
+                        
+                    ActionManager.ScriptActionManager.PerformAction(new MultiEdit(edits));
 
                     CurrentStart = null;
                     return;

@@ -220,9 +220,11 @@
   },
   "IMG_TP": {
     "name": "prefab_DCM_Tp",
+    "scale": 1.5625,
     "config": {
-      "Destination": "prefab_config_3376a9f8-9c6e-43c9-a1ba-7489c1b13d67",
-      "DestinationScene": "prefab_config_0323914f-6b5f-49a1-b010-6fce3e907fc2"
+      "Identity": "warp_point_id",
+      "Destination": "warp_point_other_id",
+      "DestinationScene": "warp_point_other_scene"
     }
   },
   "transgate": {

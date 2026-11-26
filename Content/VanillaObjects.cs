@@ -295,7 +295,8 @@ public static class VanillaObjects
         AddEnemy("Squit", "squit", ("Fungus1_22", "Mosquito"));
         AddEnemy("Fool Eater", "fool_eater", ("Fungus1_22", "Plant Trap"))
             .WithRotationGroup(RotationGroup.Four);
-        AddEnemy("Gulka", "gulka", ("Fungus1_12", "Plant Turret"))
+        AddEnemy("Gulka", "gulka", ("Fungus1_12", "Plant Turret Right"),
+                preloadAction: o => o.transform.SetRotation2D(90))
             .WithRotationGroup(RotationGroup.Eight);
         
         AddEnemy("Maskfly", "maskfly", ("Fungus1_12", "Pigeon"));
@@ -1375,7 +1376,7 @@ public static class VanillaObjects
         
         AddEnemy("Volatile Zoteling", "zoteling_volatile",
             ("GG_Mighty_Zote", "Battle Control/Zote Balloon Ordeal"),
-            postSpawnAction: EnemyFixers.FixVolatileZoteling);
+            postSpawnAction: EnemyFixers.FixVolatileZoteling).SpritePreview = true;
         
         AddEnemy("Fluke Zoteling", "zoteling_fluke",
             ("GG_Mighty_Zote", "Battle Control/Zote Fluke"),
@@ -1383,7 +1384,8 @@ public static class VanillaObjects
         
         AddEnemy("Head of Zote", "head_of_zote",
             ("GG_Mighty_Zote", "Battle Control/Zote Thwomp"),
-            postSpawnAction: EnemyFixers.FixHeadOfZote);
+            postSpawnAction: EnemyFixers.FixHeadOfZote)
+            .WithConfigGroup(ConfigGroup.HeadOfZote);
         
         /*
         AddEnemy("Grey Prince Zote", "grey_prince_zote",

@@ -413,6 +413,13 @@ public static class ReceiverGroup
         }))
     ]);
     
+    public static readonly List<EventReceiverType> WarpGate = GroupUtils.Merge(Generic, [
+        EventManager.RegisterReceiverType(new EventReceiverType("warp_gate_tp", "Transition", o =>
+        {
+            o.GetComponent<InstantTransitionPoint>().Teleport();
+        }))
+    ]);
+    
     public static readonly List<EventReceiverType> EnemyDamager = GroupUtils.Merge(Generic, [
         EventManager.RegisterReceiverType(new EventReceiverType("set_enemy_damager", "SetDamage", (o, b) =>
         {
