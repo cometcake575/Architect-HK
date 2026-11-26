@@ -24,6 +24,11 @@ public static class PreviewUtils
             renderer.flipY = type.LossyScale.y < 0;
         }
 
+        return CalculateOffset(type, flipped, rotation, scale);
+    }
+
+    public static Vector3 CalculateOffset(PlaceableObject type, bool flipped, float rotation, float scale)
+    {
         var childOffset = type.ChildOffset;
 
         childOffset.x /= type.LossyScale.x;

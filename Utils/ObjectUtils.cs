@@ -19,6 +19,7 @@ public static class ObjectUtils
         foreach (var fsm in obj.GetComponentsInChildren<PlayMakerFSM>(true)) 
             fsm.enabled = false;
         
+        obj.RemoveComponentsInChildren<StalactiteControl>();
         obj.RemoveComponentsInChildren<PersistentBoolItem>();
         obj.RemoveComponentsInChildren<PersistentIntItem>();
         obj.RemoveComponentsInChildren<FSMActivator>();

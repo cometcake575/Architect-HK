@@ -139,16 +139,6 @@ public static class DcmPorter
                 var sn = o.GetConfig("sceneName");
                 if (!globals.TryGetValue(sn, out var v)) v = globals[sn] = [];
                 v.Add(o);
-                
-                Dictionary<string, string> d = [];
-                d["door_id"] = o.GetConfig("Identity");
-                d["trigger_type"] = "2";
-                v.Add(new DcmObject(
-                    DcmObject.DcmObjectConverter.GetObjectType("transgate"),
-                    0,
-                    1,
-                    d,
-                    o.Pos));
             }
         }
         

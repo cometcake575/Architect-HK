@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ItemChanger;
+using ItemChanger.Items;
 
 namespace Architect.Events.Blocks.Outputs;
 
@@ -17,20 +18,33 @@ public class CharmBlock : ScriptBlock
 
     protected override void Trigger(string id)
     {
-        if (Finder.GetItem(CharmName) is not ItemChanger.Items.CharmItem charm) return;
+        var item = Finder.GetItem(CharmName);
+        
+        int charmNum;
+        switch (item)
+        {
+            case ItemChanger.Items.CharmItem charm:
+                charmNum = charm.charmNum;
+                break;
+            case WhiteFragmentItem:
+                charmNum = 36;
+                break;
+            default:
+                return;
+        }
 
         var pd = PlayerData.instance;
 
-        if (!pd.GetBool($"gotCharm_{charm.charmNum}")) return;
+        if (!pd.GetBool($"gotCharm_{charmNum}")) return;
 
         var equip = id == "Equip";
         
-        pd.SetBool($"equippedCharm_{charm.charmNum}", equip);
+        pd.SetBool($"equippedCharm_{charmNum}", equip);
         if (equip)
         {
-            if (!pd.equippedCharms.Contains(charm.charmNum)) pd.equippedCharms.Add(charm.charmNum);
+            if (!pd.equippedCharms.Contains(charmNum)) pd.equippedCharms.Add(charmNum);
         }
-        else pd.equippedCharms.Remove(charm.charmNum);
+        else pd.equippedCharms.Remove(charmNum);
         
         pd.CalculateNotchesUsed();
         

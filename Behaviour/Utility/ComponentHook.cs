@@ -73,7 +73,6 @@ public class ComponentHook : PreviewableBehaviour
 
     private void Update()
     {
-        
         if (isAPreview) return; 
 
         if (_done) return;

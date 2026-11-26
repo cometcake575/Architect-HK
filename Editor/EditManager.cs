@@ -616,6 +616,7 @@ public static class EditManager
             GameCameras.instance.cameraController.SetMode(CameraController.CameraMode.FOLLOWING);
 
             if (CoopManager.Instance.IsActive()) CoopManager.Instance.RefreshRoom();
+            GameCameras.instance.sceneParticles.BeginScene();
         }
 
         if (HoveredObject != null)
